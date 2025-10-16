@@ -1,0 +1,18 @@
+{
+  "footer": {
+    "copyright": "© 2025 Rimakes. Todos los derechos reservados."
+  },
+  "blog": {
+    "preTitle": "Blog",
+    "blogTitle": "Últimos Artículos",
+    "blogDescription": "Pensamientos, historias e ideas.",
+    "breadcrumb": {
+      "home": "Inicio",
+      "blog": "Blog"
+    }
+  },
+  "localeSwitcher": {
+    "en": "Inglés",
+    "es": "Español"
+  }
+}

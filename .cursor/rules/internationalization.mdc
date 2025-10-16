@@ -1,0 +1,71 @@
+---
+description: Read this rule whenever you need to add or update translations.
+alwaysApply: false
+---
+
+# Internationalization (i18n) Structure
+
+     This codebase uses **next-intl** for internationalization with a comprehensive translation system organized in JSON
+     files.
+
+     ## Supported Languages
+
+     The application supports 6 languages:
+     - `en` - English
+     - `es` - Spanish (default)
+
+     ## Translation Files Organization
+
+     Each language has identical JSON files with translations organized by component. Translations are co located in the component folder in a folder called `locales`:
+
+     ## Usage Guidelines
+
+     1. **Always add translations to ALL language files** - When adding a new translation key, it must be added to all
+     language files
+
+     2. **Maintain consistent structure** - Keep the same JSON structure across all language files
+
+     3. **Use nested objects for organization** - Group related translations within nested objects for better
+     maintainability
+
+     4. **Follow naming conventions**:
+        - Use camelCase for keys
+        - Be descriptive but concise
+        - Group related keys under common parent objects
+
+     5. **When you add new translations, update the config and global declaration files to add the new translations to the types
+
+
+     ## Example Structure
+
+     ```json
+     // /src/app/[locale]/(unauth)/components/heroSection/dictionaries/en.json
+     {
+       "heroSection": {
+         "title": "Hero Section",
+         "description": "Hero Section Description"
+       },
+     }
+
+     // /src/app/[locale]/(unauth)/components/heroSection/dictionaries/es.json
+     {
+       "heroSection": {
+         "title": "Sección Hero",
+         "description": "Descripción de la Sección Hero"
+         }
+       }
+     ```
+
+     ## Configuration
+
+     The i18n configuration is defined in:
+     - `/src/shared/internationalization/i18n/config.ts` - Routing and locale configuration
+     - `/src/shared/internationalization/i18n/request.ts` - Request handling for translations
+     - `/src/shared/internationalization/global.d.ts` - Global declarations for translations types
+
+     ## Important Notes
+
+     - Default locale is Spanish (`es`)
+     - Locale prefix is applied "as-needed" (not shown for default locale)
+     - Routes have localized URLs (e.g., `/negrita-linkedin` becomes `/bold-linkedin` in English)
+     - All translation files must maintain the same structure across languages to prevent runtime errors

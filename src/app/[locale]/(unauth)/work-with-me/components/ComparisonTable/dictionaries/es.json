@@ -1,0 +1,24 @@
+{
+  "comparison-table": {
+    "title": "rimakes. vs una agencia tradicional",
+    "description": "Ahorra Tiempo, Dinero y Dolores de Cabeza",
+    "header-characteristics": "Características",
+    "header-rimakes": "rimakes.",
+    "header-traditional": "Agencia tradicional",
+    "time": "Tiempo de desarrollo",
+    "guarantee": "Garantía",
+    "price": "Precio",
+    "ia-experience": "Experiencia en IA",
+    "price-model": "Modelo de precio",
+    "rimakes-time": "32 días",
+    "traditional-time": "3 - 6 meses",
+    "rimakes-guarantee": "100% devolución",
+    "traditional-guarantee": "x",
+    "rimakes-price": "7.300€",
+    "traditional-price": "15.000€ - 30.000€",
+    "rimakes-ia-experience": "Especializado en IA",
+    "traditional-ia-experience": "Generalista",
+    "rimakes-price-model": "Precio fijo",
+    "traditional-price-model": "Por hora"
+  }
+}
