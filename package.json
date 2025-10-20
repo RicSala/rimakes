@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "basehub dev --output=./src/shared/cms/generated & next dev --turbopack",
-    "build": "basehub --output=./src/shared/cms/generated && next build --turbopack",
+    "build": "basehub --output=./src/shared/cms/generated && next build",
     "build:check": "pnpm lint && pnpm type:check && basehub --output=./src/shared/cms/generated && next build",
     "start": "next start",
     "lint": "eslint",
@@ -34,6 +34,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "schema-dts": "^1.1.5",
+    "shiki": "^3.13.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1"
   },
