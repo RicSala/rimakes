@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { blog } from '@/shared/cms/queries/blogQueries';
+import { blog, PostMeta } from '@/shared/cms/queries/blogQueries';
 import { BlogPostPage } from '@/shared/cms/pages/BlogPostPage';
 
 // TODO: This should be rendered statically
@@ -28,7 +28,7 @@ export async function generateMetadata(
 }
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
-  const posts = await blog.getPosts('en');
+  const posts: PostMeta[] = await blog.getPosts('en');
 
   return posts.map((post) => ({
     slug: post._slug,
