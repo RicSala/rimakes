@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "basehub dev --output=./src/shared/cms/generated & next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "basehub --output=./src/shared/cms/generated && next build --turbopack",
+    "build:check": "pnpm lint && pnpm type:check && basehub --output=./src/shared/cms/generated && next build",
     "start": "next start",
     "lint": "eslint",
     "type:check": "tsc --noEmit --pretty"
