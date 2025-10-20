@@ -122,7 +122,7 @@ export const ComparisonTable = () => {
       </div>
 
       <div className='mt-8 sm:mt-10 text-center'>
-        <ScheduleButton />
+        <ScheduleButton label='Work with me' />
       </div>
     </div>
   );

@@ -61,7 +61,7 @@ export function Pricing() {
                 <Feature text='Sin costes ocultos' />
                 <Feature text='Formación incluida' />
               </div>
-              <ScheduleButton />
+              <ScheduleButton label='Work with me' />
               <div className='text-center'>
                 <span className='text-sm text-slate-500'>
                   Solo 2 Plazas disponibles

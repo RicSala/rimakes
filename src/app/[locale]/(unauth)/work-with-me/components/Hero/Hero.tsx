@@ -17,7 +17,7 @@ export const Hero = () => {
           <Feature text={t('features.no-hidden-costs')} />
           <Feature text={t('features.training-included')} />
         </div>
-        <ScheduleButton />
+        <ScheduleButton label='Work with me' />
       </div>
     </section>
   );

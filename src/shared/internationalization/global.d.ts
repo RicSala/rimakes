@@ -1,4 +1,4 @@
-import common from './dictionaries/es/shared.json';
+import common from './dictionaries/es.json';
 import comparisonTable from '@/app/[locale]/(unauth)/work-with-me/components/ComparisonTable/dictionaries/es.json';
 import hero from '@/app/[locale]/(unauth)/work-with-me/components/Hero/dictionaries/es.json';
 import ourProcess from '@/app/[locale]/(unauth)/work-with-me/components/OurProcess/dictionaries/es.json';

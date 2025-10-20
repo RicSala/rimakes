@@ -1,4 +1,4 @@
-import { Button } from '@/shared/components/ui/button';
+import { buttonVariants } from '@/shared/components/ui/button';
 import { cn } from '@/shared/lib/utils';
 
 type ScheduleButtonProps = {
@@ -7,8 +7,13 @@ type ScheduleButtonProps = {
 };
 export function ScheduleButton({ className, label }: ScheduleButtonProps) {
   return (
-    <Button className={cn('w-full border-2 border-primary', className)}>
+    <a
+      href='https://cal.com/ricardo-sala-mano7b/rimakes?overlayCalendar=true&layout=month_view'
+      className={cn(buttonVariants({ variant: 'secondary' }), className)}
+      target='_blank'
+      rel='noopener noreferrer'
+    >
       {label}
-    </Button>
+    </a>
   );
 }

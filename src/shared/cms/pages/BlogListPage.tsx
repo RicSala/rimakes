@@ -1,6 +1,6 @@
 // TODO: This should be rendered statically, but then I cannot use the session provider in the layout...?
 
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { BlogCard } from '@/shared/cms/components/BlogCard';
 import {
@@ -12,9 +12,13 @@ import {
   BreadcrumbSeparator,
 } from '@/shared/components/ui/breadcrumb';
 import { Link } from '@/shared/internationalization/navigation';
-import { blog } from '@/shared/cms/queries';
+import { blog } from '@/shared/cms/queries/blogQueries';
+import { WithLocaleParams } from '@/shared/types/globals';
 
-export const BlogListPage = async () => {
+export const BlogListPage = async ({ params }: WithLocaleParams) => {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const t = await getTranslations();
 
   return (
@@ -60,16 +64,7 @@ export const BlogPostGrid = async () => {
           xl:grid-cols-2'
     >
       {posts.map(
-        ({
-          _slug,
-          _title,
-          description,
-          image,
-          authors,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          categories,
-          date,
-        }) => (
+        ({ _slug, _title, description, image, authors, categories, date }) => (
           <BlogCard
             abstract={description!}
             date={date!}
@@ -79,6 +74,7 @@ export const BlogPostGrid = async () => {
             url={`/blog/${_slug}`}
             // topic={categories?.[0]._title!}
             author={authors?.[0]}
+            categories={categories?.map((category) => category._title) ?? []}
           />
         )
       )}

@@ -15,7 +15,7 @@ export default function Home() {
       <Pricing />
       <Specializations />
       <Technologies />
-      <Banner title='Banner' description='Banner' />
+      <Banner title='Banner' description='Banner' buttonLabel='Work with me' />
     </div>
   );
 }

@@ -1,17 +1,13 @@
 import { SectionHeader } from '@/app/[locale]/(unauth)/work-with-me/components/SectionHeader';
-import { openSourceProjects as openSourceProjectsQuery } from '@/shared/cms/queries';
+import { openSourceProjects as openSourceProjectsQuery } from '@/shared/cms/queries/openSourceQueries';
 import { OpenSourceCard } from '@/shared/components/OpenSourceCard';
-import { getLocale } from 'next-intl/server';
 
-type OpenSourceSectionProps = {};
-
-export const OpenSourceSection = async (props: OpenSourceSectionProps) => {
-  const locale = await getLocale();
+export const OpenSourceSection = async () => {
   const openSourceProjects =
-    await openSourceProjectsQuery.getOpenSourceProjects(locale);
+    await openSourceProjectsQuery.getOpenSourceProjects();
 
   return (
-    <section className='space-y-6 scroll-mt-24' id='open-source'>
+    <section className='home-section' id='open-source'>
       <SectionHeader
         title='Open Source'
         description='Projects created and maintained for the developer community'
@@ -19,7 +15,6 @@ export const OpenSourceSection = async (props: OpenSourceSectionProps) => {
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
         {openSourceProjects.map((project) => (
           <OpenSourceCard
-            slug={project._slug}
             key={project._id}
             title={project._title}
             description={project.description}
@@ -28,6 +23,7 @@ export const OpenSourceSection = async (props: OpenSourceSectionProps) => {
             imageUrl={project.imageUrl ?? undefined}
             why={project.why ?? undefined}
             role={project.role ?? undefined}
+            postPath={project.postPath ?? undefined}
           />
         ))}
       </div>

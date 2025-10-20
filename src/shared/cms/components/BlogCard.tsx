@@ -3,7 +3,8 @@ import Image from 'next/image';
 
 import { Link } from '@/shared/internationalization/navigation';
 import { AuthorCard } from '@/shared/cms/components/AuthorCard';
-import { Author } from '@/shared/cms/queries';
+import { Author } from '@/shared/cms/queries/blogQueries';
+import { TagCloud } from '@/shared/components/TagCloud';
 
 type BlogCardProps = {
   title: string;
@@ -13,6 +14,7 @@ type BlogCardProps = {
   url: string;
   topic?: string;
   author: Author;
+  categories: string[];
 };
 export function BlogCard({
   title,
@@ -22,12 +24,15 @@ export function BlogCard({
   url,
   topic = '',
   author,
+  categories,
 }: BlogCardProps) {
   return (
     <Link
       className='group space-y-6 transition-transform hover:-translate-y-1'
+      scroll={true}
       // @ts-expect-error - TODO: fix this
       href={url}
+      prefetch
     >
       <div className='space-y-6'>
         <div className='relative aspect-[384/240] overflow-clip rounded-3xl border'>
@@ -41,6 +46,7 @@ export function BlogCard({
           </h2>
           <p className='line-clamp-2 text-muted-foreground'>{abstract}</p>
         </div>
+        <TagCloud tags={categories} />
       </div>
       <AuthorCard date={date} author={author} />
     </Link>

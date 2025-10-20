@@ -7,7 +7,7 @@ import { ProjectsSection } from '@/app/[locale]/(unauth)/components/ProjectsSect
 
 export default async function Home() {
   return (
-    <div className='flex flex-col gap-24'>
+    <div className='flex flex-col gap-32'>
       <HeroSection />
       <TechnologiesSection />
       <ProjectsSection />

@@ -1,7 +1,6 @@
 import { SectionHeader } from '@/app/[locale]/(unauth)/work-with-me/components/SectionHeader';
 
-type SpecializationsProps = {};
-export function Specializations({}: SpecializationsProps) {
+export function Specializations() {
   return (
     <>
       <SectionHeader title='Specializations' description='Specializations' />
@@ -12,6 +11,7 @@ export function Specializations({}: SpecializationsProps) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const specializations = {
   'image-generation-apps': {
     title: 'Image Generation Apps',

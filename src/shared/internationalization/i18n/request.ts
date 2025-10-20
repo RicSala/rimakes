@@ -16,9 +16,9 @@ export default getRequestConfig(async ({ requestLocale }) => {
       import(
         `@/app/[locale]/(unauth)/work-with-me/components/ComparisonTable/dictionaries/${locale}.json`
       ).then((m) => m.default),
-      import(
-        `@/shared/internationalization/dictionaries/${locale}/shared.json`
-      ).then((m) => m.default),
+      import(`@/shared/internationalization/dictionaries/${locale}.json`).then(
+        (m) => m.default
+      ),
       import(
         `@/app/[locale]/(unauth)/work-with-me/components/Hero/dictionaries/${locale}.json`
       ).then((m) => m.default),

@@ -1,9 +1,8 @@
 import { SectionHeader } from '@/app/[locale]/(unauth)/work-with-me/components/SectionHeader';
 
-type TechnologiesProps = {};
-export function Technologies({}: TechnologiesProps) {
+export function Technologies() {
   return (
-    <>
+    <section className='home-section' id='technologies'>
       <SectionHeader
         title='Technologies'
         description='We use the following technologies'
@@ -17,6 +16,6 @@ export function Technologies({}: TechnologiesProps) {
       <p>Nextjs Typescript TailwindCSS Shadcn UI Vercel</p>
       <h3>AI Technologies</h3>
       <p>OpenAI Anthropic Gemini Claude</p>
-    </>
+    </section>
   );
 }

@@ -1,14 +1,13 @@
 import { SectionHeader } from '@/app/[locale]/(unauth)/work-with-me/components/SectionHeader';
-import { technologies as technologiesQuery } from '@/shared/cms/queries';
+import { technologies as technologiesQuery } from '@/shared/cms/queries/technologyQueries';
 import BlurFade from '@/shared/components/BlurFade';
 import { Badge } from '@/shared/components/ui/badge';
 import { Icon } from 'basehub/react-icon';
-type TechnologiesSectionProps = {};
 
-export async function TechnologiesSection(props: TechnologiesSectionProps) {
-  const technologies = await technologiesQuery.getTechnologies('en');
+export async function TechnologiesSection() {
+  const technologies = await technologiesQuery.getTechnologies();
   return (
-    <div className='space-y-6 scroll-mt-24' id='technologies'>
+    <section className='home-section' id='technologies'>
       <SectionHeader
         title='Technologies I use'
         description='These are the main tools in my toolbox ⚒️'
@@ -24,7 +23,7 @@ export async function TechnologiesSection(props: TechnologiesSectionProps) {
                     svg: (props) => (
                       <svg
                         {...props}
-                        className='text-white hover:text-blue-600'
+                        className='text-primary-foreground'
                         fill='currentColor'
                       />
                     ),
@@ -36,6 +35,6 @@ export async function TechnologiesSection(props: TechnologiesSectionProps) {
           ))}
         </div>
       </BlurFade>
-    </div>
+    </section>
   );
 }

@@ -22,7 +22,7 @@ type OpenSourceCardProps = {
   why?: string;
   role?: string;
   className?: string;
-  slug?: string;
+  postPath?: string;
 };
 
 export const OpenSourceCard = ({
@@ -34,7 +34,7 @@ export const OpenSourceCard = ({
   why,
   role,
   className,
-  slug,
+  postPath,
 }: OpenSourceCardProps) => {
   return (
     <Card
@@ -112,11 +112,10 @@ export const OpenSourceCard = ({
             </Link>
           )}
         </div>
-        {slug && (
+        {postPath && (
           <Link
-            href={`/technical-breakdown/${slug}`}
-            target='_blank'
-            rel='noopener noreferrer'
+            href={`/blog/${postPath}`}
+            prefetch
             className={cn(buttonVariants({ variant: 'default' }), 'w-full')}
           >
             <BookOpen className='size-3' />

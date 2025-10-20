@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { blog } from '@/shared/cms/queries';
+import { blog } from '@/shared/cms/queries/blogQueries';
 import { BlogPostPage } from '@/shared/cms/pages/BlogPostPage';
 
 // TODO: This should be rendered statically

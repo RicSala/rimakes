@@ -1,9 +1,9 @@
+import { Author } from '@/shared/cms/queries/blogQueries';
 import {
   Avatar,
   AvatarImage,
   AvatarFallback,
 } from '@/shared/components/ui/avatar';
-import { Author } from '@/shared/cms/queries';
 
 type AuthorCardProps = {
   date: string;

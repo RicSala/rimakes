@@ -1,8 +1,10 @@
-import { openSourceProjects as openSourceProjectsQuery } from '@/shared/cms/queries';
+import { openSourceProjects as openSourceProjectsQuery } from '@/shared/cms/queries/openSourceQueries';
 import { Pump } from 'basehub/react-pump';
 import { RichText } from 'basehub/react-rich-text';
 import { Link } from '@/shared/internationalization/navigation';
 import { Badge } from '@/shared/components/ui/badge';
+import { Callout } from '@/shared/components/Callout';
+import { CodeBlock } from 'basehub/react-code-block';
 
 export default async function Home({
   params,
@@ -52,18 +54,11 @@ export default async function Home({
               </header>
 
               <div className='prose'>
-                {!data.portfolio.openSource.item?.technicalBreakdown && (
-                  <div className='text-muted-foreground bg-orange-100 p-4 rounded-md'>
-                    <p className='!p-0 !m-0'>
-                      🤦🏻‍♂️ This project doesn't have a technical breakdown yet.
-                    </p>
-                    <p className='!p-0 !m-0'>
-                      But rest assured, I'm working on it and it will be ready
-                      soon.
-                    </p>
-                  </div>
-                )}
                 <RichText
+                  blocks={
+                    data.portfolio.openSource.item?.technicalBreakdown?.json
+                      .blocks
+                  }
                   components={{
                     a: ({ children, ...props }) => {
                       return (
@@ -75,6 +70,39 @@ export default async function Home({
                         >
                           {children}
                         </Link>
+                      );
+                    },
+
+                    pre: ({ language, code }) => {
+                      return (
+                        <CodeBlock
+                          lineNumbers={{
+                            className: 'mr-4 text-muted-foreground',
+                          }}
+                          snippets={[
+                            {
+                              code: code,
+                              language: language,
+                            },
+                          ]}
+                          theme='github-dark'
+                        />
+                      );
+                    },
+                    CalloutComponent: ({
+                      title,
+                      description,
+                      emoji,
+                      variant,
+                      ..._props // eslint-disable-line @typescript-eslint/no-unused-vars
+                    }) => {
+                      return (
+                        <Callout
+                          title={title ?? ''}
+                          description={description?.json.content ?? ''}
+                          emoji={emoji ?? ''}
+                          variant={variant ?? 'default'}
+                        />
                       );
                     },
                   }}

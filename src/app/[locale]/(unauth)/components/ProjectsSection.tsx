@@ -1,20 +1,19 @@
 import { SectionHeader } from '@/app/[locale]/(unauth)/work-with-me/components/SectionHeader';
-import { projects as projectsQuery } from '@/shared/cms/queries';
+import { projects as projectsQuery } from '@/shared/cms/queries/projectQueries';
 import BlurFade from '@/shared/components/BlurFade';
 import { ProjectCard } from '@/shared/components/ProjectCard';
 import { Globe, Github, Book } from 'lucide-react';
 import { format } from 'date-fns';
 
-type ProjectsSectionProps = {};
-export async function ProjectsSection({}: ProjectsSectionProps) {
+export async function ProjectsSection() {
   const projects = await projectsQuery.getProjects('en');
   return (
-    <section className='space-y-6 @container scroll-mt-24' id='projects'>
+    <section className='home-section @container' id='projects'>
       <SectionHeader
         title='Projects'
         description='I love what I do, so I keep doing it on my free time 💻'
       />
-      <div className='grid grid-cols-2 gap-4 @3xl:grid-cols-4'>
+      <div className='grid grid-cols-1 @xl:grid-cols-2 gap-4 @3xl:grid-cols-4'>
         {projects.map((project) => {
           const startDateString = project?.startDate
             ? format(new Date(project?.startDate), 'MMM yy')
@@ -49,7 +48,7 @@ export async function ProjectsSection({}: ProjectsSectionProps) {
           return (
             <BlurFade key={project?._slug}>
               <ProjectCard
-                href={project?.link!}
+                href={project?.link ?? ''}
                 cardClassName='!py-0'
                 title={project?._title}
                 description={project?.description?.plainText || ''}
@@ -59,7 +58,7 @@ export async function ProjectsSection({}: ProjectsSectionProps) {
                     (technology) => technology?._title
                   ) || []
                 }
-                link={project?.link!}
+                link={project?.link ?? ''}
                 // video={project?.video?.url}
                 image={project?.image?.url}
                 // @ts-expect-error - TODO: fix this
