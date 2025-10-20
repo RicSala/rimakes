@@ -86,7 +86,7 @@ const animationsMachineConfig: MachineConfig<
         MOUSE_HOVER: {
           target: 'hovered',
           actions: [
-            assign((context, event) => ({
+            assign((context) => ({
               isAnimating: true,
               className: cn(
                 context.className,
@@ -102,7 +102,7 @@ const animationsMachineConfig: MachineConfig<
         MOUSE_UP: {
           target: 'hovered',
           actions: [
-            assign((context, event) => ({
+            assign((context) => ({
               isAnimating: true,
               className: cn(
                 context.className,
@@ -131,7 +131,7 @@ const animationsMachineConfig: MachineConfig<
         MOUSE_DOWN: {
           target: 'down',
           actions: [
-            assign((context, event) => ({
+            assign((context) => ({
               isAnimating: true,
               className: cn(
                 context.className,
