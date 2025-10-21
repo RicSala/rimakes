@@ -26,6 +26,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tinystack/machine": "^0.1.0",
+    "@vercel/edge-config": "^1.4.0",
     "ai": "^5.0.76",
     "basehub": "^9.5.1",
     "class-variance-authority": "^0.7.1",

@@ -18,7 +18,6 @@ import { WithLocaleParams } from '@/shared/types/globals';
 export const BlogListPage = async ({ params }: WithLocaleParams) => {
   const { locale } = await params;
   setRequestLocale(locale);
-
   const t = await getTranslations();
 
   return (

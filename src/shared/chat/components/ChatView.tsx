@@ -8,6 +8,9 @@ import { DefaultChatTransport, UIDataTypes, UIMessage, UITools } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import { useState } from 'react';
 import { useRouter } from '@/shared/internationalization/navigation';
+import { useLocale } from 'next-intl';
+import { updatePrimaryColorClientTool } from '@/shared/chat/clientTools/updatePrimaryColorClientTool';
+import { goToPathClientTool } from '@/shared/chat/clientTools/goToPathClientTool';
 
 export type Message = UIMessage<unknown, UIDataTypes, UITools>;
 
@@ -38,6 +41,7 @@ This is just a glimpse of what we can do with AI, feel free to contact me if you
 
 type ChatViewProps = { className?: string; onClose: () => void };
 export function ChatView({ className, onClose }: ChatViewProps) {
+  const locale = useLocale();
   const router = useRouter();
   const {
     messages: chatMessages,
@@ -49,45 +53,17 @@ export function ChatView({ className, onClose }: ChatViewProps) {
     transport: new DefaultChatTransport({
       api: '/api/chat',
     }),
+    // TODO: improve typing here
     onToolCall: ({ toolCall }) => {
-      if (toolCall.toolName === 'updatePrimaryColor') {
-        // @ts-expect-error - toolCall.input is of type unknown
-        const oklch = toolCall.input.color;
-        // set --primary-foreground to oklch
-        document.documentElement.style.setProperty(
-          '--primary-foreground',
-          oklch
-        );
-      }
-      if (toolCall.toolName === 'goToPath') {
-        // @ts-expect-error - toolCall.input is of type unknown
-        const path = toolCall.input.path as string;
-        console.log('path', path);
+      if (toolCall.toolName === 'updatePrimaryColor')
+        updatePrimaryColorClientTool(toolCall.input);
 
-        // Check if we're already on the page
-        const [pathname, hash] = path.split('#');
-        const currentPath = window.location.pathname;
-        if (hash && (!pathname || pathname === currentPath)) {
-          // Same page, just scroll to anchor
-          const element = document.getElementById(hash);
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        } else {
-          // Different page, navigate then scroll
-          // @ts-expect-error - path is of type string
-          router.push(path);
-          if (hash) {
-            console.log('scrolling to hash', hash);
-            // Give Next.js time to render the new page
-            setTimeout(() => {
-              const element = document.getElementById(hash);
-              console.log('element', element);
-              element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 700);
-          }
-        }
-      }
+      if (toolCall.toolName === 'goToPath')
+        // @ts-expect-error - router is of type NextRouter
+        goToPathClientTool(toolCall.input, locale, router);
+    },
+    onError: (error) => {
+      console.error('error', error);
     },
   });
   const [input, setInput] = useState('');

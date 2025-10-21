@@ -114,3 +114,8 @@ export type ChatUIMessage = UIMessage<
   AiTools
 >;
 export type ChatUIMessagePart = UIMessagePart<Record<string, unknown>, AiTools>;
+
+export type ChatUIMessageToolCall = Extract<
+  ChatUIMessagePart,
+  { type: 'tool-call' }
+>;
