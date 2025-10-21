@@ -4,16 +4,16 @@ import BlurFade from '@/shared/components/BlurFade';
 import { ProjectCard } from '@/shared/components/ProjectCard';
 import { Globe, Github, Book } from 'lucide-react';
 import { format } from 'date-fns';
+import { getTranslations } from 'next-intl/server';
 
 export async function ProjectsSection() {
   const projects = await projectsQuery.getProjects('en');
+  const t = await getTranslations('projectsSection');
+
   return (
     <section className='home-section @container' id='projects'>
-      <SectionHeader
-        title='Projects'
-        description='I love what I do, so I keep doing it on my free time 💻'
-      />
-      <div className='grid grid-cols-1 @xl:grid-cols-2 gap-4 @3xl:grid-cols-4'>
+      <SectionHeader title={t('title')} description={t('description')} />
+      <div className='grid grid-cols-1 @xl:grid-cols-2 gap-8 @3xl:grid-cols-4'>
         {projects.map((project) => {
           const startDateString = project?.startDate
             ? format(new Date(project?.startDate), 'MMM yy')

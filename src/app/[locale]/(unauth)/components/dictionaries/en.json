@@ -1,12 +1,7 @@
 {
   "heroSection": {
-    "title": "Build Better Software, Faster",
-    "subtitle": "Full-stack development with modern technologies",
-    "description": "I help businesses and startups bring their ideas to life with clean, scalable code and modern web solutions.",
-    "cta": {
-      "primary": "Work with Me",
-      "secondary": "View Projects"
-    }
+    "greeting": "Hey there, I'm",
+    "name": "Ricardo",
+    "description": "I'm an dev entrepreneur with experience in diverse fields such as AI, ecommerce, finance, and more. This is my humble website to share my journey and projects."
   }
 }
-

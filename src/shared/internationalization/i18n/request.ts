@@ -11,28 +11,53 @@ export default getRequestConfig(async ({ requestLocale }) => {
     ? requested
     : routing.defaultLocale;
 
-  const [common, comparisonTable, hero, ourProcess, heroSection, navbar] =
-    await Promise.all([
-      import(
-        `@/app/[locale]/(unauth)/work-with-me/components/ComparisonTable/dictionaries/${locale}.json`
-      ).then((m) => m.default),
-      import(`@/shared/internationalization/dictionaries/${locale}.json`).then(
-        (m) => m.default
-      ),
-      import(
-        `@/app/[locale]/(unauth)/work-with-me/components/Hero/dictionaries/${locale}.json`
-      ).then((m) => m.default),
-      // add our process messages
-      import(
-        `@/app/[locale]/(unauth)/work-with-me/components/OurProcess/dictionaries/${locale}.json`
-      ).then((m) => m.default),
-      import(
-        `@/app/[locale]/(unauth)/components/dictionaries/${locale}.json`
-      ).then((m) => m.default),
-      import(`@/shared/components/dictionaries/${locale}/navbar.json`).then(
-        (m) => m.default
-      ),
-    ]);
+  const [
+    common,
+    comparisonTable,
+    hero,
+    ourProcess,
+    heroSection,
+    technologiesSection,
+    projectsSection,
+    openSourceSection,
+    latestPostSection,
+    banner,
+    navbar,
+  ] = await Promise.all([
+    import(
+      `@/app/[locale]/(unauth)/work-with-me/components/ComparisonTable/dictionaries/${locale}.json`
+    ).then((m) => m.default),
+    import(`@/shared/internationalization/dictionaries/${locale}.json`).then(
+      (m) => m.default
+    ),
+    import(
+      `@/app/[locale]/(unauth)/work-with-me/components/Hero/dictionaries/${locale}.json`
+    ).then((m) => m.default),
+    import(
+      `@/app/[locale]/(unauth)/work-with-me/components/OurProcess/dictionaries/${locale}.json`
+    ).then((m) => m.default),
+    import(
+      `@/app/[locale]/(unauth)/components/dictionaries/${locale}.json`
+    ).then((m) => m.default),
+    import(
+      `@/app/[locale]/(unauth)/components/TechnologiesSection/dictionaries/${locale}.json`
+    ).then((m) => m.default),
+    import(
+      `@/app/[locale]/(unauth)/components/ProjectsSection/dictionaries/${locale}.json`
+    ).then((m) => m.default),
+    import(
+      `@/app/[locale]/(unauth)/components/OpenSourceSection/dictionaries/${locale}.json`
+    ).then((m) => m.default),
+    import(
+      `@/app/[locale]/(unauth)/components/LatestPostSection/dictionaries/${locale}.json`
+    ).then((m) => m.default),
+    import(
+      `@/app/[locale]/(unauth)/work-with-me/components/Banner/dictionaries/${locale}.json`
+    ).then((m) => m.default),
+    import(`@/shared/components/dictionaries/${locale}/navbar.json`).then(
+      (m) => m.default
+    ),
+  ]);
 
   return {
     locale,
@@ -42,6 +67,11 @@ export default getRequestConfig(async ({ requestLocale }) => {
       ...hero,
       ...ourProcess,
       ...heroSection,
+      ...technologiesSection,
+      ...projectsSection,
+      ...openSourceSection,
+      ...latestPostSection,
+      ...banner,
       ...navbar,
     },
   };

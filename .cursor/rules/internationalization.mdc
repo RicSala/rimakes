@@ -5,67 +5,91 @@ alwaysApply: false
 
 # Internationalization (i18n) Structure
 
-     This codebase uses **next-intl** for internationalization with a comprehensive translation system organized in JSON
-     files.
+This codebase uses **next-intl** for internationalization.
 
-     ## Supported Languages
+## Supported Languages
 
-     The application supports 6 languages:
-     - `en` - English
-     - `es` - Spanish (default)
+- `en` - English
+- `es` - Spanish (default)
 
-     ## Translation Files Organization
+## File Organization
 
-     Each language has identical JSON files with translations organized by component. Translations are co located in the component folder in a folder called `locales`:
+Translations are co-located with components in a `dictionaries/` folder:
 
-     ## Usage Guidelines
+```
+MyComponent/
+  ├── MyComponent.tsx
+  └── dictionaries/
+      ├── en.json
+      └── es.json
+```
 
-     1. **Always add translations to ALL language files** - When adding a new translation key, it must be added to all
-     language files
+## Translation Files
 
-     2. **Maintain consistent structure** - Keep the same JSON structure across all language files
+Each JSON file has a **single root key** matching the component name (camelCase):
 
-     3. **Use nested objects for organization** - Group related translations within nested objects for better
-     maintainability
+```json
+// dictionaries/en.json
+{
+  "myComponent": {
+    "title": "My Title",
+    "description": "My Description"
+  }
+}
 
-     4. **Follow naming conventions**:
-        - Use camelCase for keys
-        - Be descriptive but concise
-        - Group related keys under common parent objects
+// dictionaries/es.json
+{
+  "myComponent": {
+    "title": "Mi Título",
+    "description": "Mi Descripción"
+  }
+}
+```
 
-     5. **When you add new translations, update the config and global declaration files to add the new translations to the types
+## Using Translations in Components
 
+**Client Components** (use `useTranslations` hook):
 
-     ## Example Structure
+```tsx
+import { useTranslations } from 'next-intl';
 
-     ```json
-     // /src/app/[locale]/(unauth)/components/heroSection/dictionaries/en.json
-     {
-       "heroSection": {
-         "title": "Hero Section",
-         "description": "Hero Section Description"
-       },
-     }
+export const MyComponent = () => {
+  const t = useTranslations('myComponent');
+  return <h1>{t('title')}</h1>;
+};
+```
 
-     // /src/app/[locale]/(unauth)/components/heroSection/dictionaries/es.json
-     {
-       "heroSection": {
-         "title": "Sección Hero",
-         "description": "Descripción de la Sección Hero"
-         }
-       }
-     ```
+**Server Components** (use `getTranslations`):
 
-     ## Configuration
+```tsx
+import { getTranslations } from 'next-intl/server';
 
-     The i18n configuration is defined in:
-     - `/src/shared/internationalization/i18n/config.ts` - Routing and locale configuration
-     - `/src/shared/internationalization/i18n/request.ts` - Request handling for translations
-     - `/src/shared/internationalization/global.d.ts` - Global declarations for translations types
+export const MyComponent = async () => {
+  const t = await getTranslations('myComponent');
+  return <h1>{t('title')}</h1>;
+};
+```
 
-     ## Important Notes
+## Adding New Translations (Checklist)
 
-     - Default locale is Spanish (`es`)
-     - Locale prefix is applied "as-needed" (not shown for default locale)
-     - Routes have localized URLs (e.g., `/negrita-linkedin` becomes `/bold-linkedin` in English)
-     - All translation files must maintain the same structure across languages to prevent runtime errors
+When adding translations for a new component:
+
+1. **Create dictionary files** for both `en.json` and `es.json`
+2. **Import in `global.d.ts`** - Add the Spanish import
+3. **Add to type union** in `global.d.ts` - Include in `Messages` type
+4. **Import in `request.ts`** - Add to the `Promise.all()` array
+5. **Spread in messages** - Add to the returned `messages` object
+
+## Configuration Files
+
+- `/src/shared/internationalization/i18n/config.ts` - Routing and locale settings
+- `/src/shared/internationalization/i18n/request.ts` - Loads translation files
+- `/src/shared/internationalization/global.d.ts` - TypeScript definitions
+
+## Key Rules
+
+- **Same structure** - All language files must have identical JSON structure
+- **All languages** - Add translations to both `en.json` and `es.json`
+- **camelCase keys** - Use descriptive, concise names
+- **Default locale** - Spanish (`es`) is default; no prefix in URLs
+- **Type safety** - Update config files to get autocomplete and type checking

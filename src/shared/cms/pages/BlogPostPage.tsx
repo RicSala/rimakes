@@ -23,7 +23,6 @@ export const BlogPostPage = async ({
   const { slug, locale } = await params;
   console.log('rendering blog post page');
   setRequestLocale(locale);
-
   const post = await blog.getPost(slug, locale);
   if (!post) {
     return notFound();

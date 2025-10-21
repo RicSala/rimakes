@@ -1,12 +1,7 @@
 {
   "heroSection": {
-    "title": "Construye Mejor Software, Más Rápido",
-    "subtitle": "Desarrollo full-stack con tecnologías modernas",
-    "description": "Ayudo a empresas y startups a dar vida a sus ideas con código limpio, escalable y soluciones web modernas.",
-    "cta": {
-      "primary": "Trabaja Conmigo",
-      "secondary": "Ver Proyectos"
-    }
+    "greeting": "Hola, soy",
+    "name": "Ricardo",
+    "description": "Soy un emprendedor desarrollador con experiencia en diversos campos como IA, ecommerce, finanzas y más. Este es mi humilde sitio web para compartir mi trayectoria y proyectos."
   }
 }
-

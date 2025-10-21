@@ -8,6 +8,9 @@ export const routing = defineRouting({
   alternateLinks: false, // Disable HTTP header hreflang to avoid duplicates with HTML tags
   pathnames: {
     '/': '/',
+    '/#projects': '/#projects',
+    '/#open-source': '/#open-source',
+    '/blog': '/blog',
     '/work-with-me': {
       es: '/trabaja-conmigo',
       en: '/work-with-me',

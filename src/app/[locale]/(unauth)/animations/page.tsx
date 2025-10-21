@@ -24,7 +24,11 @@ export default function Home() {
       {context.counter}
       <div className={cn('rounded-md', 'bg-blue-800 w-md')}>
         <button
-          className={cn('p-4 rounded-md w-full ', context.className)}
+          className={cn(
+            'p-4 rounded-md w-full disabled:cursor-not-allowed',
+            context.className
+          )}
+          disabled={value === 'waiting'}
           onMouseEnter={() =>
             actor.send({
               type: 'MOUSE_HOVER',
@@ -67,7 +71,8 @@ type AnimationsEvent =
       type: 'MOUSE_LEAVE';
     }
   | { type: 'MOUSE_DOWN' }
-  | { type: 'MOUSE_UP' };
+  | { type: 'MOUSE_UP' }
+  | { type: 'CONTINUE' };
 
 const animationsMachineConfig: MachineConfig<
   AnimationsContext,
@@ -100,7 +105,7 @@ const animationsMachineConfig: MachineConfig<
     down: {
       on: {
         MOUSE_UP: {
-          target: 'hovered',
+          target: 'waiting',
           actions: [
             assign((context) => ({
               isAnimating: true,
@@ -110,6 +115,24 @@ const animationsMachineConfig: MachineConfig<
               ),
             })),
           ],
+        },
+      },
+    },
+    waiting: {
+      entry: [
+        {
+          type: 'WAIT',
+          exec: async ({ context, self, event }) => {
+            await new Promise((resolve) => setTimeout(resolve, 3000));
+            self.send({
+              type: 'CONTINUE',
+            });
+          },
+        },
+      ],
+      on: {
+        CONTINUE: {
+          target: 'hovered',
         },
       },
     },
