@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "prebuild": "tsc --noEmit --pretty & pnpm run lint",
-    "dev": "basehub dev --output=./src/shared/cms/generated & next dev --turbopack",
-    "build": "basehub --output=./src/shared/cms/generated && next build",
-    "build:check": "pnpm lint && pnpm type:check && basehub --output=./src/shared/cms/generated && next build",
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "build:check": "pnpm lint && pnpm type:check && next build",
     "start": "next start",
     "lint": "eslint",
     "type:check": "tsc --noEmit --pretty"
@@ -16,6 +16,7 @@
     "@ai-sdk/react": "^2.0.76",
     "@codesandbox/sandpack-react": "^2.20.0",
     "@codesandbox/sandpack-themes": "^2.0.21",
+    "@markdoc/markdoc": "^0.5.7",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -28,7 +29,6 @@
     "@tinystack/machine": "^0.1.0",
     "@vercel/edge-config": "^1.4.0",
     "ai": "^5.0.76",
-    "basehub": "^9.5.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

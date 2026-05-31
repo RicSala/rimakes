@@ -1,3 +1,3 @@
-import { BlogListPage } from '@/shared/cms/pages/BlogListPage';
+import { MarkdocBlogListPage } from '@/shared/blog/MarkdocBlogListPage';
 
-export default BlogListPage;
+export default MarkdocBlogListPage;

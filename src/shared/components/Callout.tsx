@@ -1,12 +1,13 @@
-import { Link } from '@/shared/internationalization/navigation';
+import type { ReactNode } from 'react';
+
 import { cn } from '@/shared/lib/utils';
-import { RichText } from 'basehub/react-rich-text';
 import { cva, VariantProps } from 'class-variance-authority';
 
 type CalloutProps = {
   title: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  description: any;
+  description?: any;
+  children?: ReactNode;
   emoji: string;
   className?: string;
   descriptionClassName?: string;
@@ -17,6 +18,7 @@ export function Callout({
   description,
   emoji,
   className,
+  children,
   variant = 'default',
   descriptionClassName,
   emojiClassName,
@@ -27,7 +29,7 @@ export function Callout({
         <span className={cn('text-3xl', emojiClassName)}>{emoji}</span>
         <h3 className='text-lg font-bold'>{title}</h3>
       </div>
-      <p
+      <div
         className={cn(
           calloutDescriptionVariants({
             variant,
@@ -35,25 +37,8 @@ export function Callout({
           })
         )}
       >
-        <RichText
-          components={{
-            a: ({ children, ...props }) => {
-              return (
-                <Link
-                  {...props}
-                  // @ts-expect-error "idk"
-                  href={props.href as string}
-                  className='text-primary'
-                >
-                  {children}
-                </Link>
-              );
-            },
-          }}
-        >
-          {description}
-        </RichText>
-      </p>
+        {children ?? description}
+      </div>
     </div>
   );
 }

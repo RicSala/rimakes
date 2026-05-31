@@ -1,25 +1,34 @@
-import { Author } from '@/shared/cms/queries/blogQueries';
 import {
   Avatar,
   AvatarImage,
   AvatarFallback,
 } from '@/shared/components/ui/avatar';
 
+export type BlogAuthor = {
+  _title?: string;
+  name?: string;
+  avatar?: {
+    url?: string;
+  } | null;
+};
+
 type AuthorCardProps = {
   date: string;
-  author?: Author;
+  author?: BlogAuthor;
 };
 export function AuthorCard({ date, author }: AuthorCardProps) {
+  const authorName = author?._title ?? author?.name ?? 'Ricardo Sala';
+
   return (
     <div className='flex items-center gap-3'>
       <Avatar className='h-full'>
         <AvatarImage src={author?.avatar?.url} alt='avatar' />
         <AvatarFallback className='text-[10px]'>
-          {author?._title.slice(0, 2)}
+          {authorName.slice(0, 2)}
         </AvatarFallback>
       </Avatar>
       <div>
-        <p className='text-sm font-semibold'>{author?._title}</p>
+        <p className='text-sm font-semibold'>{authorName}</p>
         <p className='text-sm text-muted-foreground'>
           {new Date(date).toLocaleDateString('es-ES', {
             year: 'numeric',

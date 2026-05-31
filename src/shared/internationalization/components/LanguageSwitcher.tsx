@@ -32,7 +32,6 @@ export const LanguageSwitcher = ({
   function onSelectChange(locale: Locale) {
     // REVIEW: why putting this _after_ was causing problems?
     onChange?.(locale);
-    // @ts-expect-error -- TypeScript will validate that only known `params`
     router.replace({ pathname, params: params as never }, { locale });
   }
 

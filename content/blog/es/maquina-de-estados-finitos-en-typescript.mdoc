@@ -1,0 +1,481 @@
+---
+title: "Máquina de estados finitos en TypeScript: Tiny Machine"
+description: "Una implementación sencilla de una máquina de estados finitos muy inspirada en la librería XState."
+publishedAt: "2025-10-20T00:00:00.000Z"
+status: "published"
+locale: "es"
+image: "/images/blog/tiny-machine-cover.jpg"
+authors:
+  - "Ricardo Sala"
+categories:
+  - "Open Source"
+  - "State Machines"
+  - "Learning"
+readingTime: 22
+---
+
+Cada vez que quería crear un componente con un estado complejo —_y por "complejo" me refiero a algo con muchas interacciones entre distintas piezas de estado, condiciones para las transiciones o efectos secundarios que deberían ocurrir durante esas transiciones_— acababa con la lógica encargada de gestionar esa "máquina" (aunque no fuera explícita, la mayor parte de las veces es una máquina de estados) desperdigada por todas partes.
+
+Después de investigar un poco cómo otros se habían enfrentado a escenarios parecidos, di con el concepto de **máquinas de estados finitos y la librería XState**.
+
+XState me pareció una librería tremendamente sofisticada, con una curva de aprendizaje bastante pronunciada, y probablemente un 95% de su complejidad no me hacía falta para lo que necesitaba, así que decidí crear una versión _**muy**_ **simplificada**, y así fue como nació la librería tiny-machine.
+
+La librería está **muy inspirada en XState**, y es algo intencionado: quería que crearla me sirviera tanto para mis apps como para aprender y entender mejor cómo funciona XState por dentro. Insisto: es una versión muy simplificada de XState, lejos del trabajazo que hace la gente de Stately, de modo que pudiera pasarme fácilmente a XState si alguna vez lo necesitaba.
+
+## Arquitectura
+
+Tiny Machine tiene dos componentes principales:
+
+1. **Actor**: ejecuta la lógica de la máquina y gestiona el estado en tiempo de ejecución.
+2. **StateMachine**: define la configuración de la máquina y la lógica de las transiciones.
+
+De esta forma mantenemos la máquina de estados pura, libre de efectos secundarios (aunque su configuración _defina_ esos efectos, no los ejecuta), mientras que el actor se encarga de toda la parte impura (efectos secundarios, notificaciones, ejecución de acciones). La máquina es pura, determinista y testeable, mientras que el actor gestiona su relación con el mundo exterior.
+
+## El Actor
+
+Vamos a echarle un vistazo a la interfaz del Actor:
+
+```ts
+export interface ActorRef<TContext, TEvent extends EventObject> {
+  id: string;
+  send: (event: TEvent) => void; // 👈🏻 ¡Aquí es donde pasan las cosas interesantes!
+
+  // Métodos observables
+  getSnapshot: () => Snapshot<TContext, StateValue>;
+  subscribe: (
+    callback: (snapshot: Snapshot<TContext, StateValue>) => void
+  ) => () => void;
+
+  // Métodos de ciclo de vida
+  start: () => void;
+  stop: () => void;
+
+  // Helpers
+  matches: (stateValue: StateValue) => boolean;
+  can: (event: TEvent) => boolean;
+}
+```
+
+Como puedes ver, aquí no hay nada del otro mundo: solo algunos métodos para arrancar y detener el actor, y otros que permiten a suscriptores externos enterarse de los cambios. Y cuando digo "actor" podríamos decir "máquina", porque nuestro actor —tal y como está hoy— solo es capaz de ejecutar máquinas de estados.
+
+Al fin y al cabo, en su forma más básica, una máquina de estados finitos no es más que una máquina ("entidad") que:
+
+- Solo puede estar en unos estados concretos ("finitos").
+- Define las transiciones entre esos estados.
+- Define los efectos secundarios que se disparan en esas transiciones.
+
+La lógica de esos estados (cuáles son, qué transiciones son posibles, qué eventos las disparan, qué efectos secundarios lanzan…) está definida en la propia configuración de la máquina. El actor es "solamente" el ejecutor al que podemos suscribirnos.
+
+El único método algo más complejo es el `send`, que se usa para interactuar con la máquina enviando eventos a través del actor, informándola de "cambios" en el mundo exterior para que ella haga lo suyo, sin que tengamos que hacerlo nosotros de forma imperativa.
+
+Así que, volviendo al actor:
+
+El método `send` tiene esta pinta:
+
+```ts
+send = (event: TEvent): void => {
+  if (this.snapshot.status !== "active") {
+    if (process.env.NODE_ENV === "development") {
+      console.warn(
+        `Event "${event.type}" was sent to stopped actor "${this.id}"`,
+      )
+    }
+    return
+  }
+
+  try {
+    // Obtener el siguiente estado y las acciones (computación pura)
+    const result: TransitionResult<TContext, StateValue> =
+      this.machine.transition(this.snapshot, event)
+
+    // Ejecutar acciones y actualizar el contexto
+    const newContext = this.executeActions(
+      result.actions,
+      event,
+    )
+
+    // Invalidar la caché antes de actualizar el snapshot
+    this.lastSnapshot = null
+
+    // Actualizar snapshot
+    const nextSnapshot: Snapshot<TContext, StateValue> = {
+      status: this.snapshot.status,
+      value: result.value,
+      context: newContext,
+    }
+
+    // Actualizar estado y notificar
+    this.snapshot = nextSnapshot
+    this.notify()
+  } catch (error) {
+    this.handleError(error)
+  }
+}
+```
+
+Fíjate bien: **el actor simplemente recibe la configuración de la máquina**, averigua qué transiciones se esperan, ejecuta las acciones y actualiza el contexto en consecuencia, llegando a un nuevo estado, hasta que le llegue un nuevo evento por parte del usuario del actor. Y así repite el proceso hasta que se alcanza un estado final o el actor se detiene manualmente.
+
+En ese sentido, el actor es solo un "ejecutor". La lógica está en la máquina, y el actor es nuestra forma de interactuar con ella a través de eventos mediante el método `send`.
+
+## La máquina
+
+Pasemos ahora a lo jugoso… la máquina de estados.
+
+Antes de meternos con ella, merece la pena recordar la idea principal: solo estamos intentando definir un sistema que…
+
+1. …tenga un número finito de estados.
+2. …sea capaz de gestionar las transiciones entre esos estados (¿es una transición posible?, ¿está protegida por un guard?…).
+3. …pueda disparar efectos secundarios en ciertas transiciones o momentos (on entry, on exit,…).
+
+Lo primero que necesitamos para que esto funcione es una forma de describir nuestra máquina de estados.
+
+Para eso, JSON parece una buena opción por varias razones:
+
+- Es lo que usa XState, lo que significa que seguramente sea una buena decisión de cara al futuro y, además, nos permite aprovechar algunas herramientas de XState gratis (como el visualizer, hasta cierto punto).
+- Es omnipresente en el desarrollo web.
+- Está listo para la IA. El desarrollo con IA ha venido para quedarse. Los LLM de los principales proveedores entienden JSON sin problema. Te sorprendería lo lejos que pueden llevarte los LLM con una API clara para crear máquinas de estados.
+- Es serializable, es decir, se puede enviar por red, guardar en una base de datos, etc.
+
+Esto último puede parecer irrelevante, y lo es en esta fase de la librería, pero en el futuro nos permitirá persistir configuraciones de máquinas de estados.
+
+### La configuración de la máquina
+
+El objeto de configuración de nuestra máquina de estados finitos es bastante grande y puede volverse un poco complejo. En lugar de intentar digerirlo todo de golpe, vamos a echarle un vistazo a su API desde una "vista de pájaro":
+
+```ts
+export type StateValue = string;
+export type EventObject = { type: string; [key: string]: any };
+export type MachineContext = Record<string, any>;
+
+export interface MachineConfig<TContext, TEvent extends EventObject> {
+  id: string;
+  initial: StateValue;
+  context: TContext;
+  on?: {
+    [K in TEvent['type']]?: TransitionConfig<TContext, TEvent>;
+  };
+  states: {
+    [key: string]: StateNodeConfig<TContext, TEvent>;
+  };
+}
+```
+
+Con suerte, el código de arriba es más o menos autoexplicativo:
+
+- `id`: necesario para depurar cuando tenemos varias máquinas corriendo en paralelo. De hecho, en futuras versiones debería añadir una forma de diferenciar entre distintas _instancias_ de la misma configuración de máquina, algo que no vi venir cuando creé la librería y que parece bastante obvio.
+- `initial`: el estado inicial de la máquina, que, como puedes ver, no es más que un string. Lo envuelvo en un tipo propio para ayudar con la inferencia de tipos.
+- `context`: los datos que mantenemos dentro de la máquina (ver la explicación más abajo).
+- `on`: la clave `on` siempre apunta a configuraciones de transiciones (las veremos luego). Cuando la clave `on` está al nivel de la configuración de la máquina (en lugar de dentro de un estado concreto), define transiciones que estarán disponibles en cualquier estado. Piensa por ejemplo en un evento `RESET`: independientemente del estado en el que esté la máquina, es posible que queramos actuar sobre él y resetearla. En lugar de añadir esa transición a todos los estados, la añadimos al nivel de la configuración de la máquina.
+- `states`: los distintos estados de la máquina (claves) y su configuración (valores).
+
+Así, la primera parte de nuestra configuración de máquina podría quedar algo así:
+
+```text
+{
+  id: 'onboarding',
+  initial: 'generatingPost',
+  context: INITIAL_CONTEXT,
+  on: {
+    GO_TO_GENERATING_POST: //...,
+    RESET: // ...,
+    SET_USER_ID: // ...,
+  // states
+};
+```
+
+Es decir, estamos diciendo:
+
+"Mi máquina se llama `onboarding`, arranca en el estado `generatingPost`, con estos datos iniciales (que probablemente estén vacíos), y estos son los eventos que deben manejarse independientemente del estado en el que nos encontremos".
+
+Sobre el `context`:
+
+El contexto es una decisión de diseño pragmática. Las FSM puras exigen modelar explícitamente cada estado posible, pero para aplicaciones prácticas como un input de formulario eso significaría crear un estado por cada valor string posible, algo claramente inviable. En su lugar, usamos el contexto para almacenar datos dinámicos manteniendo finito el espacio de estados. La clave: simplificamos estados "infinitos" (como todos los valores posibles de un input) en estados semánticos con sentido (como "clean" vs. "dirty") y guardamos los datos reales en el contexto.
+
+Piensa por ejemplo en uno de los ejemplos más simples de máquina de estados finitos: un campo de input. Si definiéramos los estados del input, serían algo así:
+
+- `clean`: el campo no se ha modificado.
+- `dirty`: tiene algún texto escrito.
+
+Pero "tiene algún texto escrito" es en realidad un "estado cajón de sastre" para un número muuuuuy alto de estados potenciales: tantos como combinaciones de strings se puedan escribir en el input.
+
+Crear una configuración de máquina de estados finitos con todos esos estados sería una tarea imposible (e inútil), así que, en lugar de intentarlo, simplificamos todos esos estados en uno solo: `dirty`. Para no perder información, guardamos la cadena del input en el contexto.
+
+Eso reduce el número de estados necesarios, hace posible trabajar con máquinas de estados finitos y, usado bien, no debería meternos en problemas con las configuraciones de transiciones ni con el comportamiento de nuestra máquina.
+
+Vamos ahora a desempaquetar el `TransitionConfig`, que luego nos ayudará a hacer lo mismo con el `StateNodeConfig`:
+
+```ts
+export interface TransitionConfig<
+  TContext extends MachineContext,
+  TEvent extends EventObject
+> {
+  target?: StateValue;
+  guards?: Guard<TContext, TEvent>[];
+  actions?: Action<TContext, TEvent>[];
+}
+```
+
+- **target**: el estado en el que acabará la máquina si la transición puede ocurrir y tiene éxito.
+- **guards**: condiciones que deben cumplirse para que la transición pueda seguir adelante. También podríamos llamarlas "bloqueadores".
+- **actions**: efectos secundarios que ocurrirán en la transición del estado actual al estado destino. Solo se ejecutan si la transición se lleva a cabo de verdad (es decir, si los guards no la bloquean).
+
+Los guards son, simplemente, funciones que, dados el contexto y el evento recibido, deben devolver un booleano indicando si la transición puede llevarse a cabo o no:
+
+```ts
+export interface Guard<
+  TContext extends MachineContext,
+  TEvent extends EventObject
+> {
+  type: string;
+  condition: (context: TContext, event: TEvent) => boolean;
+}
+```
+
+Mientras que las actions tienen esta pinta:
+
+```ts
+export interface ActionArgs<
+  TContext extends MachineContext,
+  TEvent extends EventObject
+> {
+  context: TContext;
+  event: TEvent;
+  self: ActorRef<TContext, TEvent>;
+}
+
+export interface Action<
+  TContext extends MachineContext,
+  TEvent extends EventObject
+> {
+  type: string;
+  exec: (args: ActionArgs<TContext, TEvent>) => void | Record<string, any>;
+}
+```
+
+Hay una acción especial que merece mención aparte: cambiar el contexto. Uno de los principios que hace que nuestro sistema sea tan fiable es que el contexto no puede modificarse desde fuera: todo cambio en el estado o el contexto de la máquina es consecuencia del estado actual de la máquina más un evento determinado. Para poder modificar el contexto, entonces, definimos la acción `assign`:
+
+```ts
+// actions.ts
+export function assign<
+  TContext extends MachineContext,
+  TEvent extends EventObject
+>(
+  assignment: (context: TContext, event: TEvent) => Partial<TContext>
+): Action<TContext, TEvent> {
+  return {
+    type: 'xstate.assign',
+    exec: ({ context, event }: ActionArgs<TContext, TEvent>) => {
+      return assignment(context, event);
+    },
+  };
+}
+```
+
+Lo que hace especial a esa acción es que el objeto devuelto se fusiona con el contexto dentro de la implementación del método `send` (en concreto, en el helper `executeAction`):
+
+```ts
+private executeActions(
+    actions: ActionExecutor<TContext, TEvent>[],
+    event: TEvent
+  ): TContext {
+    let context = { ...this.snapshot.context };
+
+    actions.forEach((action) => {
+      // Las acciones assign actualizan el contexto
+      if (action.type === 'xstate.assign') {
+        const updates = action.exec({
+          context,
+          event,
+          self: this,
+        });
+        context = { ...context, ...updates };
+      } else {
+        // el resto de acciones simplemente se ejecutan
+        action.exec({ context, event, self: this });
+      }
+    });
+
+    return context;
+  }
+```
+
+Con esto ya somos capaces de definir:
+
+- El estado inicial de nuestra máquina.
+- Las transiciones posibles en cualquier estado.
+- Los guards para esas transiciones.
+
+Lo que queda es una de las partes centrales de la configuración: el `StateNodeConfig`.
+
+Para cada estado de nuestra máquina definimos una configuración con este aspecto:
+
+```ts
+export interface StateNodeConfig<TContext, TEvent extends EventObject> {
+  on?: {
+    [K in TEvent['type']]?: TransitionConfig<TContext, TEvent>;
+  };
+  entry?: Action<TContext, TEvent>[];
+  exit?: Action<TContext, TEvent>[];
+}
+```
+
+`entry` y `exit` se explican solas: son las acciones que se ejecutarán cuando la máquina de estados entre en (o salga de) un estado determinado.
+
+El objeto `on` contiene las transiciones para los distintos eventos que este estado debe manejar. Ya vimos el `TransitionConfig` cuando lo definimos a nivel de la configuración de la máquina.
+
+Y con eso, terminamos de definir la configuración de nuestra máquina de estados.
+
+Así que… hasta aquí tenemos:
+
+- Un actor capaz de ejecutar la lógica de nuestra máquina.
+- La configuración de la máquina, que define los distintos estados y transiciones.
+
+Lo que queda es la lógica de las transiciones, el intérprete del objeto de configuración que acabamos de crear. Y, aunque cueste creerlo, es bastante sencillo. Tan sencillo que voy a pegarlo tal cual aquí y —en lugar de explicar el código en un párrafo— vamos a ir línea por línea:
+
+```ts
+export class StateMachine<
+  TContext extends MachineContext,
+  TEvent extends EventObject
+> {
+  readonly config: MachineConfig<TContext, TEvent>;
+
+  constructor(config: MachineConfig<TContext, TEvent>) {
+    this.config = config;
+  }
+
+  // Nada del otro mundo: dado un estado y el evento recibido, devolver la configuración de la transición...
+  getTransition(state: StateValue, event: TEvent) {
+    const stateNode = this.config.states[state];
+    return (
+      // ... de ese estado concreto
+      stateNode?.on?.[event.type as keyof typeof stateNode.on] ||
+      // ... o la transición global si ese estado no maneja el evento
+      this.config.on?.[event.type as keyof typeof this.config.on]
+    );
+  }
+
+  // Dado un estado, un evento y el contexto actual, ¿podemos seguir adelante con una transición?
+  can(state: StateValue, event: TEvent, context: TContext): boolean {
+    const transition = this.getTransition(state, event);
+    // Si la transición no existe, no, no podemos seguir
+    if (!transition) return false;
+    
+    // Si existe...
+    return (
+      // si hay guards, devolver el resultado del guard...
+      transition.guards?.every((guard) => guard.condition(context, event)) ??
+      // ... si no hay guards, podemos proceder
+      true
+    );
+  }
+
+  getInitialSnapshot(): Snapshot<TContext, StateValue> {
+    return {
+      status: 'active',
+      context: { ...this.config.context } as TContext,
+      value: this.config.initial,
+    };
+  }
+
+  // Este es el núcleo de la clase: la lógica de transición que interpreta la config.
+  // Dados el snapshot actual (estado de la máquina y contexto) y el evento recibido,
+  // devolver el estado destino y las acciones que debe ejecutar el runner / actor.
+  transition(
+    snapshot: Snapshot<TContext, StateValue>,
+    event: TEvent
+  ): TransitionResult<TContext, StateValue> {
+    const currentState = snapshot.value;
+    const transition = this.getTransition(currentState, event);
+    
+    // La comprobación !transition es redundante, a arreglar en la siguiente release
+    if (!transition || !this.can(currentState, event, snapshot.context)) {
+      return {
+        value: currentState,
+        actions: [],
+      };
+    }
+    
+    // Recolectar las acciones de la transición (serían las exit actions del estado actual,
+    // las entry actions del estado destino y las propias acciones de la transición; más sobre esto luego).
+    // Salir del estado actual → Ejecutar acciones de transición → Entrar al nuevo estado
+    
+    const targetState = transition.target || currentState;
+    const actions: ActionExecutor<TContext, TEvent>[] = [];
+
+    // Recolectar exit actions
+    if (targetState !== currentState) {
+      const currentStateNode = this.config.states[currentState];
+      if (currentStateNode?.exit) {
+        const exitActions = Array.isArray(currentStateNode.exit)
+          ? currentStateNode.exit
+          : [currentStateNode.exit];
+        actions.push(...exitActions);
+      }
+    }
+
+    // Recolectar acciones de la transición
+    if (transition.actions) {
+      const transitionActions = Array.isArray(transition.actions)
+        ? transition.actions
+        : [transition.actions];
+      actions.push(...transitionActions);
+    }
+
+    // Recolectar entry actions
+    if (targetState !== currentState) {
+      const targetStateNode = this.config.states[targetState];
+      if (targetStateNode?.entry) {
+        const entryActions = Array.isArray(targetStateNode.entry)
+          ? targetStateNode.entry
+          : [targetStateNode.entry];
+        actions.push(...entryActions);
+      }
+    }
+
+    return {
+      value: targetState,
+      actions,
+    };
+  }
+}
+```
+
+¿Por qué tenemos "acciones de estado" (entry y exit actions) y "acciones de transición"?
+
+Pues porque algunas acciones están intrínsecamente ligadas a un estado concreto, independientemente de "cómo lleguemos a ese estado". No tiene sentido añadir esa acción a todas las transiciones que llevan a él, sino al propio estado. Para eso están las entry actions.
+
+Por ejemplo, si estamos creando una máquina que gestiona un reproductor de vídeo, podríamos tener un estado `playing` con esta pinta:
+
+```ts
+states: {
+  playing: {
+    entry: ['requestWakeLock', 'hideControls', 'trackPlaybackStart'],
+    exit: ['releaseWakeLock', 'showControls', 'trackPlaybackEnd'],
+    // ... transitions
+  }
+}
+```
+
+Independientemente de cómo lleguemos al estado `playing`, esas acciones tienen que ejecutarse al entrar y al salir.
+
+Por otro lado, algunas acciones están necesariamente ligadas a un "cambio" en el estado de nuestra máquina, y no al estado en sí. Esas acciones deberían ser "acciones de transición".
+
+Por ejemplo, la configuración de una transición de envío de formulario podría quedar así:
+
+```ts
+on: {
+  SUBMIT: {
+    target: 'success',
+    actions: ['validateForm', 'saveToDatabase', 'sendConfirmationEmail'],
+    guards: ['isFormValid']
+  }
+}
+```
+
+Las acciones ocurren como consecuencia de que la máquina reciba el evento `SUBMIT` y de que el formulario sea válido (gracias al guard).
+
+Y eso es todo sobre mi primera librería, tiny-machine.
+
+No es ni mucho menos perfecta, es una primera versión muy sencilla, pero cumple con lo que necesito y ojalá te sirva como introducción a la idea de las máquinas de estados finitos. Si quieres añadir algo, sugerir un cambio o simplemente corregirme alguna cosa (mis disculpas por adelantado), escríbeme sin problema a ricardo@rimakes.com.
+
+En la próxima actualización puliré el post y añadiré algún ejemplo de cómo usarla.
