@@ -2,8 +2,10 @@ import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 
 import { Link } from '@/shared/internationalization/navigation';
-import { AuthorCard } from '@/shared/cms/components/AuthorCard';
-import { Author } from '@/shared/cms/queries/blogQueries';
+import {
+  AuthorCard,
+  type BlogAuthor,
+} from '@/shared/blog/components/AuthorCard';
 import { TagCloud } from '@/shared/components/TagCloud';
 
 type BlogCardProps = {
@@ -13,7 +15,7 @@ type BlogCardProps = {
   image: string;
   url: string;
   topic?: string;
-  author: Author;
+  author?: BlogAuthor;
   categories: string[];
 };
 export function BlogCard({

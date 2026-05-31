@@ -9,10 +9,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'assets.basehub.com',
-      },
-      {
-        protocol: 'https',
         hostname: 'im.runware.ai',
       },
       {

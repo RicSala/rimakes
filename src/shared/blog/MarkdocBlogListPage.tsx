@@ -1,8 +1,6 @@
-// TODO: This should be rendered statically, but then I cannot use the session provider in the layout...?
-
 import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { BlogCard } from '@/shared/cms/components/BlogCard';
+import { BlogCard } from '@/shared/blog/components/BlogCard';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,16 +10,16 @@ import {
   BreadcrumbSeparator,
 } from '@/shared/components/ui/breadcrumb';
 import { Link } from '@/shared/internationalization/navigation';
-import { blog } from '@/shared/cms/queries/blogQueries';
-import { WithLocaleParams } from '@/shared/types/globals';
+import { getMarkdocPosts } from '@/shared/blog/loader';
+import type { WithLocaleParams } from '@/shared/types/globals';
 
-export const BlogListPage = async ({ params }: WithLocaleParams) => {
+export async function MarkdocBlogListPage({ params }: WithLocaleParams) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
 
   return (
-    <div className={`flex flex-col gap-16`}>
+    <div className='flex flex-col gap-16'>
       <div className='space-y-4'>
         <p className='text-sm font-semibold text-primary'>
           {t('blog.preTitle')}
@@ -42,14 +40,14 @@ export const BlogListPage = async ({ params }: WithLocaleParams) => {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <BlogPostGrid />
+      <MarkdocBlogPostGrid />
     </div>
   );
-};
+}
 
-export const BlogPostGrid = async () => {
+export async function MarkdocBlogPostGrid() {
   const locale = await getLocale();
-  const posts = await blog.getPosts(locale);
+  const posts = await getMarkdocPosts(locale);
 
   return (
     <div
@@ -62,21 +60,18 @@ export const BlogPostGrid = async () => {
           lg:grid-cols-2
           xl:grid-cols-2'
     >
-      {posts.map(
-        ({ _slug, _title, description, image, authors, categories, date }) => (
-          <BlogCard
-            abstract={description!}
-            date={date!}
-            key={_slug}
-            title={_title!}
-            image={image?.url ?? ''}
-            url={`/blog/${_slug}`}
-            // topic={categories?.[0]._title!}
-            author={authors?.[0]}
-            categories={categories?.map((category) => category._title) ?? []}
-          />
-        )
-      )}
+      {posts.map((post) => (
+        <BlogCard
+          abstract={post.description}
+          author={{ name: post.authors[0] }}
+          categories={post.categories}
+          date={post.publishedAt}
+          image={post.image ?? ''}
+          key={post.slug}
+          title={post.title}
+          url={`/blog/${post.slug}`}
+        />
+      ))}
     </div>
   );
-};
+}

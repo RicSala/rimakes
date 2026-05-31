@@ -1,6 +1,7 @@
-import { blog } from '@/shared/cms/queries/blogQueries';
 import { routing } from '@/shared/internationalization/i18n/config';
+import { getMarkdocPosts } from '@/shared/blog/loader';
 import { InferUITool, tool, UIMessage, UIMessagePart } from 'ai';
+import type { Locale } from 'next-intl';
 import { z } from 'zod';
 
 export const updatePrimaryColor = tool({
@@ -89,7 +90,9 @@ export const getBlogPosts = tool({
       .describe('The locale to get the blog posts for'),
   }),
   execute: async ({ count, locale }: { count?: number; locale?: string }) => {
-    return await blog.getPosts(locale ?? 'en');
+    const posts = await getMarkdocPosts((locale ?? 'en') as Locale);
+
+    return posts.slice(0, count ?? posts.length);
   },
 });
 

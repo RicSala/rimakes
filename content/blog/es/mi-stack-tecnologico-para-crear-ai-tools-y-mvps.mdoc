@@ -1,0 +1,133 @@
+---
+title: "Mi stack tecnológico para crear AI tools y mvps"
+description: "El ecosistema de JavaScript a veces resulta abrumador con todas las librerías y herramientas disponibles. Trato de mantener mi stack ajustado, conocerlo en profundidad, lo que me permite desarrollar más rápido y disfrutar más del proceso."
+publishedAt: "2025-04-11T00:00:00.000Z"
+status: "published"
+locale: "es"
+image: "/images/blog/tech-stack-cover.png"
+authors:
+  - "Ricardo Sala"
+categories:
+  - "programación"
+readingTime: 7
+---
+
+## React
+
+Me planteé otras opciones, como Vue o incluso Svelte, pero:
+
+- Ninguna tenía —ni de lejos— la comunidad que tenía React (aunque hoy en día ya no tengo tan claro que eso sea una ventaja, porque a veces cuesta separar el ruido de la señal en el ecosistema de React).
+- React estaba más asentado y no daba la sensación de que fueran a dejar de actualizarlo para mejorarlo.
+- Saber React me abría las puertas a otras plataformas, como móvil (React Native). Aunque, de nuevo, hoy probablemente tiraría de Capacitor para un MVP rápido de una app móvil.
+
+A día de hoy estoy súper contento con mi decisión (pero no puedo negar que Svelte me genera mucha curiosidad).
+
+## Next.js
+
+Cuando empecé era un poco una apuesta, porque no era tan "dominante" como lo es hoy.
+
+Next.js es un framework full stack y me permite desarrollar front y back en el mismo repo, algo bastante cómodo y ergonómico si estás montando AI tools a medida que no requieren arquitecturas de microservicios ni historias por el estilo.
+
+Next.js también viene con otras herramientas y utilidades que no solo mejoran mi proceso de desarrollo, sino que además ayudan a que mis apps (bien hechas) se sirvan sorprendentemente rápido, algo estupendo para el SEO.
+
+## Tanstack Query
+
+Si intentas crear un hook para obtener datos a través de una operación asíncrona, hay un montón de cosas de las que tienes que ocuparte:
+
+- Estados de carga
+- Estados de error
+- Race conditions
+- Invalidación de caché
+- Cancelación de peticiones pendientes (no sé el nombre oficial de esto…)
+
+Tanstack Query (antes React Query) hace todo eso y más en unas pocas líneas de código.
+
+Pero para mí ese no es el beneficio principal.
+
+Al menos en mi caso, usar Tanstack Query le da a mis queries y mutaciones cierta estructura y un modelo mental a seguir, así que no tengo que reinventar la rueda cada vez.
+
+## Next Safe Actions
+
+Me sorprende que esto siga haciendo falta, pero bueno…
+
+Next Safe Actions actúa como un HOF para server actions que, entre otras cosas, aporta:
+
+- Validación de esquemas de entrada y salida
+- Middleware
+
+Una vez configurado, hace que nuestras server actions sean más robustas y escuetas, ya que puedes —por ejemplo— comprobar la autenticación en el middleware en lugar de escribirlo en cada action.
+
+Soy consciente de que esto se puede hacer fácilmente con código, pero NSA funciona muy bien, no pesa, y espero que el equipo de Next.js acabe ofreciendo una funcionalidad parecida de serie.
+
+## BetterAuth
+
+Después de usar NextAuth en un par de apps, me pasé a BetterAuth. Hoy NextAuth forma parte de BetterAuth (creo que los compraron, ¿no?), así que supongo que fue un buen movimiento.
+
+BetterAuth es una librería de autenticación fantástica, con un core sólido y fácilmente ampliable gracias a su sistema de plugins.
+
+## Prisma
+
+No tenía muy claro cuál era la mejor base de datos (Postgres vs. Mongo) para mis apps, y Prisma hace un muy buen trabajo abstrayendo eso, sin dejar de darme margen para "mirar por dentro" cuando lo necesito.
+
+Se hacía un poco tosco por toda la compilación del "rust client" que requería, pero desde la última versión ya no hace falta y el cliente está hecho en TypeScript. Así que mejores tipos, rendimiento top (si sabes lo que haces) y versatilidad para irte con la base de datos que quieras sin tocar demasiado la API.
+
+He tonteado con Drizzle y en algún momento querré probarlo en producción, pero ahora mismo están trabajando en la v1.0 y cuando salga no me veo con la necesidad de ser de los primeros en adoptarla. Así que seguramente me quede en Prisma una temporada.
+
+## Shadcn + Radix
+
+Este tío se llevó por delante al mundo del desarrollo web creando una "pseudolibrería" basada en Radix. Básicamente, puedes "copy pastear" sus componentes (aunque no hace falta, ¡hay un CLI muy chulo!) y modificarlos a tu gusto.
+
+Curiosamente, ShadcnUI acabó siendo más conocido que el propio Radix (que es el que hace el trabajo de verdad, para ser justos), y Radix hoy tiene alguna alternativa (Radix Themes), aunque no sigue el mismo patrón que Shadcn: es una simple librería cuyo código no se espera que modifiques. Sinceramente, ¡ojalá hubieran seguido el enfoque de Shadcn!
+
+En fin… el creador de Shadcn acabó fichando por Vercel, y la "librería" ShadcnUI cada vez está mejor.
+
+## Next-Intl
+
+Mi librería de referencia para localización. He investigado un montón y esta es la que más me gusta:
+
+- Funciona con Next.js out of the box.
+- Se integra bien con extensiones de editor como i18n ally.
+- No depende de servicios externos (puedes alojar los ficheros de diccionario en local, dentro de tu propio código).
+
+Lo único que me faltaría es que tuviera algún mecanismo de extracción de strings, ¡pero sé que están en ello!
+
+## Tailwind
+
+Poco que decir. Supongo que un "purista" preferiría tener el CSS en un fichero aparte pero… yo prefiero tenerlo en el mismo archivo que los elementos para poder "diseñar" sin ir saltando entre CSS y tsx. Y si te preocupa tener Tailwind por todas partes y te pone nervioso, instálate la extensión "Tailwind Fold" y solo lo verás cuando lo necesites :)
+
+![Si esto te molesta...](/images/blog/tailwind-fold-before.png)
+
+_Si esto te molesta..._
+
+![¡Pues escóndelo!](/images/blog/tailwind-fold-after.png)
+
+_¡Pues escóndelo!_
+
+## AI SDK
+
+En los últimos dos años se han proclamado un montón de "librerías/frameworks de IA definitivos".
+
+He usado varios y le di un uso intensivo a Langchain. Me hizo el apaño durante un tiempo, pero conforme los modelos de IA van incorporando ciertas funcionalidades de forma nativa, la complejidad que Langchain añadía al stack es cada vez menos necesaria. En mi opinión, además, se pasa un poco de abstracto.
+
+Para herramientas sencillas, ahora tiro de AI SDK. Para herramientas complejas, puede que programe yo una solución apoyándome en las features del AI SDK, o que vuelva a Langchain si eso me va a ahorrar (a mí o al cliente) mucho tiempo (o dinero).
+
+Por ejemplo: un cliente me pidió crear un asistente de IA que fuera capaz de ingerir y entender
+
+## Puppeteer
+
+Puppeteer te da control programático sobre un navegador Chrome headless (o completo) para que puedas navegar por páginas, sacar capturas, pulsar botones y, básicamente, hacer todo lo que un "humano" podría hacer en una web.
+
+Aprender a usarlo fue —por decirlo suavemente— un proceso interesante, sobre todo en un caso en el que necesitaba varias instancias corriendo en paralelo que había que rotar como es debido después de cierto número de usos.
+
+Gracias a usar Puppeteer aprendí a manejarme con herramientas como btop y pillé mejor cómo funcionan los procesos y el garbage collection :)
+
+## Otras herramientas que uso
+
+- **Cursor**: evidentemente.
+- **PostHog**: como ellos mismos dicen, "Product OS". Hoy es una herramienta imprescindible para mí, sobre todo en la primera fase de cualquier proyecto.
+
+Iré actualizando este post cada vez que haya algún cambio relevante en mi stack 😊
+
+{% callout title="¡No es una lista cerrada!" emoji="☝🏻" variant="error" %}
+Esta es una lista con algunas de las herramientas que uso, pero no es una lista exhaustiva.
+{% /callout %}

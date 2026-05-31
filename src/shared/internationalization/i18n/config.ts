@@ -1,4 +1,4 @@
-import { Link } from '@/shared/internationalization/navigation';
+import type { Link } from '@/shared/internationalization/navigation';
 import { defineRouting } from 'next-intl/routing';
 
 export const routing = defineRouting({
@@ -11,6 +11,7 @@ export const routing = defineRouting({
     '/#projects': '/#projects',
     '/#open-source': '/#open-source',
     '/blog': '/blog',
+    '/blog/[slug]': '/blog/[slug]',
     '/work-with-me': {
       es: '/trabaja-conmigo',
       en: '/work-with-me',
