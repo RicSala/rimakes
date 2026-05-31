@@ -1,5 +1,5 @@
-import { AiTools } from '@/app/api/chat/tools';
-import { ToolDisplayConfig } from '@/shared/chat/components/ToolCallDisplay';
+import type { AiTools } from '@/app/api/chat/tools';
+import type { ToolDisplayConfig } from '@/shared/chat/components/ToolCallDisplay';
 import {
   BookIcon,
   ClockIcon,

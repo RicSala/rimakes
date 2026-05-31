@@ -1,7 +1,6 @@
 'use client';
 
-import { AnimatePresence, motion, useInView, Variants } from 'motion/react';
-import { useRef } from 'react';
+import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
 interface BlurFadeProps {
   children: React.ReactNode;
@@ -28,33 +27,48 @@ const BlurFade = ({
   inViewMargin = '-50px',
   blur = '6px',
 }: BlurFadeProps) => {
-  const ref = useRef(null);
-  // @ts-expect-error - TODO: fix this
-  const inViewResult = useInView(ref, { once: true, margin: inViewMargin });
-  const isInView = !inView || inViewResult;
-  const defaultVariants: Variants = {
-    hidden: { y: yOffset, opacity: 0, filter: `blur(${blur})` },
-    visible: { y: -yOffset, opacity: 1, filter: `blur(0px)` },
-  };
-  const combinedVariants = variant || defaultVariants;
+  const ref = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const hiddenY = variant?.hidden.y ?? yOffset;
+  const visibleY = variant?.visible.y ?? -yOffset;
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    if (!inView) {
+      const frame = requestAnimationFrame(() => setIsVisible(true));
+      return () => cancelAnimationFrame(frame);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        setIsVisible(true);
+        observer.disconnect();
+      },
+      { rootMargin: inViewMargin }
+    );
+
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, [inView, inViewMargin]);
+
+  const style = useMemo<CSSProperties>(
+    () => ({
+      opacity: isVisible ? 1 : 0,
+      filter: isVisible ? 'blur(0px)' : `blur(${blur})`,
+      transform: `translateY(${isVisible ? visibleY : hiddenY}px)`,
+      transition: `opacity ${duration}s ease-out ${delay + 0.04}s, filter ${duration}s ease-out ${delay + 0.04}s, transform ${duration}s ease-out ${delay + 0.04}s`,
+    }),
+    [blur, delay, duration, hiddenY, isVisible, visibleY]
+  );
+
   return (
-    <AnimatePresence>
-      <motion.div
-        ref={ref}
-        initial='hidden'
-        animate={isInView ? 'visible' : 'hidden'}
-        exit='hidden'
-        variants={combinedVariants}
-        transition={{
-          delay: 0.04 + delay,
-          duration,
-          ease: 'easeOut',
-        }}
-        className={className}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <div ref={ref} className={className} style={style}>
+      {children}
+    </div>
   );
 };
 

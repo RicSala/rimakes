@@ -1,5 +1,11 @@
 import { withNextIntl } from '@/shared/internationalization/next-config';
+import bundleAnalyzer from '@next/bundle-analyzer';
 import type { NextConfig } from 'next';
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: false,
+});
 
 const nextConfig: NextConfig = {
   // Generate client side source maps
@@ -35,4 +41,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+export default withBundleAnalyzer(withNextIntl(nextConfig));

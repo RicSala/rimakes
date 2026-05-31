@@ -1,5 +1,6 @@
 import { CheckCircle, ToolCaseIcon } from 'lucide-react';
-import { ToolUIPart, getToolName } from 'ai';
+import { getToolName } from 'ai';
+import type { ToolUIPart } from 'ai';
 
 // Tool UI component to display tool calls nicely
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

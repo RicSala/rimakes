@@ -4,7 +4,8 @@ import { ChatHeader } from '@/shared/chat/components/ChatHeader';
 import { MessageInput } from '@/shared/chat/components/ChatMessageInput';
 import { ChatMessages } from '@/shared/chat/components/ChatMessages';
 import { cn } from '@/shared/lib/utils';
-import { DefaultChatTransport, UIDataTypes, UIMessage, UITools } from 'ai';
+import { DefaultChatTransport } from 'ai';
+import type { UIDataTypes, UIMessage, UITools } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import { useState } from 'react';
 import { useRouter } from '@/shared/internationalization/navigation';
@@ -46,7 +47,6 @@ export function ChatView({ className, onClose }: ChatViewProps) {
   const {
     messages: chatMessages,
     sendMessage,
-    stop,
     status,
   } = useChat({
     messages: initialMessages,

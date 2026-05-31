@@ -1,13 +1,13 @@
 'use client';
 
-import { AiTools } from '@/app/api/chat/tools';
+import type { AiTools } from '@/app/api/chat/tools';
 import { AssistantMessage } from '@/shared/chat/components/AssistantMessage';
-import { Message } from '@/shared/chat/components/ChatView';
+import type { Message } from '@/shared/chat/components/ChatView';
 import { ToolCallDisplay } from '@/shared/chat/components/ToolCallDisplay';
 import { toolDisplayConfig } from '@/shared/chat/components/toolDisplayConfig';
 import { UserMessage } from '@/shared/chat/components/UserMessage';
 import { cn } from '@/shared/lib/utils';
-import { ToolUIPart } from 'ai';
+import type { ToolUIPart } from 'ai';
 import { useEffect, useRef } from 'react';
 
 type ChatMessagesProps = {

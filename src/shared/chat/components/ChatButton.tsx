@@ -1,17 +1,27 @@
 'use client';
 
-import { ChatView } from '@/shared/chat/components/ChatView';
 import { Portal } from '@/shared/components/Portal';
 import { Button } from '@/shared/components/ui/button';
 import { cn } from '@/shared/lib/utils';
 import { ChevronDown } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useState } from 'react';
 
 type ChatButtonProps = {
   className?: string;
 };
-export function ChatButton({ className }: ChatButtonProps) {
+
+const ChatView = dynamic(
+  () =>
+    import('@/shared/chat/components/ChatView').then((module) => module.ChatView),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
+
+export const ChatButton = ({ className }: ChatButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const handleClick = () => {
     setIsOpen(!isOpen);
@@ -64,4 +74,4 @@ export function ChatButton({ className }: ChatButtonProps) {
       )}
     </Portal>
   );
-}
+};
