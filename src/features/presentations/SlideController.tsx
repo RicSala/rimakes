@@ -22,6 +22,68 @@ type SlideControllerProps = {
 };
 
 /**
+ * One overview thumbnail. The (potentially heavy) slide content is only rendered
+ * once the cell scrolls near the viewport, so opening the overview on a large
+ * deck mounts a handful of thumbnails instead of all of them at once.
+ */
+function SlideThumbnail({
+  number,
+  active,
+  onSelect,
+  children,
+}: {
+  number: number;
+  active: boolean;
+  onSelect: () => void;
+  children: ReactNode;
+}) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || revealed) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setRevealed(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '300px' }
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [revealed]);
+
+  return (
+    <button
+      ref={ref}
+      type='button'
+      onClick={onSelect}
+      aria-current={active}
+      className={`group relative aspect-[16/10] overflow-hidden rounded-lg border-2 bg-background text-left transition ${
+        active
+          ? 'border-primary ring-2 ring-primary'
+          : 'border-border hover:border-primary/50'
+      }`}
+    >
+      {revealed ? (
+        <div
+          className='pointer-events-none absolute left-0 top-0 origin-top-left scale-[0.32]'
+          style={{ width: '312.5%', height: '312.5%' }}
+        >
+          <div className='markdoc prose px-6 py-6 text-primary'>{children}</div>
+        </div>
+      ) : null}
+      <span className='absolute bottom-1 right-1 rounded bg-background/80 px-1.5 text-xs font-medium tabular-nums'>
+        {number}
+      </span>
+    </button>
+  );
+}
+
+/**
  * Presenter surface: drives the deck locally and broadcasts each change through
  * the secret-gated server route. Publishing never happens directly from the
  * browser, so viewers can't move the deck. Every move — prev/next, keyboard, or
@@ -150,30 +212,14 @@ export function SlideController({ slug, slides, secret }: SlideControllerProps) 
 
           <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4'>
             {slides.map((slide, slideIndex) => (
-              <button
-                type='button'
+              <SlideThumbnail
                 key={slideIndex}
-                onClick={() => jumpTo(slideIndex)}
-                aria-current={slideIndex === index}
-                className={`group relative aspect-[16/10] overflow-hidden rounded-lg border-2 bg-background text-left transition ${
-                  slideIndex === index
-                    ? 'border-primary ring-2 ring-primary'
-                    : 'border-border hover:border-primary/50'
-                }`}
+                number={slideIndex + 1}
+                active={slideIndex === index}
+                onSelect={() => jumpTo(slideIndex)}
               >
-                {/* Scaled-down live render of the slide as a thumbnail. */}
-                <div
-                  className='pointer-events-none absolute left-0 top-0 origin-top-left scale-[0.32]'
-                  style={{ width: '312.5%', height: '312.5%' }}
-                >
-                  <div className='markdoc prose px-6 py-6 text-primary'>
-                    {slide}
-                  </div>
-                </div>
-                <span className='absolute bottom-1 right-1 rounded bg-background/80 px-1.5 text-xs font-medium tabular-nums'>
-                  {slideIndex + 1}
-                </span>
-              </button>
+                {slide}
+              </SlideThumbnail>
             ))}
           </div>
         </div>
