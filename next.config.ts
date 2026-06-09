@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
   // Generate client side source maps
   productionBrowserSourceMaps: true,
 
+  // Keystatic ships untranspiled ESM; let Next transpile it for the admin bundle.
+  transpilePackages: ['@keystatic/core', '@keystatic/next'],
+
   images: {
     remotePatterns: [
       {

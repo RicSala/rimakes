@@ -1,0 +1,47 @@
+---
+title: Intro to synced slides
+description: A short demo deck that proves live slide sync and Markdoc components.
+---
+
+# Synced slides
+
+Everyone in this room is looking at **this exact slide** — because I am.
+
+Use the arrow keys (or the buttons) on the control screen to move us all along.
+
+---
+
+## How it works
+
+- The deck is just **Markdoc**, authored in Keystatic like a blog post.
+- Each `---` starts a new slide.
+- A single number — _"which slide are we on"_ — is broadcast over Pusher.
+- Your browser shows `slides[index]`. That's the whole trick.
+
+---
+
+{% callout title="Late to the party?" emoji="👋" variant="info" %}
+Refresh the page any time. You'll jump straight to the slide we're on — the
+cache channel replays the current position to anyone who joins.
+{% /callout %}
+
+---
+
+## Markdoc components work here too
+
+```ts
+function nextSlide(index: number): number {
+  // The presenter broadcasts; everyone else just follows.
+  return index + 1;
+}
+```
+
+Callouts, Shiki-highlighted code, everything the blog renders — for free.
+
+---
+
+## That's it
+
+Author a deck, open the control screen, share the viewer link.
+
+**Questions?**

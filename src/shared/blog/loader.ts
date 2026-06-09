@@ -1,24 +1,28 @@
-import { readdir, readFile } from 'node:fs/promises';
-import path from 'node:path';
 import { cache } from 'react';
+import { createReader } from '@keystatic/core/reader';
 import type { Locale } from 'next-intl';
 
+import { keystaticConfig } from '@/keystatic.config';
 import { routing } from '@/shared/internationalization/i18n/config';
-import {
-  normalizePostMeta,
-  splitFrontmatter,
-} from '@/shared/blog/frontmatter';
 import type { MarkdocPost, MarkdocPostMeta } from '@/shared/blog/types';
 
-const CONTENT_ROOT = path.join(process.cwd(), 'content/blog');
+const reader = createReader(process.cwd(), keystaticConfig);
 
-// TODO: Consider replacing the local filesystem reader with Keystatic's
-// GitHub-backed Reader API plus ISR so new posts can publish without redeploys.
+type PostEntry = Awaited<
+  ReturnType<typeof reader.collections.posts.all>
+>[number]['entry'];
+
 export const getMarkdocPosts = cache(async (locale: Locale) => {
-  const posts = await readPostsForLocale(locale);
+  const entries = await reader.collections.posts.all({
+    resolveLinkedFiles: true,
+  });
 
-  return posts
-    .filter((post) => post.status === 'published')
+  return entries
+    .map(({ slug, entry }) => splitLocale(slug, entry))
+    .filter((post): post is LocalizedEntry => post !== null)
+    .filter((post) => post.locale === locale)
+    .filter((post) => post.entry.status === 'published')
+    .map((post) => toPostMeta(post.slug, post.locale, post.entry))
     .sort(
       (left, right) =>
         new Date(right.publishedAt).getTime() -
@@ -28,13 +32,18 @@ export const getMarkdocPosts = cache(async (locale: Locale) => {
 
 export const getMarkdocPost = cache(
   async (slug: string, locale: Locale): Promise<MarkdocPost | undefined> => {
-    const post = await readPost(slug, locale);
+    const entry = await reader.collections.posts.read(`${locale}/${slug}`, {
+      resolveLinkedFiles: true,
+    });
 
-    if (post?.status !== 'published') {
+    if (!entry || entry.status !== 'published') {
       return undefined;
     }
 
-    return post;
+    return {
+      ...toPostMeta(slug, locale, entry),
+      content: entry.content,
+    };
   }
 );
 
@@ -53,73 +62,50 @@ export async function getMarkdocPostStaticParams() {
   return params.flat();
 }
 
-async function readPostsForLocale(locale: Locale): Promise<MarkdocPostMeta[]> {
-  const directory = path.join(CONTENT_ROOT, locale);
+type LocalizedEntry = {
+  locale: Locale;
+  slug: string;
+  entry: PostEntry;
+};
 
-  try {
-    const files = await readdir(directory);
-    const posts = await Promise.all(
-      files
-        .filter((file) => file.endsWith('.mdoc'))
-        .map(async (file) => {
-          const slug = file.replace(/\.mdoc$/, '');
-          const post = await readPost(slug, locale);
+function splitLocale(slug: string, entry: PostEntry): LocalizedEntry | null {
+  const separatorIndex = slug.indexOf('/');
 
-          return post;
-        })
-    );
-
-    return posts.filter(isMarkdocPost).map(toPostMeta);
-  } catch (error) {
-    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
-      return [];
-    }
-
-    throw error;
+  if (separatorIndex === -1) {
+    return null;
   }
+
+  const locale = slug.slice(0, separatorIndex);
+  const postSlug = slug.slice(separatorIndex + 1);
+
+  if (!postSlug || !isSupportedLocale(locale)) {
+    return null;
+  }
+
+  return { locale, slug: postSlug, entry };
 }
 
-function isMarkdocPost(post: MarkdocPost | undefined): post is MarkdocPost {
-  return Boolean(post);
+function isSupportedLocale(locale: string): locale is Locale {
+  return (routing.locales as readonly string[]).includes(locale);
 }
 
-function toPostMeta(post: MarkdocPost): MarkdocPostMeta {
-  return {
-    slug: post.slug,
-    locale: post.locale,
-    title: post.title,
-    description: post.description,
-    publishedAt: post.publishedAt,
-    status: post.status,
-    authors: post.authors,
-    categories: post.categories,
-    tags: post.tags,
-    image: post.image,
-    imageAlt: post.imageAlt,
-    readingTime: post.readingTime,
-  };
-}
-
-async function readPost(
+function toPostMeta(
   slug: string,
-  locale: Locale
-): Promise<MarkdocPost | undefined> {
-  const filePath = path.join(CONTENT_ROOT, locale, `${slug}.mdoc`);
-
-  try {
-    const file = await readFile(filePath, 'utf8');
-    const { frontmatter, content } = splitFrontmatter(file);
-    const meta = normalizePostMeta({ frontmatter, slug, locale });
-
-    return {
-      ...meta,
-      content,
-    };
-  } catch (error) {
-    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
-      return undefined;
-    }
-
-    throw error;
-  }
+  locale: Locale,
+  entry: PostEntry
+): MarkdocPostMeta {
+  return {
+    slug,
+    locale,
+    title: entry.title,
+    description: entry.description,
+    publishedAt: entry.publishedAt ?? '',
+    status: entry.status,
+    authors: [...entry.authors],
+    categories: [...entry.categories],
+    tags: [...entry.tags],
+    image: entry.image ?? undefined,
+    imageAlt: entry.imageAlt || undefined,
+    readingTime: entry.readingTime ?? undefined,
+  };
 }

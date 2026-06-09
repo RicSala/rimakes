@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import type { Locale } from 'next-intl';
 
+import type { MarkdocSource } from '@/shared/blog/render';
+
 export type MarkdocPostStatus = 'draft' | 'published';
 
 export type MarkdocPostMeta = {
@@ -19,7 +21,7 @@ export type MarkdocPostMeta = {
 };
 
 export type MarkdocPost = MarkdocPostMeta & {
-  content: string;
+  content: MarkdocSource;
 };
 
 export type MarkdocContent = ReactNode;

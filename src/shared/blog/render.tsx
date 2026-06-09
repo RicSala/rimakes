@@ -1,5 +1,5 @@
 import React from 'react';
-import Markdoc from '@markdoc/markdoc';
+import Markdoc, { type Node } from '@markdoc/markdoc';
 
 import {
   CustomMarkdocComponents,
@@ -7,8 +7,12 @@ import {
 } from '@/shared/blog/custom-components';
 import { MarkdocNodes } from '@/shared/blog/markdoc-nodes';
 
-export function renderMarkdoc(source: string) {
-  const ast = Markdoc.parse(source);
+// A raw Markdoc string (legacy) or a pre-parsed node from the Keystatic reader
+// (returned when reading the `content` field with `resolveLinkedFiles`).
+export type MarkdocSource = string | { node: Node };
+
+export function renderMarkdoc(source: MarkdocSource) {
+  const ast = typeof source === 'string' ? Markdoc.parse(source) : source.node;
   const config = {
     tags: {
       ...CustomMarkdocTags,
