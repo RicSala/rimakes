@@ -14,6 +14,14 @@ const nextConfig: NextConfig = {
   // Keystatic ships untranspiled ESM; let Next transpile it for the admin bundle.
   transpilePackages: ['@keystatic/core', '@keystatic/next'],
 
+  // The dynamic /present/[slug]/control route reads deck markdoc from disk at
+  // request time (Keystatic local reader). Next's tracer can't see that runtime
+  // read, so without this the deck files are missing from the serverless bundle
+  // and getDeck() returns null -> 404. Bundle the (tiny) deck content in.
+  outputFileTracingIncludes: {
+    '/**': ['./content/decks/**/*'],
+  },
+
   images: {
     remotePatterns: [
       {
