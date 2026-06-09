@@ -2,20 +2,25 @@
 title: Intro to synced slides
 description: A short demo deck that proves live slide sync and Markdoc components.
 ---
-
 # Synced slides
 
 Everyone in this room is looking at **this exact slide** — because I am.
 
 Use the arrow keys (or the buttons) on the control screen to move us all along.
 
+{% prompt title="Example prompt" %}
+You are a senior TypeScript engineer. Review the following code for bugs, edge cases, and readability. Respond with a prioritized list of issues — each with a one-line explanation and a concrete fix. Be concise and specific, and call out anything that could break in production.
+{% /prompt %}
+
 ---
 
 ## How it works
 
+![](/cms-assets/decks/intro-to-synced-slides/image.png)
+
 - The deck is just **Markdoc**, authored in Keystatic like a blog post.
 - Each `---` starts a new slide.
-- A single number — _"which slide are we on"_ — is broadcast over Pusher.
+- A single number — *"which slide are we on"* — is broadcast over Pusher.
 - Your browser shows `slides[index]`. That's the whole trick.
 
 ---

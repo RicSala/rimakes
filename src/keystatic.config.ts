@@ -36,6 +36,12 @@ const markdocComponents = {
       title: fields.text({ label: 'Title' }),
     },
   }),
+  prompt: wrapper({
+    label: 'Prompt',
+    schema: {
+      title: fields.text({ label: 'Title' }),
+    },
+  }),
 };
 
 export const keystaticConfig = config({

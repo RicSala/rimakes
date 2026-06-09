@@ -6,6 +6,7 @@ import {
   MarkdocCodeEditor,
 } from '@/shared/blog/components';
 import { Callout } from '@/shared/components/Callout';
+import { Prompt } from '@/shared/components/Prompt';
 
 type Component = ComponentType<Record<string, unknown>>;
 
@@ -13,6 +14,7 @@ export const CustomMarkdocComponents: Record<string, Component> = {
   Callout: Callout as Component,
   CodeBlock: MarkdocCodeBlock as Component,
   CodeEditor: MarkdocCodeEditor as Component,
+  Prompt: Prompt as Component,
 };
 
 export const CustomMarkdocTags: Record<string, Schema> = {
@@ -31,6 +33,13 @@ export const CustomMarkdocTags: Record<string, Schema> = {
   'code-editor': {
     render: 'CodeEditor',
     selfClosing: true,
+    attributes: {
+      title: { type: String },
+    },
+  },
+  prompt: {
+    render: 'Prompt',
+    children: ['paragraph', 'fence', 'list', 'tag'],
     attributes: {
       title: { type: String },
     },
