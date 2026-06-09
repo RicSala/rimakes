@@ -1,10 +1,42 @@
 import { collection, config, fields } from '@keystatic/core';
+import { block, wrapper } from '@keystatic/core/content-components';
 
 const blogDir = 'content/blog';
 const blogAssetPath = '/cms-assets/blog';
 
 const decksDir = 'content/decks';
 const decksAssetPath = '/cms-assets/decks';
+
+// Custom Markdoc tags used in post/deck bodies. These must be registered on the
+// markdoc field so the Keystatic editor can parse, validate, and edit them.
+// (Front-end rendering is handled separately in src/shared/blog/render.tsx — the
+// schemas here just mirror the tag attributes so the admin understands them.)
+const markdocComponents = {
+  callout: wrapper({
+    label: 'Callout',
+    schema: {
+      title: fields.text({ label: 'Title' }),
+      emoji: fields.text({ label: 'Emoji' }),
+      variant: fields.select({
+        label: 'Variant',
+        options: [
+          { label: 'Default', value: 'default' },
+          { label: 'Info', value: 'info' },
+          { label: 'Warning', value: 'warning' },
+          { label: 'Error', value: 'error' },
+          { label: 'Success', value: 'success' },
+        ],
+        defaultValue: 'info',
+      }),
+    },
+  }),
+  'code-editor': block({
+    label: 'Code editor',
+    schema: {
+      title: fields.text({ label: 'Title' }),
+    },
+  }),
+};
 
 export const keystaticConfig = config({
   storage: { kind: 'local' },
@@ -62,6 +94,7 @@ export const keystaticConfig = config({
               publicPath: blogAssetPath,
             },
           },
+          components: markdocComponents,
         }),
       },
     }),
@@ -89,6 +122,7 @@ export const keystaticConfig = config({
               publicPath: decksAssetPath,
             },
           },
+          components: markdocComponents,
         }),
       },
     }),
