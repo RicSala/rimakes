@@ -1,50 +1,813 @@
 ---
-title: Intro to synced slides
-description: A short demo deck that proves live slide sync and Markdoc components.
+title: Session 1
+description: Intro to Claude
 ---
-# Synced slides
+# Antes de nada…
 
-Everyone in this room is looking at **this exact slide** — because I am.
+…daros las gracias por atreveros a este experimento.
 
-Use the arrow keys (or the buttons) on the control screen to move us all along.
+Os lo he repetido ya varias veces, pero me quedo más tranquilo repitiéndolo:
 
-{% prompt title="Example prompt" %}
-You are a senior TypeScript engineer. Review the following code for bugs, edge cases, and readability. Respond with a prioritized list of issues — each with a one-line explanation and a concrete fix. Be concise and specific, and call out anything that could break in production.
+**Es una beta.** Esto quiere decir que:
+
+- Puede ser **o genial, o un desastre** (o —posiblemente— algo en el medio).
+- **Dadme feedback.** Si os sentís más cómodos, hacedlo por privado. El contenido lo desarrollo cada semana y está abierto a cambios.
+- **No conozco vuestros casos de uso.** Mi entorno es 90% terminal y todo enfocado a coding. Os explico los primitivos y descubrimos vuestros casos de uso (juntos o en las individuales).
+- **Las individuales están sobredimensionadas a propósito:** yo duermo mejor, vosotros contáis más conmigo.
+
+{% callout title="Aviso a navegantes" emoji="💡" variant="warning" %}
+Mi entorno natural es la terminal. Hay cosas que me he preparado para explicaros aquí, cuyo caso de uso fuera de programar descubriré con vosotros en las inviduales
+{% /callout %}
+
+{% notes %}
+- Esta mini experiencia en el ordenador es experimento también...
+- Bajar el ritmo aquí, mirar a cámara.
+- Recordar: "es una beta, vuestro feedback la moldea".
+{% /notes %}
+
+---
+
+# Encuadre: Objetivos
+
+Pasar de *"la IA es un chat"* a *"la IA es un trabajador proactivo"*.
+
+- Que salgáis con **mínimo 3 horas ahorradas por semana**.
+- Que salgáis del workshop con un poco de **hype** por las cosas que podríais hacer.
+- Desbloquear una **nueva habilidad**.
+- Que podáis (empezar a) haceros vuestro **"personal software"**.
+
+Lo haremos paso a paso, desde la app de escritorio hasta hacer una pequeña aplicación con la terminal (veréis que es lo mismo pero "vestido de otra forma").
+
+Si vas más avanzado, colabora en las primeras; si estás más pez, céntrate en ellas.
+
+{% callout title="🤚 Yo os enseño la puerta" emoji="🤚" variant="tip" %}
+Yo os enseño la puerta, pero el trabajo de cruzarla es vuestro — con mi compañía en las individuales.
+{% /callout %}
+
+
+---
+
+# Encuadre: Metodología
+
+**La estructura:**
+
+- **4 sesiones de 2h**, de chat a app: 2 en app, 2 en terminal.
+- **Individuales (1:1)** — para traer cosas tipo:
+  - *"¿Cómo enfocarías esto que nos quita X tiempo?"*
+  - *"Estoy haciéndome una app y estoy atascado en X."*
+- **Recursos** que os iré compartiendo (en principio, a través de Notion).
+
+**Cómo será una sesión grupal** (dos partes, más o menos así):
+
+- **\~20 min** explicando (interactivo).
+- **5–10 min** aplicando cada uno.
+- **5 min** comentando qué hemos hecho / dónde nos atascamos.
+
+Ritmo: **2 bloques → descanso de 5–10 min → 1 bloque**. En función de lo que nos dé tiempo, ajustamos.
+
+---
+
+{% slide bg="brand" width="normal" /%}
+
+# ¿Dudas, comentarios, sugerencias?
+
+---
+
+{% slide bg="brand" width="normal" /%}
+
+# Módulo 1: Primer contacto con Claude
+
+---
+
+# Empecemos con lo básico
+{% callout title="Paciencia!" emoji="🙏" variant="warning" %}
+Son 5 minutos de teoría. Aplica a lo que veremos y os ayudará a entender el porqué
+{% /callout %}
+
+
+
+
+Una LLM simplemente predice el siguiente token (trozo de palabra) a partir de patrones aprendidos.
+
+- **Es probabilística:** misma pregunta, respuestas distintas (por la temperatura).
+- **Alucina:** cuando no sabe algo, puede inventárselo e intentar convencerte de ello.
+- **"Sicofante":** es complaciente.
+- **No tiene memoria:** ni de mensaje a mensaje; es simulada (y cuesta dinero).
+- **Conocimiento congelado:** hasta la fecha de entreno.
+
+*Un becario brillante y rapidísimo, con mucha labia y **muchísima seguridad en sí mismo**, que a veces se inventa cosas y siempre quiere quedar bien.*
+
+Hagamos algunas pruebas… [🖥️]
+
+---
+
+{% prompt title="El encargo" %}
+Quiero desarrollar una aplicación web que haga lo siguiente:
+
+A partir de un formulario en el que el usuario dirá la temática, la audiencia, el nivel y el número de módulos, la aplicación generará un sílabus sobre un curso concreto.
+
+A partir de ese sílabus, con inteligencia artificial, la aplicación será capaz de desarrollar un curso de las características definidas en el formulario.
+
+La aplicación podrá generar voz en la que se leerá el curso.
+
+Quiero que hagas una estimación de las horas que tardaríamos en desarrollar esta aplicación.
+{% /prompt %}
+
+{% prompt title="Le presionamos" %}
+…yo creo que si vamos a hacerla bien, tardaríamos al menos 700 horas…
+{% /prompt %}
+
+{% prompt title="Fecha de corte" %}
+¿Hasta cuándo (fecha exacta si la tienes) llega tu conocimiento?
 {% /prompt %}
 
 ---
 
-## How it works
+# De autocompletado a “agéntico”, es un abanico
 
-- The deck is just **Markdoc**, authored in Keystatic like a blog post.
-- Each `---` starts a new slide.
-- A single number — *"which slide are we on"* — is broadcast over Pusher.
-- Your browser shows `slides[index]`. That's the whole trick.
+- **Autocompletado:** “En un lugar de la…” → 0 autonomía.
+- **Agéntico:** “Hazme una aplicación para generar y agendar posts de LinkedIn” → máx. autonomía. El loop mantiene al agente “haciendo cosas”.
+
+En realidad, la IA que hay detrás es la misma.
+
+Lo que diferencia uno de otro es el **“harness”**, que:
+
+- Da al agente memoria.
+- Le expone herramientas para hacer cosas (editar archivo, borrar archivo, etc.).
+- Lo mantiene “despierto”.
+
+Para que la ilusión de “agente” funcione, el agente no solo recibe los tokens que le enviamos, sino también todos los necesarios para entender lo que tiene a su disposición, y la situación en la que está siendo usado.
 
 ---
 
-{% callout title="Late to the party?" emoji="👋" variant="info" %}
-Refresh the page any time. You'll jump straight to the slide we're on — the
-cache channel replays the current position to anyone who joins.
+# La escalera de autonomía
+
+{% table %}
+- \#
+- Peldaño
+- ¿Genera o **actúa**?
+- Ejemplo (sesión)
+---
+- 0
+- Autocompletado
+- genera
+- `cursor` · editar un `.ts`
+---
+- 1
+- Respuesta única
+- genera
+- `claude -p "Cuéntame un chiste"`
+---
+- 2
+- Chat
+- genera
+- Claude chat
+---
+- 3
+- Flujo (workflow) ⭐
+- genera (pasos fijos)
+- n8n / Make con IA
+---
+- 4
+- Agente
+- **actúa**
+- Claude cowork / code
+---
+- 5
+- Autónomo / async
+- **actúa** (sin supervisión)
+- `/loop`, rutinas programadas
+{% /table %}
+
+{% notes %}
+El salto clave es **3 → 4**: de *generar* (texto/pasos) a *actuar* (herramientas, archivos, comandos). Peldaños 0–2 ya los conocen; el “wow” está en 4–5.
+{% /notes %}
+
+---
+
+# ¿Qué es un harnés?
+
+Lo que envuelve al modelo crudo: el bucle que le pasa herramientas, gestiona el contexto, controla permisos y ejecuta comandos. **Claude Code *es* un harness**; el modelo es el motor.
+
+- **Mismo harness con distinto modelo:** Cursor, donde tienes varios modelos de distintos proveedores a elegir.
+- **Distinto harness, mismo modelo:** Claude en Claude Code vs. en Cursor vs. en Perplexity.
+
+A medida que mejoran los modelos, los harneses son menos importantes. Cada vez más, los modelos usan las herramientas ya disponibles y se “salen” del harnés.
+
+Los proveedores tienen su harnés propio (Claude Code, Codex…), pero también existen harneses para programar que son “vendor agnostic”, como OpenCode, Open Design o Pi.
+
+---
+
+{% slide bg="none" width="wide" /%}
+
+# Los tres harneses de Claude
+
+{% columns %}
+{% column title="Chat" subtitle="Conversa, no actúa" highlight=false %}
+- Pensado para **conversación**, no para “hacer cosas”.
+- **Sin acceso** a los ficheros de tu ordenador; pocas “herramientas locales”.
+- Funcionalidad única: **conversación por voz** (yo la uso para pensar, inglés…).
+{% /column %}
+
+{% column
+   title="Claude Code"
+   subtitle="Piensa y HACE"
+   badge="Nuestro foco"
+   highlight=true %}
+- Vive en la **terminal** (pero hay otras interfaces, como la de escritorio).
+- Creado para programar… pero se ha ido **comiendo otras áreas** (marketing, papeleo…).
+- …porque **accede a tu ordenador**: además de pensar, puede **HACER**.
+- Traía cosas muy “de programador”, así que…
+{% /column %}
+
+{% column
+   title="Claude Cowork"
+   subtitle="Code en la app de escritorio"
+   highlight=false %}
+- …**Claude Code disfrazado** de asistente (veréis los paralelismos).
+- Vive en la **app de escritorio**.
+{% /column %}
+{% /columns %}
+
++ Ahora (oficialmente) Claude Design
+
+La gran diferencia: **Chat no tiene “manos”** en tu ordenador; **Code (y Cowork) sí**.
+---
+# Mini ejercicio 
+
+{% callout title="Mini ejercicio" emoji="💡" variant="warning" %}
+{% prompt title="Pidele a Chat, luego a Cowork, y luego a Code lo siguiente:" %}
+Crea un archivo test.txt vacío en el escritorio
+{% /prompt %}
+
 {% /callout %}
 
 ---
 
-## Markdoc components work here too
+# Por qué nos vamos a centrar en Claude Code
 
-```ts
-function nextSlide(index: number): number {
-  // The presenter broadcasts; everyone else just follows.
-  return index + 1;
-}
-```
+- **No solo “genera texto”:** además *hace trabajo*.
+- **Más “en bruto”:** da más libertad al modelo.
+- **Es donde llegan antes las cosas** (no necesariamente algo bueno).
+- **Es donde trabajo yo.**
 
-Callouts, Shiki-highlighted code, everything the blog renders — for free.
+Dicho esto, en las primeras sesiones también veremos los otros harneses, porque facilitan tareas muy prácticas.
 
 ---
 
-## That's it
+# Antes de empezar a gastar…
 
-Author a deck, open the control screen, share the viewer link.
+Supongo que lo tenéis claro, pero…
 
-**Questions?**
+- **Se paga por tokens.**
+- **Tokens ≠ “lo que yo escribo + lo que la IA me contesta”:**
+  - Leer archivos, leer webs, usar herramientas, system prompt…
+  - ¡Y es acumulado!
+- **Dos formas de pagar:**
+  - Suscripción: lo que espero que tengáis. Más barato.
+  - “API” / por uso.
+- **La suscripción tiene límites**, los más importantes:
+  - Cada 5 horas (“session”).
+  - Semanal.
+  - Otros (Design, modelo específico…).
+
+E insisto: es acumulado. Cada vez que escribes un mensaje, estás mandando (¡y pagando!) ese **y todo lo anterior otra vez**.
+
+A los que tengáis Mac: Codexbar.
+
+---
+
+# Esta sesión: solo la app de escritorio
+
+En esta sesión vamos a trabajar solo en la aplicación de escritorio.
+
+Veréis que todo lo que vemos en la app de escritorio tiene su “paralelo” cuando nos vayamos a la terminal, pero he pensado que ayudaría a hacerlo más digerible verlo así.
+
+**Claude Cowork es “Claude Code vestido de oficina”:**
+
+- **Instrucciones globales** = `CLAUDE.md` de usuario.
+- **Instrucciones por proyecto** = `CLAUDE.md` de la carpeta.
+- **Skills** = mismo concepto.
+- **“Connectors”** = MCPs.
+
+---
+
+{% slide bg="none" width="wide" /%}
+
+# Cuatro conceptos clave
+
+{% columns %}
+{% column
+   title="CLAUDE.md"
+   subtitle="Memoria del proyecto"
+   badge="Esta sesión"
+   highlight=true %}
+- Un archivo que Claude lee al arrancar: contexto, convenciones y reglas del proyecto.
+- Para no tener que repetírselo en cada conversación.
+{% /column %}
+
+{% column
+   title="Skills"
+   subtitle="Habilidades reutilizables"
+   badge="Esta sesión"
+   highlight=true %}
+- Instrucciones empaquetadas para una tarea concreta: un “así se hace esto aquí”.
+- Se cargan cuando hacen falta; las invocas con `/nombre`.
+{% /column %}
+{% /columns %}
+
+{% columns %}
+{% column
+   title="MCPs"
+   subtitle="Conexión a herramientas externas"
+   badge="Esta sesión"
+   highlight=true %}
+- Un “enchufe” estándar para darle acceso a apps y datos (Notion, GitHub, tu BBDD…).
+- Amplía lo que Claude puede leer y hacer fuera de tu código.
+{% /column %}
+
+{% column title="Subagents" subtitle="Delegar en paralelo" highlight=false %}
+- Agentes secundarios, con su propio contexto, para tareas acotadas.
+- Trabajan en paralelo y devuelven solo la conclusión (no llenan tu contexto).
+{% /column %}
+{% /columns %}
+
+Vereis que la misma cosa se puede hacer de diferentes maneras. No está definido.
+**Son esas 4 cosas todo el rato!**
+- Plugins: son "paquetes" que traen skills + agentes + mcps...
+
+---
+
+# Un paseo por la aplicación de escritorio
+
+- Proyectos
+- Artefactos
+- Thinking
+- Customize
+- **Settings importantes:**
+  - Language
+  - Capabilities > Memory (probándolo)
+  - …
+
+---
+
+# ¡Y hasta aquí la teoría!
+
+Hagamos un ejercicio muy sencillo para que los que no habéis usado Claude Code (de momento, a través de Cowork) veáis la potencia que tiene.
+
+**Ejercicios:**
+
+- [Organizar el caos](https://app.notion.com/p/Organiza-el-caos-3790bcf552548013b6bccfa6c3cf14c3)
+- [Preparar P&L](https://app.notion.com/p/Prepara-P-L-3790bcf55254801b95ecd3ae47230506)
+- [Sacar insights](https://app.notion.com/p/Saca-insights-3790bcf5525480e588bbea0dbafb48c2)
+
+---
+
+# Ejercicio — ¡manos a la obra!
+
+{% timer minutes=5 label="Tiempo del ejercicio" /%}
+
+{% notes %}
+Pulsa **▶ Play** cuando todos estéis listos; suena al acabar. Antes de empezar puedes ajustar con ±15 s / ±1 min.
+{% /notes %}
+
+---
+
+# Conclusiones de los ejercicios
+
+- **Chat** no puede tocar tu ordenador; **Cowork sí**.
+- Posiblemente cada uno de nosotros ha obtenido un resultado distinto…
+- …y si quisiéramos que lo hiciese igual, tendríamos que describírselo cada vez.
+
+Esto es poco eficiente, así que el siguiente paso es…
+
+---
+
+{% slide bg="brand" width="normal" /%}
+
+# Módulo 2: Personaliza tu Claude
+
+---
+
+# Por qué personalizar Claude
+
+- **Pasarle contexto de nuestra situación particular:**
+  - Decisiones importantes.
+  - Explicación de decisiones importantes, para que infiera otras.
+- **Darle conocimiento de cómo hacemos las cosas:**
+  - Vocabulario propio.
+  - Qué incluye nuestro margen de contribución (CM2).
+- **Darle herramientas que de forma nativa no tiene:**
+  - Publicar un anuncio en Meta.
+- **Decirle cómo quiero que me responda:**
+  - *“No soy programador, no uses vocabulario muy técnico.”*
+- **Decirle lo que NO debe hacer** (pero no es “imperativo”):
+  - No muevas los presupuestos de Google Ads.
+
+En resumen, no tenerle que contar, cada vez que iniciemos una sesión, algo que es imposible que Claude sepa si no se lo decimos.
+
+---
+
+# CLAUDE.md a distintos niveles
+
+Como hemos dicho antes, los `CLAUDE.md` existen a distintos niveles: **a nivel de usuario** y **a nivel de proyecto**.
+
+{% columns %}
+{% column highlight=false %}
+![](/cms-assets/decks/intro-to-synced-slides/image.png)
+{% /column %}
+
+{% column highlight=false %}
+![](/cms-assets/decks/intro-to-synced-slides/image.png)
+{% /column %}
+{% /columns %}
+
+En **Claude Code** son archivos **anidados** en tu disco: el de usuario está arriba del todo y aplica a TODO lo de abajo.
+
+```
+~/                                # tu usuario · lo de aquí aplica a TODO
+├── .claude/
+│   └── CLAUDE.md                 # ← nivel usuario (todos tus proyectos)
+├── Documentos/
+├── Descargas/
+├── Escritorio/
+├── …                            # (y un montón de cosas más)
+└── Proyectos/
+    └── mi-proyecto/
+        ├── src/
+        ├── …
+        └── CLAUDE.md            # ← nivel proyecto (solo esta carpeta)
+```
+
+---
+
+# Escribiendo tu CLAUDE.md
+
+- **¿Usuario o proyecto?** Piensa primero a qué nivel va lo que vas a escribir.
+- **Referencias con `@`:** puedes apuntar a otros archivos… pero ojo, **se cargan enteros igual**.
+- **No te pases de ~200 líneas:** ¡recuerda que va en **cada mensaje**!
+- **Lo opcional, no lo metas entero:** si algo tiene que estar pero no siempre hace falta, **nombra el archivo e indica dónde encontrarlo**.
+
+---
+
+# Por qué crear skills
+
+Una **skill** es, literalmente, una "capacidad" que añadimos al modelo: **prompt + [programa] + [recursos / referencias]**.
+
+- **Velocidad:** no tienes que explicarte cada vez que quieres hacer algo. Es como un prompt enlatado.
+- **Consistencia:** siempre se hace igual.
+- **Conocimiento:** transmitir conocimiento.
+- **Herramientas enlazadas a un proceso:** scripts, logos, etc., que no quieres que "pululen" sueltos. Los paquetizas.
+
+No son más que archivos que el agente sabe dónde encontrar, y que "inyectan" esa capacidad en el contexto cuando la mencionas.
+
+---
+
+{% slide width="wide" /%}
+
+# ¿Qué pinta tienen?
+
+De momento las haremos en la app de escritorio, pero veréis (¡otra vez!) que es exactamente lo mismo que cuando lo hagamos en la terminal.
+
+```tree
+mi-skill/
+  SKILL.md        # obligatorio: frontmatter (YAML entre ---) + cuerpo Markdown (el prompt)
+  references/     # docs que el modelo lee bajo demanda (REFERENCE.md, FORMS.md…)
+  scripts/        # código ejecutable que el modelo corre (no se carga en contexto, solo su salida)
+  assets/         # plantillas y recursos estáticos (imágenes, ficheros base)
+```
+
+**Frontmatter:** el bloque que ponemos al inicio del archivo (YAML, entre `---`) para configurar cómo se usa esa skill:
+
+- nombre, descripción, modelo, *thinking effort*, …
+
+{% notes %}
+- Crear una skill. Descargarla y enseñarles lo que hay dentro.
+- Crear una skill con el *brand definition* de una marca, que será lo que luego harán ellos.
+{% /notes %}
+
+---
+
+# El contexto: qué es y por qué nos importa
+
+El **contexto** es todos los tokens que el modelo ve cuando le enviamos un mensaje. Incluye, entre otros:
+
+- El **system prompt**.
+- Prompts de **"estado"**: qué archivo tenemos abierto, si hay algún error en él, etc.
+- Las **herramientas disponibles**: abrir archivo, buscar, editar, fetch…
+- **Archivos** y descripciones de **imágenes** que le hayamos adjuntado.
+- **Toda la conversación** hasta ahora.
+
+Es decir, es **MUCHO más** que nuestro mensaje. Y es **limitado**.
+
+…y dentro de él hay una **zona lista** y una **"dumb zone"**.
+
+Por esto es tan importante **gestionar el contexto** (veremos formas).
+
+---
+
+# Respecto a las skills y el contexto
+
+Las skills ocupan contexto… pero implementan un concepto llamado **"progressive disclosure"** (*descubrimiento progresivo*):
+
+- Cuando añades una skill, el agente **no ve todo el archivo**.
+- Solo ve **nombre y descripción** (¡incluso podemos dejarlo en solo el nombre!).
+- Cuando detecta que lo que va a hacer **tiene que ver con la skill** (por nombre, descripción y *when to use*), lee su contenido explícitamente.
+- Y ni siquiera lee todo: lee el **`SKILL.md`** y abre los archivos referenciados **solo si le hacen falta**.
+
+Esto nos permite meter skills **sin machacar el contexto**.
+
+---
+
+# "Mi Claude no hace caso a mis skills"
+
+El agente hace —o no hace— algo en función de nuestras instrucciones y de **cuánta atención** dirijamos a esa herramienta.
+
+**Que la invoque depende de:**
+
+- Nombre, descripción y *when to use*.
+- El contexto y tu prompt.
+- Qué otras cosas están llamando la atención del modelo (de nuevo, la **"dumb zone"**).
+
+**Si una skill no se está invocando:**
+
+- Comprueba que no esté en modo **"name-only"** (lo veremos).
+- Mejora la **descripción** y el *when to use*.
+- Añade una línea en el **`CLAUDE.md`**.
+
+---
+
+# Hemos personalizado nuestro Claude…
+
+…a nivel de usuario y a nivel de proyecto.
+
+Pero no es muy útil si no se puede **comunicar con el mundo**…
+
+---
+
+{% slide bg="brand" width="normal" /%}
+
+# Módulo 3: Conectando a Claude
+
+---
+
+{% slide width="full" /%}
+
+# ¿Cómo conectamos Claude al mundo?
+
+{% columns %}
+{% column title="Archivos en tu PC" badge="Visto" %}
+Leer y escribir en tu disco — lo que ya hemos hecho.
+{% /column %}
+
+{% column title="Conectores (MCPs)" badge="Fácil" highlight=true %}
+El "enchufe" estándar a apps externas (Notion, Gmail…).
+{% /column %}
+
+{% column title="Extensión de Chrome" badge="MUY lento" %}
+Claude maneja tu navegador.
+{% /column %}
+
+{% column title="Computer use" badge="Beta" %}
+Controla el ordenador como un humano (ratón y teclado).
+{% /column %}
+{% /columns %}
+
+{% columns %}
+{% column title="Extensiones" badge="Escondido" %}
+…
+{% /column %}
+
+{% column title="Web scraper" subtitle="Firecrawl" %}
+Extraer el contenido de páginas web.
+{% /column %}
+
+{% column title="API calls, SDKs…" badge="Avanzado" %}
+Conectar por código a prácticamente cualquier cosa.
+{% /column %}
+{% /columns %}
+
+---
+
+# MCPs: el "enchufe" estándar
+
+Un **MCP** (*Model Context Protocol*) es un estándar para conectar Claude a una app o fuente de datos externa. En la app de escritorio aparecen como **"Connectors"**.
+
+- **Le da herramientas sobre esa app:** no solo **leer** (tus correos, tu Notion…), también **actuar** (crear un evento, enviar un borrador, mover una fila).
+- **Estándar = se reutiliza:** quien escribe el MCP de Notion lo escribe una vez y sirve para Claude, Cursor… (como un USB).
+- **Lo enchufas una vez:** lo activas y queda disponible en tus conversaciones.
+
+Ejemplos: **Notion, Gmail, Calendar, Drive, GitHub, tu base de datos…**
+
+**Ojo:** cada MCP mete sus herramientas en el **contexto**. Activar muchos a la vez lo llena (¿recuerdas la *"dumb zone"*?) — enchufa solo los que necesites.
+
+---
+
+# Veamos cómo añadir MCPs
+
+- **Los fáciles:** conectores **"oficiales"** disponibles en la propia app.
+- **Marketplaces de terceros:** añádelos para descubrir muchos más.
+- **Los "no oficiales":** encontrarlos y añadirlos a mano.
+
+---
+
+# MCPs de MCPs
+
+Ir añadiendo MCPs a tu app tiene **inconvenientes**:
+
+- **Cargan el contexto** (aunque esto está cada vez mejor gestionado — lo podemos ver).
+- **No todos están entre los oficiales**, y no todo el mundo se siente cómodo con la vía alternativa…
+
+Así que han aparecido apps que son **"directorios de MCP para tu agente"**: un único MCP que da acceso a **muchas** herramientas y **solo las carga cuando el modelo las pide** (¡hoy Claude también lo hace así!).
+
+Algunos:
+
+- [Zapier](https://zapier.com/mcp)
+- [Nango](https://nango.dev)
+- [Composio](https://composio.dev)
+
+Yo uso **Zapier**, pero creo que las tres tienen **plan gratuito**.
+
+Si no encuentras un MCP por la vía oficial… **¡quizá esté ahí!**
+
+---
+
+# Claude toma el navegador: Chrome extension
+
+Es una forma más de que Claude interactúe con el mundo… pero es **útil para más cosas**.
+
+A veces la herramienta con la que queremos trabajar **no tiene otra vía** de exponerse a una IA. La extensión de Chrome funciona en **(casi) todas**.
+
+Pero es **mucho más lenta y gasta mucho más**:
+
+- Tiene que **leer toda la página**.
+- Tiene que **parecer un humano** para que no la (te) bloqueen.
+
+Es, en cierto modo, **el otro extremo de un MCP**: la vía cuando una herramienta **NO quiere** que una IA actúe en nombre del usuario… o cuando **aún no está preparada**.
+
+**Ejemplos:**
+
+- Contestar mensajes de **Instagram / LinkedIn / WhatsApp**.
+- No preparado: **nuestra propia app mientras la creamos** 🫠
+
+---
+
+# Conectar vía API (1)
+
+Como he ido repitiendo: que los modelos sean **cada vez más listos** hace que cada vez sea **menos necesario** fabricarles herramientas *ad hoc*.
+
+Así que otra forma de conectar Claude con el mundo es usar el sistema que los programadores llevan **años** usando: **las APIs**.
+
+Como veremos más adelante, una webapp tiene un **frontend** (lo que ves) y un **backend** (lo que piensa y guarda los datos). Se comunican por una **API**: un conjunto de direcciones (como una URL) que sirven para **i)** obtener datos o **ii)** modificarlos. Quizá os suena:
+
+- `GET`
+- `POST`
+
+**Las IAs pueden usar esas direcciones directamente** para interactuar con el exterior (obviamente, necesitan tu "contraseña") — en lugar de pasar por un MCP.
+
+---
+
+# Conectar vía API (2)
+
+A veces los programadores, cuando llaman mucho a una API, crean (o usan) una **función**:
+
+- En lugar de `http://…` → `getProduct(1234)`.
+
+Las IAs pueden hacer algo parecido: **crear ellas la función** o **usar funciones que otros ya hicieron** (las *librerías*).
+
+**Ventajas:**
+
+- **No tienes que hacer nada.**
+- La IA tiene la **misma libertad que un programador**: todo lo que la app expone por API, no solo lo que elijas exponer por MCP.
+
+**Desventajas:**
+
+- Requiere que sepas qué es un **token** y cómo "gestionarlo".
+- A veces **no quieres** que tenga tanta libertad.
+
+---
+
+# Skills de terceros como forma de conectar Claude
+
+Como comentamos, una skill puede llevar —además de un prompt o recursos— **programas**. Y, como vimos antes, los programadores ya tenían **formas establecidas** de "interactuar" con las apps (APIs, CLIs, SDKs).
+
+- Muchas veces, una skill **no es más que un envoltorio** de esas APIs y CLIs, con la explicación para que el modelo sepa usarlas.
+- Si eres **Notion**, quizá está claro cómo usar tu API y tu CLI… pero imaginaos que **VOSOTROS** desarrolláis una herramienta.
+- Vuestros desarrolladores crean la **API y el SDK**, y queréis que las IAs de vuestros clientes **sepan usarlos**.
+- Una opción: **empaquetarlo todo y distribuirlo como una skill**.
+
+**Así que, muchas veces, una skill no es más que un envoltorio para que la IA sepa usar algo.**
+
+---
+
+# Ampliando el entorno (Notion)
+
+- **No todas las herramientas** están preparadas para interactuar igual con la IA.
+- …y hoy eso es una **palanca enorme**. Mi caso: **ClickUp vs Notion**.
+- Ser **"AI-first"** se ha vuelto una **vía de captación de usuarios**.
+
+**Si estáis haciendo una herramienta**, podéis exponerla por:
+
+- **MCP:** usad la librería de Anthropic — veréis que es **MUY fácil** (un par de horas).
+- **API "típica"** (REST) y **bien documentada**.
+- **GraphQL.**
+
+**Comparemos ClickUp con Notion** 💻
+
+---
+
+{% slide bg="brand" width="normal" /%}
+
+# Módulo 4: Tus primeras herramientas
+
+---
+
+# Artifacts: una mini herramienta descargable
+
+- Habréis visto los típicos… lo que quizá no sabéis es que puede hacer **casi cualquier cosa**.
+- …y que es **compartible** (ojo).
+- Y que puede estar **"powered by IA"**, gastando de la cuenta de **quien lo usa**.
+- ¿Es como los **GPTs de ChatGPT**? Se parece.
+
+**Desventaja:**
+
+- **No está conectada** a tus conectores (MCPs).
+
+**Veámoslo** 💻 — 🚚 · 🎹 · 🐍
+
+---
+
+# Creamos nuestros primeros artefactos
+
+Elige uno (o el que se te ocurra):
+
+- **ASCII art generator**
+- **Route optimizer** — optimizador de rutas
+- **Dashboard personal**
+- **Directorio de artefactos**
+
+{% callout title="Son ejemplos tontos a propósito" emoji="🙃" variant="info" %}
+No conozco vuestro caso de uso, así que *feel free* de sustituirlo por el vuestro. Lo que quiero es que veáis **qué puede y qué no puede hacer**.
+{% /callout %}
+
+---
+
+# Repaso: ¿nos quedamos con lo importante?
+
+Responde en tu pantalla 👇 (al final ves tu puntuación).
+
+{% quiz title="Repaso de la sesión 1" %}
+{% question text="Cuando una LLM no sabe algo, ¿qué suele hacer?" %}
+{% option %}Te avisa de que no lo sabe{% /option %}
+{% option correct=true %}Se lo puede **inventar** y sonar muy convincente (alucina){% /option %}
+{% option %}Consulta internet automáticamente{% /option %}
+{% explanation %}
+**Alucina:** rellena el hueco con lo más probable, con mucha seguridad. Por eso conviene darle contexto y verificar.
+{% /explanation %}
+{% /question %}
+{% question text="¿Qué es un 'harness'?" %}
+{% option %}El modelo de IA en sí{% /option %}
+{% option correct=true %}El **bucle** que envuelve al modelo: memoria, herramientas, permisos{% /option %}
+{% option %}Un proveedor (Anthropic, OpenAI…){% /option %}
+{% explanation %}
+El modelo es el motor; el harness es lo que lo rodea. **Claude Code _es_ un harness.**
+{% /explanation %}
+{% /question %}
+{% question text="En la escalera de autonomía, ¿cuál es el salto clave?" %}
+{% option %}De autocompletar (0) a chat (2){% /option %}
+{% option correct=true %}De **generar** (3, flujo) a **actuar** (4, agente){% /option %}
+{% option %}De agente (4) a autónomo (5){% /option %}
+{% explanation %}
+El "wow" está en **3 → 4**: pasar de *generar* texto/pasos a *actuar* con herramientas, archivos y comandos.
+{% /explanation %}
+{% /question %}
+{% question text="De los tres harneses, ¿cuál tiene 'manos' en tu ordenador?" %}
+{% option %}Solo el Chat{% /option %}
+{% option correct=true %}Claude **Code** (y Cowork){% /option %}
+{% option %}Ninguno: todos solo conversan{% /option %}
+{% explanation %}
+El Chat conversa pero no toca tus ficheros; **Code (y Cowork) accede a tu ordenador y HACE**.
+{% /explanation %}
+{% /question %}
+{% /quiz %}
+
+---
+
+# Una más, rapidita 🃏
+
+¿Te quedó claro lo de conectar Claude al mundo?
+
+{% quiz title="Comprobación exprés" mode="modal" %}
+{% question text="¿Qué es un MCP?" %}
+{% option correct=true %}Un **enchufe estándar** para dar a Claude acceso a apps y datos{% /option %}
+{% option %}Un modelo más potente{% /option %}
+{% option %}Un lenguaje de programación{% /option %}
+{% explanation %}
+MCP = *Model Context Protocol*: el estándar para conectar Claude a Notion, GitHub, tu BBDD…
+{% /explanation %}
+{% /question %}
+{% question text="¿Cuál es la forma MÁS fácil de exponer tu herramienta?" %}
+{% option correct=true %}Un **MCP** con la librería de Anthropic{% /option %}
+{% option %}Reescribir todo en GraphQL{% /option %}
+{% /question %}
+{% /quiz %}
