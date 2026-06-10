@@ -38,12 +38,31 @@ const heading = {
   },
 };
 
+// Images render as a click-to-zoom lightbox (ZoomableImage) instead of a bare
+// <img>, so small screenshots are readable on a projector. Like the `tree` fence,
+// this is a node transform — author writes native Markdown `![alt](src)`, so it
+// needs no Keystatic block or tag schema, only the CustomMarkdocComponents entry.
+const image = {
+  attributes: {
+    src: { type: String, required: true },
+    alt: { type: String },
+    title: { type: String },
+  },
+  transform(node: Node, config: Config) {
+    return new Tag('ZoomableImage', node.transformAttributes(config));
+  },
+};
+
 const fence = {
   attributes: {
     content: { type: String, required: true },
     language: { type: String },
   },
   transform(node: Node) {
+    // A ```tree fence renders as a styled file tree instead of a code block.
+    if (node.attributes.language === 'tree') {
+      return new Tag('FileTree', { content: node.attributes.content });
+    }
     return new Tag('CodeBlock', {
       code: node.attributes.content,
       language: node.attributes.language,
@@ -54,4 +73,5 @@ const fence = {
 export const MarkdocNodes = {
   fence,
   heading,
+  image,
 };

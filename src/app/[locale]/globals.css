@@ -34,6 +34,7 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-brand: var(--brand);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -54,6 +55,8 @@
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
+  /* Brand indigo — used by per-slide {% slide bg="brand" %} backgrounds. */
+  --brand: oklch(0.488 0.243 264.376);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -111,6 +114,33 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/*
+ * Per-slide theme scope. Applied to a slide's subtree by SlideStage when a
+ * {% slide bg="brand" %} directive is present. It re-points the same semantic
+ * tokens components already use (--background, --muted, --border, --primary…),
+ * so Callout/Prompt/etc. re-theme automatically — no per-component work.
+ * (The `dark` scheme reuses the existing `.dark` token set above.)
+ */
+.slide-theme-brand {
+  --background: var(--brand);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.54 0.21 264.376);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.54 0.21 264.376);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: var(--brand);
+  --secondary: oklch(0.56 0.19 264.376);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.56 0.19 264.376);
+  --muted-foreground: oklch(0.92 0.05 264.376);
+  --accent: oklch(0.58 0.2 264.376);
+  --accent-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 22%);
+  --input: oklch(1 0 0 / 22%);
+  --ring: oklch(0.92 0.05 264.376);
 }
 
 @layer base {

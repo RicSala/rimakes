@@ -5,20 +5,28 @@ import {
   useEffect,
   useRef,
   useState,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react';
 
 import { deckChannel, SLIDE_EVENT, type SlidePayload } from './channel';
+import { PresentationProvider } from './presentation-context';
 import { getPusherClient } from './pusher.client';
-import { SlideStage } from './SlideStage';
+import { SlideStage, type SlideMeta, type SlideTheme } from './SlideStage';
 
 // Keep the (<=30min) cache channel warm so late joiners stay correct on long talks.
 const HEARTBEAT_MS = 4 * 60 * 1000;
+
+const DEFAULT_THUMBNAIL_CONTENT = 'markdoc prose px-6 py-6 text-primary';
 
 type SlideControllerProps = {
   slug: string;
   slides: ReactNode[];
   secret: string;
+  theme?: SlideTheme;
+  slidesMeta?: SlideMeta[];
+  /** Presenter-only speaker notes, indexed per slide (null where a slide has none). */
+  notes?: (ReactNode | null)[];
 };
 
 /**
@@ -30,11 +38,13 @@ function SlideThumbnail({
   number,
   active,
   onSelect,
+  contentClass,
   children,
 }: {
   number: number;
   active: boolean;
   onSelect: () => void;
+  contentClass: string;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
@@ -73,7 +83,7 @@ function SlideThumbnail({
           className='pointer-events-none absolute left-0 top-0 origin-top-left scale-[0.32]'
           style={{ width: '312.5%', height: '312.5%' }}
         >
-          <div className='markdoc prose px-6 py-6 text-primary'>{children}</div>
+          <div className={contentClass}>{children}</div>
         </div>
       ) : null}
       <span className='absolute bottom-1 right-1 rounded bg-background/80 px-1.5 text-xs font-medium tabular-nums'>
@@ -90,11 +100,32 @@ function SlideThumbnail({
  * jumping straight to a slide from the overview grid — goes through `go()`, which
  * broadcasts, so the whole room follows along.
  */
-export function SlideController({ slug, slides, secret }: SlideControllerProps) {
+export function SlideController({
+  slug,
+  slides,
+  secret,
+  theme,
+  slidesMeta,
+  notes,
+}: SlideControllerProps) {
   const count = slides.length;
+  const thumbnailContent = theme?.content ?? DEFAULT_THUMBNAIL_CONTENT;
   const [index, setIndex] = useState(0);
   const [overview, setOverview] = useState(false);
+  const [showNotes, setShowNotes] = useState(true);
+  // Where the speaker-notes panel sits (viewport top-left). null = default corner.
+  // It's plain state, so the panel stays put across slide changes (the controller
+  // never unmounts) without needing localStorage.
+  const [notesPos, setNotesPos] = useState<{ x: number; y: number } | null>(null);
+  const notesRef = useRef<HTMLDivElement>(null);
+  const notesDrag = useRef<{
+    pointerStartX: number;
+    pointerStartY: number;
+    originX: number;
+    originY: number;
+  } | null>(null);
   const indexRef = useRef(0);
+  const currentNotes = notes?.[index] ?? null;
 
   const setBoth = useCallback((next: number) => {
     indexRef.current = next;
@@ -133,6 +164,43 @@ export function SlideController({ slug, slides, secret }: SlideControllerProps) 
     [go]
   );
 
+  // Drag the speaker-notes panel by its header. Pointer capture keeps the move
+  // tracking even when the cursor leaves the handle; the position is clamped to
+  // the viewport so the panel can't be dragged off-screen.
+  const startNotesDrag = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+    const panel = notesRef.current;
+    if (!panel) return;
+    const rect = panel.getBoundingClientRect();
+    notesDrag.current = {
+      pointerStartX: event.clientX,
+      pointerStartY: event.clientY,
+      originX: rect.left,
+      originY: rect.top,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }, []);
+
+  const onNotesDrag = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = notesDrag.current;
+    const panel = notesRef.current;
+    if (!drag || !panel) return;
+    const x = drag.originX + (event.clientX - drag.pointerStartX);
+    const y = drag.originY + (event.clientY - drag.pointerStartY);
+    const maxX = Math.max(window.innerWidth - panel.offsetWidth, 0);
+    const maxY = Math.max(window.innerHeight - panel.offsetHeight, 0);
+    setNotesPos({
+      x: Math.min(Math.max(x, 0), maxX),
+      y: Math.min(Math.max(y, 0), maxY),
+    });
+  }, []);
+
+  const endNotesDrag = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+    notesDrag.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  }, []);
+
   // Recover the current slide if the presenter refreshes — the cache channel
   // replays the last event — and stay consistent with our own broadcasts.
   useEffect(() => {
@@ -165,6 +233,11 @@ export function SlideController({ slug, slides, secret }: SlideControllerProps) 
       if (event.key === 'o' || event.key === 'O') {
         event.preventDefault();
         setOverview((value) => !value);
+        return;
+      }
+      if (event.key === 'n' || event.key === 'N') {
+        event.preventDefault();
+        setShowNotes((value) => !value);
         return;
       }
       if (
@@ -217,12 +290,55 @@ export function SlideController({ slug, slides, secret }: SlideControllerProps) 
                 number={slideIndex + 1}
                 active={slideIndex === index}
                 onSelect={() => jumpTo(slideIndex)}
+                contentClass={thumbnailContent}
               >
                 {slide}
               </SlideThumbnail>
             ))}
           </div>
         </div>
+      ) : null}
+
+      {!overview && currentNotes ? (
+        showNotes ? (
+          <div
+            ref={notesRef}
+            style={notesPos ? { left: notesPos.x, top: notesPos.y } : undefined}
+            className={`pointer-events-auto fixed z-50 max-h-[40vh] w-[min(28rem,calc(100vw-2rem))] overflow-auto rounded-lg border border-border bg-background/95 p-4 shadow-lg backdrop-blur ${
+              notesPos ? '' : 'bottom-24 left-4'
+            }`}
+          >
+            <div
+              onPointerDown={startNotesDrag}
+              onPointerMove={onNotesDrag}
+              onPointerUp={endNotesDrag}
+              className='mb-2 flex cursor-move touch-none select-none items-center justify-between gap-2'
+            >
+              <span className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
+                Notas del ponente
+              </span>
+              <button
+                type='button'
+                onPointerDown={(event) => event.stopPropagation()}
+                onClick={() => setShowNotes(false)}
+                className='shrink-0 cursor-pointer text-xs text-muted-foreground transition hover:text-foreground'
+              >
+                Ocultar (n)
+              </button>
+            </div>
+            <div className='markdoc prose prose-sm max-w-none text-primary prose-headings:text-primary prose-a:text-primary'>
+              {currentNotes}
+            </div>
+          </div>
+        ) : (
+          <button
+            type='button'
+            onClick={() => setShowNotes(true)}
+            className='pointer-events-auto fixed bottom-24 left-4 z-50 rounded-md border border-border bg-background/95 px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur transition hover:text-foreground'
+          >
+            📝 Notas (n)
+          </button>
+        )
       ) : null}
 
       <div className='pointer-events-auto fixed inset-x-0 bottom-0 z-50 flex items-center justify-center gap-3 p-4'>
@@ -254,5 +370,15 @@ export function SlideController({ slug, slides, secret }: SlideControllerProps) 
     </>
   );
 
-  return <SlideStage slides={slides} index={index} overlay={overlay} />;
+  return (
+    <PresentationProvider slug={slug} secret={secret}>
+      <SlideStage
+        slides={slides}
+        index={index}
+        overlay={overlay}
+        theme={theme}
+        slidesMeta={slidesMeta}
+      />
+    </PresentationProvider>
+  );
 }

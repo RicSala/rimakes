@@ -3,7 +3,10 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 
 import { getDeck } from '@/features/presentations/decks';
-import { splitNodeIntoSlides } from '@/features/presentations/splitSlides';
+import {
+  extractSlideMeta,
+  splitNodeIntoSlides,
+} from '@/features/presentations/splitSlides';
 import { SlideController } from '@/features/presentations/SlideController';
 import { renderMarkdoc } from '@/shared/blog/render';
 
@@ -29,9 +32,26 @@ export default async function ControlPage({ params, searchParams }: Props) {
     notFound();
   }
 
-  const slides = splitNodeIntoSlides(deck.content.node).map((node, slideIndex) => (
+  const parsed = splitNodeIntoSlides(deck.content.node).map(extractSlideMeta);
+  const slides = parsed.map(({ node }, slideIndex) => (
     <div key={slideIndex}>{renderMarkdoc({ node })}</div>
   ));
+  const slidesMeta = parsed.map(({ meta }) => meta);
+  // Presenter-only: rendered here (the secret-gated /control screen) and never on
+  // the audience viewer, which doesn't read `notes` at all.
+  const notes = parsed.map(({ notes: slideNotes }, slideIndex) =>
+    slideNotes ? (
+      <div key={slideIndex}>{renderMarkdoc({ node: slideNotes })}</div>
+    ) : null
+  );
 
-  return <SlideController slug={slug} slides={slides} secret={secret} />;
+  return (
+    <SlideController
+      slug={slug}
+      slides={slides}
+      secret={secret}
+      slidesMeta={slidesMeta}
+      notes={notes}
+    />
+  );
 }

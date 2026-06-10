@@ -42,6 +42,99 @@ const markdocComponents = {
       title: fields.text({ label: 'Title' }),
     },
   }),
+  // Per-slide chrome: place at the top of a slide to set its background scheme
+  // and/or corner tags. Rendered by SlideStage, not inline.
+  slide: block({
+    label: 'Slide settings',
+    schema: {
+      bg: fields.select({
+        label: 'Background',
+        options: [
+          { label: 'Default (white)', value: 'none' },
+          { label: 'Brand (indigo)', value: 'brand' },
+          { label: 'Dark', value: 'dark' },
+        ],
+        defaultValue: 'none',
+      }),
+      tags: fields.text({ label: 'Corner tags (comma-separated)' }),
+      width: fields.select({
+        label: 'Content width',
+        options: [
+          { label: 'Normal', value: 'normal' },
+          { label: 'Wide (comparisons / tables)', value: 'wide' },
+          { label: 'Full', value: 'full' },
+        ],
+        defaultValue: 'normal',
+      }),
+    },
+  }),
+  // Side-by-side comparison cards. `columns` wraps two or more `column`s.
+  columns: wrapper({
+    label: 'Columns (comparison)',
+    schema: {},
+  }),
+  column: wrapper({
+    label: 'Column (card)',
+    schema: {
+      title: fields.text({ label: 'Title' }),
+      subtitle: fields.text({ label: 'Subtitle' }),
+      badge: fields.text({ label: 'Badge (small pill)' }),
+      highlight: fields.checkbox({ label: 'Highlight this card' }),
+    },
+  }),
+  // Presenter-only speaker notes. Authored at the top of a slide (like a
+  // callout); pulled out before render and shown only on the /control screen —
+  // never sent to the audience viewer. See extractSlideMeta + SlideController.
+  notes: wrapper({
+    label: 'Speaker notes (presenter-only)',
+    schema: {},
+  }),
+  // Synced countdown timer. Presenter drives Play/Reset on /control; every viewer
+  // counts down together and chimes at zero. See features/presentations/Timer.
+  timer: block({
+    label: 'Timer',
+    schema: {
+      minutes: fields.integer({ label: 'Minutes' }),
+      seconds: fields.integer({ label: 'Seconds' }),
+      label: fields.text({ label: 'Label (optional)' }),
+      id: fields.text({ label: 'Id (only if multiple timers in one deck)' }),
+    },
+  }),
+  // Self-check for the audience. `quiz` wraps one or more `question`s (each with
+  // its `option`s + optional `explanation`) and shows a score at the end; each
+  // viewer answers locally. See features/Quiz.
+  quiz: wrapper({
+    label: 'Quiz',
+    schema: {
+      title: fields.text({ label: 'Title (optional)' }),
+      // Single-question shorthand (no `question` wrapper needed).
+      question: fields.text({ label: 'Question (single-question shorthand)' }),
+      mode: fields.select({
+        label: 'Mode',
+        options: [
+          { label: 'Inline (card on the slide)', value: 'inline' },
+          { label: 'Modal (trigger button)', value: 'modal' },
+        ],
+        defaultValue: 'inline',
+      }),
+    },
+  }),
+  question: wrapper({
+    label: 'Quiz question',
+    schema: {
+      text: fields.text({ label: 'Question text' }),
+    },
+  }),
+  option: wrapper({
+    label: 'Quiz option',
+    schema: {
+      correct: fields.checkbox({ label: 'Correct answer' }),
+    },
+  }),
+  explanation: wrapper({
+    label: 'Quiz explanation',
+    schema: {},
+  }),
 };
 
 export const keystaticConfig = config({

@@ -3,7 +3,10 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 
 import { getDeck, getDeckSlugs } from '@/features/presentations/decks';
-import { splitNodeIntoSlides } from '@/features/presentations/splitSlides';
+import {
+  extractSlideMeta,
+  splitNodeIntoSlides,
+} from '@/features/presentations/splitSlides';
 import { SlideViewer } from '@/features/presentations/SlideViewer';
 import { renderMarkdoc } from '@/shared/blog/render';
 import { routing } from '@/shared/internationalization/i18n/config';
@@ -28,9 +31,11 @@ export default async function PresentPage({ params }: Props) {
     notFound();
   }
 
-  const slides = splitNodeIntoSlides(deck.content.node).map((node, slideIndex) => (
+  const parsed = splitNodeIntoSlides(deck.content.node).map(extractSlideMeta);
+  const slides = parsed.map(({ node }, slideIndex) => (
     <div key={slideIndex}>{renderMarkdoc({ node })}</div>
   ));
+  const slidesMeta = parsed.map(({ meta }) => meta);
 
-  return <SlideViewer slug={slug} slides={slides} />;
+  return <SlideViewer slug={slug} slides={slides} slidesMeta={slidesMeta} />;
 }
