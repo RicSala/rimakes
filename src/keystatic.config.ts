@@ -1,5 +1,7 @@
+import { createElement } from 'react';
+import { CircleDot } from 'lucide-react';
 import { collection, config, fields } from '@keystatic/core';
-import { block, wrapper } from '@keystatic/core/content-components';
+import { block, mark, wrapper } from '@keystatic/core/content-components';
 
 const blogDir = 'content/blog';
 const blogAssetPath = '/cms-assets/blog';
@@ -125,8 +127,14 @@ const markdocComponents = {
       text: fields.text({ label: 'Question text' }),
     },
   }),
-  option: wrapper({
+  // Options are authored inline (`{% option %}…{% /option %}` on one line), so
+  // Markdoc parses them as *inline* tags. Keystatic can only round-trip an inline
+  // tag that carries text content as a `mark` — a `wrapper`/`block` is block-level
+  // and rejects inline placement ("tag has unexpected children"). As a mark, the
+  // `correct` attribute and any bold/inline markup are preserved on round-trip.
+  option: mark({
     label: 'Quiz option',
+    icon: createElement(CircleDot),
     schema: {
       correct: fields.checkbox({ label: 'Correct answer' }),
     },
