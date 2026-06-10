@@ -1,0 +1,350 @@
+---
+title: Session 1
+description: Intro to Claude
+---
+
+# Antes de nada…
+
+…daros las gracias por atreveros a este experimento.
+
+Os lo he repetido ya varias veces, pero me quedo más tranquilo repitiéndolo:
+
+**Es una beta.** Esto quiere decir que:
+
+- Puede ser **o genial, o un desastre** (o —posiblemente— algo en el medio).
+- **Dadme feedback.** Si os sentís más cómodos, hacedlo por privado. El contenido lo desarrollo cada semana y está abierto a cambios.
+- **No conozco vuestros casos de uso.** Mi entorno es 90% terminal y todo enfocado a coding. Os explico los primitivos y descubrimos vuestros casos de uso (juntos o en las individuales).
+- **Las individuales están sobredimensionadas a propósito:** yo duermo mejor, vosotros contáis más conmigo.
+
+{% notes %}
+Ejemplo de nota del ponente — solo la ves tú en `/control`, nunca el público.
+
+- Bajar el ritmo aquí, mirar a cámara.
+- Recordar: "es una beta, vuestro feedback la moldea".
+{% /notes %}
+
+---
+
+# Encuadre: Objetivos
+
+Pasar de _"la IA es un chat"_ a _"la IA es un trabajador proactivo"_.
+
+- Que salgáis con **mínimo 3 horas ahorradas por semana**.
+- Que salgáis del workshop con un poco de **hype** por las cosas que podríais hacer.
+- Desbloquear una **nueva habilidad**.
+- Que podáis (empezar a) haceros vuestro **"personal software"**.
+
+Lo haremos paso a paso, desde la app de escritorio hasta hacer una pequeña aplicación con la terminal (veréis que es lo mismo pero "vestido de otra forma").
+
+Si vas más avanzado, colabora en las primeras; si estás más pez, céntrate en ellas.
+
+---
+
+# Encuadre: Metodología
+
+**La estructura:**
+
+- **4 sesiones de 2h**, de chat a app: 2 en app, 2 en terminal.
+- **Individuales (1:1)** — para traer cosas tipo:
+    - _"¿Cómo enfocarías esto que nos quita X tiempo?"_
+    - _"Estoy haciéndome una app y estoy atascado en X."_
+- **Recursos** que os iré compartiendo (en principio, a través de Notion).
+
+**Cómo será una sesión grupal** (dos partes, más o menos así):
+
+- **~20 min** explicando (interactivo).
+- **5–10 min** aplicando cada uno.
+- **5 min** comentando qué hemos hecho / dónde nos atascamos.
+
+Ritmo: **2 bloques → descanso de 5–10 min → 1 bloque**. En función de lo que nos dé tiempo, ajustamos.
+
+---
+
+{% slide bg="brand" /%}
+
+# ¿Dudas, comentarios, sugerencias?
+
+---
+
+{% slide bg="brand" /%}
+
+# Módulo 1: Primer contacto con Claude
+
+---
+
+# Empecemos con lo básico
+
+Una LLM simplemente predice el siguiente token (trozo de palabra) a partir de patrones aprendidos.
+
+- **Es probabilística:** misma pregunta, respuestas distintas (por la temperatura).
+- **Alucina:** cuando no sabe algo, puede inventárselo e intentar convencerte de ello.
+- **"Sicofante":** es complaciente.
+- **No tiene memoria:** ni de mensaje a mensaje; es simulada (y cuesta dinero).
+- **Conocimiento congelado:** hasta la fecha de entreno.
+
+*Un becario brillante y rapidísimo, con mucha labia y **muchísima seguridad en sí mismo**, que a veces se inventa cosas y siempre quiere quedar bien.*
+
+Hagamos algunas pruebas… [🖥️]
+
+---
+
+{% prompt title="El encargo" %}
+Quiero desarrollar una aplicación web que haga lo siguiente:
+
+A partir de un formulario en el que el usuario dirá la temática, la audiencia, el nivel y el número de módulos, la aplicación generará un sílabus sobre un curso concreto.
+
+A partir de ese sílabus, con inteligencia artificial, la aplicación será capaz de desarrollar un curso de las características definidas en el formulario.
+
+La aplicación podrá generar voz en la que se leerá el curso.
+
+Quiero que hagas una estimación de las horas que tardaríamos en desarrollar esta aplicación.
+{% /prompt %}
+
+{% prompt title="Le presionamos" %}
+…yo creo que si vamos a hacerla bien, tardaríamos al menos 700 horas…
+{% /prompt %}
+
+{% prompt title="Fecha de corte" %}
+¿Hasta cuándo (fecha exacta si la tienes) llega tu conocimiento?
+{% /prompt %}
+
+---
+
+# De autocompletado a “agéntico”, es un abanico
+
+- **Autocompletado:** “En un lugar de la…” → 0 autonomía.
+- **Agéntico:** “Hazme una aplicación para generar y agendar posts de LinkedIn” → máx. autonomía. El loop mantiene al agente “haciendo cosas”.
+
+En realidad, la IA que hay detrás es la misma.
+
+Lo que diferencia uno de otro es el **“harness”**, que:
+
+- Da al agente memoria.
+- Le expone herramientas para hacer cosas (editar archivo, borrar archivo, etc.).
+- Lo mantiene “despierto”.
+
+Para que la ilusión de “agente” funcione, el agente no solo recibe los tokens que le enviamos, sino también todos los necesarios para entender lo que tiene a su disposición, y la situación en la que está siendo usado.
+
+{% notes %}
+- **Memoria:** Damos la ilusión de que el agente “recuerda” porque, cada vez que enviamos un mensaje, se reenvía **toda la conversación anterior** junto con el nuevo mensaje. Así puede hacer referencia a lo pasado aunque realmente no tenga memoria interna.
+- **Mantenerlo “despierto”:** Cuando el agente está ejecutando una tarea larga (por ejemplo, crear un archivo muy grande o buscar información compleja), se utiliza un bucle (“loop”) que reenvía el mensaje a la IA repetidamente mientras no haya terminado, hasta un número máximo de veces. Así evita quedarse parado y puede gestionar tareas de larga duración.
+{% /notes %}
+
+---
+
+# La escalera de autonomía
+
+| # | Peldaño | ¿Genera o **actúa**? | Ejemplo (sesión) |
+| --- | --- | --- | --- |
+| 0 | Autocompletado | genera | `cursor` · editar un `.ts` |
+| 1 | Respuesta única | genera | `claude -p "Cuéntame un chiste"` |
+| 2 | Chat | genera | Claude chat |
+| 3 | Flujo (workflow) ⭐ | genera (pasos fijos) | n8n / Make con IA |
+| 4 | Agente | **actúa** | Claude cowork / code |
+| 5 | Autónomo / async | **actúa** (sin supervisión) | `/loop`, rutinas programadas |
+
+{% notes %}
+El salto clave es **3 → 4**: de *generar* (texto/pasos) a *actuar* (herramientas, archivos, comandos). Peldaños 0–2 ya los conocen; el “wow” está en 4–5.
+{% /notes %}
+
+---
+
+# ¿Qué es un harnés?
+
+Lo que envuelve al modelo crudo: el bucle que le pasa herramientas, gestiona el contexto, controla permisos y ejecuta comandos. **Claude Code *es* un harness**; el modelo es el motor.
+
+- **Mismo harness con distinto modelo:** Cursor, donde tienes varios modelos de distintos proveedores a elegir.
+- **Distinto harness, mismo modelo:** Claude en Claude Code vs. en Cursor vs. en Perplexity.
+
+A medida que mejoran los modelos, los harneses son menos importantes. Cada vez más, los modelos usan las herramientas ya disponibles y se “salen” del harnés.
+
+Los proveedores tienen su harnés propio (Claude Code, Codex…), pero también existen harneses para programar que son “vendor agnostic”, como OpenCode, Open Design o Pi.
+
+---
+
+{% slide width="wide" /%}
+
+# Los tres harneses de Claude
+
+{% columns %}
+{% column title="Chat" subtitle="Conversa, no actúa" %}
+- Pensado para **conversación**, no para “hacer cosas”.
+- **Sin acceso** a los ficheros de tu ordenador; pocas “herramientas locales”.
+- Funcionalidad única: **conversación por voz** (yo la uso para pensar, inglés…).
+{% /column %}
+
+{% column title="Claude Code" subtitle="Piensa y HACE" badge="Nuestro foco" highlight=true %}
+- Vive en la **terminal** (pero hay otras interfaces, como la de escritorio).
+- Creado para programar… pero se ha ido **comiendo otras áreas** (marketing, papeleo…).
+- …porque **accede a tu ordenador**: además de pensar, puede **HACER**.
+- Traía cosas muy “de programador”, así que…
+{% /column %}
+
+{% column title="Claude Cowork" subtitle="Code en la app de escritorio" %}
+- …**Claude Code disfrazado** de asistente (veréis los paralelismos).
+- Vive en la **app de escritorio**.
+{% /column %}
+{% /columns %}
+
+La gran diferencia: **Chat no tiene “manos”** en tu ordenador; **Code (y Cowork) sí**.
+
+
+---
+
+# Por qué nos vamos a centrar en Claude Code
+
+- **No solo “genera texto”:** además *hace trabajo*.
+- **Más “en bruto”:** da más libertad al modelo.
+- **Es donde llegan antes las cosas** (no necesariamente algo bueno).
+- **Es donde trabajo yo.**
+
+Dicho esto, en las primeras sesiones también veremos los otros harneses, porque facilitan tareas muy prácticas.
+
+
+---
+
+# Antes de empezar a gastar…
+
+Supongo que lo tenéis claro, pero…
+
+- **Se paga por tokens.**
+- **Tokens ≠ “lo que yo escribo + lo que la IA me contesta”:**
+    - Leer archivos, leer webs, usar herramientas, system prompt…
+    - ¡Y es acumulado!
+- **Dos formas de pagar:**
+    - Suscripción: lo que espero que tengáis. Más barato.
+    - “API” / por uso.
+- **La suscripción tiene límites**, los más importantes:
+    - Cada 5 horas (“session”).
+    - Semanal.
+    - Otros (Design, modelo específico…).
+
+E insisto: es acumulado. Cada vez que escribes un mensaje, estás mandando (¡y pagando!) ese **y todo lo anterior otra vez**.
+
+A los que tengáis Mac: Codexbar.
+
+---
+
+# Esta sesión: solo la app de escritorio
+
+En esta sesión vamos a trabajar solo en la aplicación de escritorio.
+
+Veréis que todo lo que vemos en la app de escritorio tiene su “paralelo” cuando nos vayamos a la terminal, pero he pensado que ayudaría a hacerlo más digerible verlo así.
+
+**Claude Cowork es “Claude Code vestido de oficina”:**
+
+- **Instrucciones globales** = `CLAUDE.md` de usuario.
+- **Instrucciones por proyecto** = `CLAUDE.md` de la carpeta.
+- **Skills** = mismo concepto.
+- **“Connectors”** = MCPs.
+
+---
+
+{% slide width="wide" /%}
+
+# Cuatro conceptos clave
+
+{% columns %}
+{% column title="CLAUDE.md" subtitle="Memoria del proyecto" badge="Esta sesión" highlight=true %}
+- Un archivo que Claude lee al arrancar: contexto, convenciones y reglas del proyecto.
+- Para no tener que repetírselo en cada conversación.
+{% /column %}
+
+{% column title="Skills" subtitle="Habilidades reutilizables" badge="Esta sesión" highlight=true %}
+- Instrucciones empaquetadas para una tarea concreta: un “así se hace esto aquí”.
+- Se cargan cuando hacen falta; las invocas con `/nombre`.
+{% /column %}
+{% /columns %}
+
+{% columns %}
+{% column title="MCPs" subtitle="Conexión a herramientas externas" badge="Esta sesión" highlight=true %}
+- Un “enchufe” estándar para darle acceso a apps y datos (Notion, GitHub, tu BBDD…).
+- Amplía lo que Claude puede leer y hacer fuera de tu código.
+{% /column %}
+
+{% column title="Subagents" subtitle="Delegar en paralelo" %}
+- Agentes secundarios, con su propio contexto, para tareas acotadas.
+- Trabajan en paralelo y devuelven solo la conclusión (no llenan tu contexto).
+{% /column %}
+{% /columns %}
+
+Vereis que la misma cosa se puede hacer de diferentes maneras. No está definido.
+
+
+
+---
+
+# Un paseo por la aplicación de escritorio
+
+- Proyectos
+- Artefactos
+- Thinking
+- Customize
+- **Settings importantes:**
+    - Language
+    - Capabilities > Memory (probándolo)
+    - …
+
+---
+
+# ¡Y hasta aquí la teoría!
+
+Hagamos un ejercicio muy sencillo para que los que no habéis usado Claude Code (de momento, a través de Cowork) veáis la potencia que tiene.
+
+**Ejercicios:**
+
+- [Organizar el caos](https://app.notion.com/p/Organiza-el-caos-3790bcf552548013b6bccfa6c3cf14c3)
+- [Preparar P&L](https://app.notion.com/p/Prepara-P-L-3790bcf55254801b95ecd3ae47230506)
+- [Sacar insights](https://app.notion.com/p/Saca-insights-3790bcf5525480e588bbea0dbafb48c2)
+
+---
+
+# Ejercicio — ¡manos a la obra!
+
+{% timer minutes=5 label="Tiempo del ejercicio" /%}
+
+{% notes %}
+Pulsa **▶ Play** cuando todos estéis listos; suena al acabar. Antes de empezar puedes ajustar con ±15 s / ±1 min.
+{% /notes %}
+
+---
+
+# Conclusiones de los ejercicios
+
+- **Chat** no puede tocar tu ordenador; **Cowork sí**.
+- Posiblemente cada uno de nosotros ha obtenido un resultado distinto…
+- …y si quisiéramos que lo hiciese igual, tendríamos que describírselo cada vez.
+
+Esto es poco eficiente, así que el siguiente paso es…
+
+---
+
+{% slide bg="brand" /%}
+
+# Módulo 2: Personaliza tu Claude
+
+---
+
+# Por qué personalizar Claude
+
+- **Pasarle contexto de nuestra situación particular:**
+    - Decisiones importantes.
+    - Explicación de decisiones importantes, para que infiera otras.
+- **Darle conocimiento de cómo hacemos las cosas:**
+    - Vocabulario propio.
+    - Qué incluye nuestro margen de contribución (CM2).
+- **Darle herramientas que de forma nativa no tiene:**
+    - Publicar un anuncio en Meta.
+- **Decirle cómo quiero que me responda:**
+    - *“No soy programador, no uses vocabulario muy técnico.”*
+- **Decirle lo que NO debe hacer** (pero no es “imperativo”):
+    - No muevas los presupuestos de Google Ads.
+
+En resumen, no tenerle que contar, cada vez que iniciemos una sesión, algo que es imposible que Claude sepa si no se lo decimos.
+
+---
+
+# CLAUDE.md a distintos niveles
+
+Como hemos dicho antes, los `CLAUDE.md` existen a distintos niveles: **a nivel de usuario** y **a nivel de proyecto**.
+
