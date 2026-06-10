@@ -7,6 +7,7 @@ import {
 } from '@/shared/blog/components';
 import { Columns, Column } from '@/features/presentations/Columns';
 import { FileTree } from '@/features/presentations/FileTree';
+import { Match, MatchPair } from '@/features/presentations/Match';
 import {
   Quiz,
   QuizQuestion,
@@ -63,6 +64,13 @@ export const CustomMarkdocComponents: Record<string, Component> = {
   QuizQuestion: QuizQuestion as Component,
   QuizOption: QuizOption as Component,
   QuizExplanation: QuizExplanation as Component,
+  // `{% match %}` is a self-check where the audience connects each `{% pair %}`'s
+  // left label to its right label (two columns, the right one scrambled). Like
+  // the quiz, its nested `pair` tags are folded into a `pairs` prop at transform
+  // time (they can't be read as React children across the RSC boundary). MatchPair
+  // is only a fallback for a `pair` authored outside a match.
+  Match: Match as Component,
+  MatchPair: MatchPair as Component,
   // `{% slide %}` carries per-slide chrome (background, corner tags). It's
   // stripped before render by extractSlideMeta; this no-op renderer is a safety
   // net so a stray/misplaced directive can't break validation.
@@ -242,5 +250,56 @@ export const CustomMarkdocTags: Record<string, Schema> = {
     render: 'QuizExplanation',
     children: [...INLINE_CHILDREN, 'paragraph', 'list', 'fence', 'heading', 'tag'],
     attributes: {},
+  },
+  // `{% match %}` folds its nested self-closing `{% pair %}` tags into a
+  // structured `pairs` prop at transform time — same reason as the quiz: Markdoc
+  // client components are React.lazy-wrapped across the RSC boundary, so Match
+  // can't read the pairs as React children. Each pair's labels are plain strings,
+  // so no deepRender is needed (unlike the quiz's rich option bodies).
+  match: {
+    render: 'Match',
+    children: ['tag', 'paragraph'],
+    attributes: {
+      title: { type: String },
+      instructions: { type: String },
+    },
+    transform(node: Node, config: Config) {
+      const attributes = node.transformAttributes(config);
+      const pairs: Array<{ left: string; right: string }> = [];
+      const walk = (current: Node) => {
+        for (const child of current.children ?? []) {
+          if (child.type === 'tag' && child.tag === 'pair') {
+            const pairAttributes = child.transformAttributes(config);
+            if (
+              typeof pairAttributes.left === 'string' &&
+              typeof pairAttributes.right === 'string'
+            ) {
+              pairs.push({ left: pairAttributes.left, right: pairAttributes.right });
+            }
+          } else if (child.type !== 'tag') {
+            walk(child);
+          }
+        }
+      };
+      walk(node);
+
+      return new Tag(
+        'Match',
+        {
+          title: attributes.title,
+          instructions: attributes.instructions,
+          pairs,
+        },
+        []
+      );
+    },
+  },
+  pair: {
+    render: 'MatchPair',
+    selfClosing: true,
+    attributes: {
+      left: { type: String },
+      right: { type: String },
+    },
   },
 };

@@ -79,6 +79,7 @@ copyable block. Don't wrap ordinary content in components for decoration.
 | **Timer** | `{% timer minutes="5" label="…" /%}` | synced countdown — see below; `minutes`, `seconds`, `label`, `id` (self-closing) |
 | **Columns** | `{% columns %}{% column title="…" %}…{% /column %}…{% /columns %}` | comparison cards — see below; `column` takes `title`, `subtitle`, `badge`, `highlight` |
 | **Quiz** | `{% quiz %}{% question text="…" %}{% option correct=true %}…{% /option %}…{% explanation %}…{% /explanation %}{% /question %}…{% /quiz %}` | self-check, 1+ questions + final score — see below; `quiz` takes `title`, `mode` (`inline` \| `modal`); `question` takes `text`; `option` takes `correct` |
+| **Match** | `{% match %}{% pair left="…" right="…" /%}…{% /match %}` | connect-the-columns self-check — see below; `match` takes `title`, `instructions`; `pair` takes `left`, `right` (self-closing) |
 | **File tree** | a fenced ` ```tree ` block (indented text) | styled folder/file tree — see below; `/` = folder, `# …` = annotation |
 | **Code editor** | `{% code-editor title="…" /%}` | `title` — interactive Sandpack editor (self-closing) |
 | **Code block** | fenced ` ```ts … ``` ` | language after the opening fence — Shiki-highlighted |
@@ -165,6 +166,39 @@ is revealed once that question is answered.
   `quiz` **transform** folds them into a `questions` prop (Markdoc client
   components are `React.lazy`-wrapped across the RSC boundary, so a parent can't
   match them by identity). Components: `features/presentations/Quiz.tsx`.
+
+## Match (connect-the-columns self-check)
+
+Two columns the audience **connects**: each `{% pair %}`'s `left` label belongs
+with its `right` label. The right column is **scrambled**; the viewer taps a left
+item then its match (or vice versa) to draw a connecting line, then **Comprobar**
+scores every line green (right) or red (wrong). Like the quiz, it's local and
+per-device — nothing is broadcast. Good as a warm-up / recall check (e.g. who's
+who, term ↔ definition, tool ↔ what it does).
+
+```mdoc
+{% slide width="wide" /%}
+
+# ¿Qué hace cada herramienta?
+
+{% match title="Une cada herramienta con lo que hace" instructions="Toca una y luego su pareja; pulsa «Comprobar» al terminar." %}
+{% pair left="Claude Code" right="Agente en la terminal" /%}
+{% pair left="Pusher" right="Sync en tiempo real" /%}
+{% pair left="Keystatic" right="Editor de contenido" /%}
+{% /match %}
+```
+
+- **`{% match %}`** attributes: `title` (the task prompt, optional) and
+  `instructions` (optional how-to hint; a sensible default shows if omitted).
+- **`{% pair %}`** — one row; **self-closing**, with `left` and `right` text. The
+  matching is `left ↔ right` of the *same* pair. Add as many as you like.
+- Connect by tapping (no drag — robust on touch / projector / Zoom). Tap a node
+  again to deselect; tapping a new partner re-assigns. **↺ Reiniciar** clears and
+  re-scrambles. Green/red are intentional and don't follow the slide's `bg`.
+- **Pair with `{% slide width="wide" /%}`** so the two columns + lines breathe.
+- Like the quiz, the `pair`s aren't read as React children — the `match`
+  **transform** folds them into a `pairs` prop. Components:
+  `features/presentations/Match.tsx`.
 
 ## File tree
 

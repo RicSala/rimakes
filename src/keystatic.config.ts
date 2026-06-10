@@ -135,6 +135,23 @@ const markdocComponents = {
     label: 'Quiz explanation',
     schema: {},
   }),
+  // Matching self-check. `match` wraps one or more self-closing `pair`s; the
+  // audience connects each left label to its right label (the right column is
+  // scrambled) and checks the result. See features/presentations/Match.
+  match: wrapper({
+    label: 'Match (connect columns)',
+    schema: {
+      title: fields.text({ label: 'Title (optional)' }),
+      instructions: fields.text({ label: 'Instructions (optional)' }),
+    },
+  }),
+  pair: block({
+    label: 'Match pair',
+    schema: {
+      left: fields.text({ label: 'Left label' }),
+      right: fields.text({ label: 'Right label (its match)' }),
+    },
+  }),
 };
 
 export const keystaticConfig = config({
