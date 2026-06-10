@@ -40,7 +40,7 @@ Lo haremos paso a paso, desde la app de escritorio hasta hacer una pequeña apli
 
 Si vas más avanzado, colabora en las primeras; si estás más pez, céntrate en ellas.
 
-{% callout title="🤚 Yo os enseño la puerta" emoji="🤚" variant="tip" %}
+{% callout title="Yo os enseño la puerta" emoji="🚪" variant="warning" %}
 Yo os enseño la puerta, pero el trabajo de cruzarla es vuestro — con mi compañía en las individuales.
 {% /callout %}
 
@@ -70,6 +70,16 @@ Ritmo: **2 bloques → descanso de 5–10 min → 1 bloque**. En función de lo 
 {% slide bg="brand" width="normal" /%}
 
 # ¿Dudas, comentarios, sugerencias?
+
+---
+
+# Presentaciones
+
+Me habéis comentado algunos que os gustaría que surgieran posibles colaboraciones.
+Y de hecho, algunos tenéis necesidades e ideas de como solventarlas parecidas.
+- Hagamos una ronda de presentación si os parece.
+- Cuenta quién eres, qué haces, y cuál es tu objetivo con la IA, luego pasa la pelota
+- Empiezo yo... 👋
 
 ---
 
@@ -192,9 +202,11 @@ Lo que envuelve al modelo crudo: el bucle que le pasa herramientas, gestiona el 
 - **Mismo harness con distinto modelo:** Cursor, donde tienes varios modelos de distintos proveedores a elegir.
 - **Distinto harness, mismo modelo:** Claude en Claude Code vs. en Cursor vs. en Perplexity.
 
-A medida que mejoran los modelos, los harneses son menos importantes. Cada vez más, los modelos usan las herramientas ya disponibles y se “salen” del harnés.
+A medida que mejoran los modelos, los harneses son menos importantes. Cada vez más, los modelos usan las herramientas ya disponibles y se “salen” del harness.
 
-Los proveedores tienen su harnés propio (Claude Code, Codex…), pero también existen harneses para programar que son “vendor agnostic”, como OpenCode, Open Design o Pi.
+Los proveedores tienen su arnés propio (Claude Code, Codex…), pero también existen harneses para programar que son “vendor agnostic”, como OpenCode, o Pi.
+
+Hay arneses que no tienen nada que ver con programar: Open Design. En mi opinión, todo será "un arnés".
 
 ---
 
@@ -239,6 +251,9 @@ La gran diferencia: **Chat no tiene “manos”** en tu ordenador; **Code (y Cow
 {% prompt title="Pidele a Chat, luego a Cowork, y luego a Code lo siguiente:" %}
 Crea un archivo test.txt vacío en el escritorio
 {% /prompt %}
+- Chat no puede
+- Cowork puede
+- Code puede y es más "techy"
 
 {% /callout %}
 
@@ -277,9 +292,7 @@ A los que tengáis Mac: Codexbar.
 
 ---
 
-# Esta sesión: solo la app de escritorio
-
-En esta sesión vamos a trabajar solo en la aplicación de escritorio.
+# La app de escritorio = "terminal vestida"
 
 Veréis que todo lo que vemos en la app de escritorio tiene su “paralelo” cuando nos vayamos a la terminal, pero he pensado que ayudaría a hacerlo más digerible verlo así.
 
@@ -611,6 +624,37 @@ Ejemplos: **Notion, Gmail, Calendar, Drive, GitHub, tu base de datos…**
 
 ---
 
+# Ejercicio (conmigo): añadiendo un MCP complicado
+
+- Los MCPs **oficiales** son muy fáciles de instalar — ahí poco os puedo aportar.
+- Pero hay quien hace MCPs **"no oficiales"** para cubrir esas necesidades, e instalarlos **no es tan directo**.
+- Ejemplo: el MCP **oficial de Google Ads** solo expone herramientas de **lectura**…
+- …pero veamos **este**: [github.com/kLOsk/adloop](https://github.com/kLOsk/adloop)
+
+{% callout title="Ojo con lo que instalas" emoji="⚠️" variant="warning" %}
+Mira **forks** y **stars**, y pídele a Claude que **revise si es seguro** de instalar antes de hacerlo.
+{% /callout %}
+
+{% prompt title="MCP de Google Ads" %}
+Quiero instalar este mcp: https://github.com/kLOsk/adloop
+
+Revisa si es seguro instalarlo antes de seguir.
+
+Si lo es, guíame paso a paso, no soy developer.
+
+Crea una guía paso a paso que pueda seguir contigo
+{% /prompt %}
+
+{% callout title="Lo más probable es que os atasquéis" emoji="⚠️" variant="warning" %}
+Es lo normal: si no os da tiempo y queréis terminarlo, lo vemos en sesiones individuales.
+- Pide ayuda a Claude
+- Pégale pantallazos
+- Dile que te lleve paso a paso
+{% /callout %}
+
+
+---
+
 # MCPs de MCPs
 
 Ir añadiendo MCPs a tu app tiene **inconvenientes**:
@@ -713,6 +757,24 @@ Como comentamos, una skill puede llevar —además de un prompt o recursos— **
 - **GraphQL.**
 
 **Comparemos ClickUp con Notion** 💻
+
+---
+
+# Ejercicio (conmigo): Claude crea y publica anuncios en Meta
+
+Este es algo más complicado, pero creo que **viene bien verlo juntos** para que, cuando nos juntemos en las individuales, **tengáis ideas**.
+
+Lo haremos **paso a paso**:
+
+- ¿Podemos **generar imágenes**?
+- ¿Podemos **interactuar con Meta**?
+- ¿Lo empaquetamos como **skill**…? ¿O hacemos un **proyecto** y lo metemos en el `CLAUDE.md`? ¿O un **subagente**? 🤯
+
+{% prompt title="Pide a Claude que te guíe" %}
+Guíame para añadirte Replicate como mcp: https://replicate.com/docs/reference/mcp
+
+No soy técnico, y lo quiero añadir a Claude Cowork, a ser posible por la interfaz de usuario en lugar de tocar archivos de configuración
+{% /prompt %}
 
 ---
 
