@@ -83,6 +83,21 @@ Y de hecho, algunos tenéis necesidades e ideas de como solventarlas parecidas.
 
 ---
 
+{% slide width="wide" /%}
+
+# ¿Quién es quién?
+
+{% match title="Une cada persona con lo que hace" instructions="Toca un nombre y luego lo que hace (o al revés); pulsa «Comprobar» al terminar." %}
+{% pair left="Humbert" right="Fundador de PdPaola, creando un saas 🤖" /%}
+{% pair left="Salva" right="Administrador / CEO de varias sociedades, gestionando Poble Espanyol 🏰" /%}
+{% pair left="Borja" right="Estrategia y finanzas, haciendo pinitos en software 🤖" /%}
+{% pair left="Guillem" right="Consultor de estrategia, estrategia y jeeps! 🚙" /%}
+{% pair left="Jordi" right="Diseñador gráfico de marca, diseñando marcas que 🚀" /%}
+{% pair left="Ricardo" right="Instructor · crea AI tools y MVPs, explorando enseñar 🔎" /%}
+{% /match %}
+
+---
+
 {% slide bg="brand" width="normal" /%}
 
 # Módulo 1: Primer contacto con Claude
@@ -108,6 +123,13 @@ Una LLM simplemente predice el siguiente token (trozo de palabra) a partir de pa
 *Un becario brillante y rapidísimo, con mucha labia y **muchísima seguridad en sí mismo**, que a veces se inventa cosas y siempre quiere quedar bien.*
 
 Hagamos algunas pruebas… [🖥️]
+
+{% notes %}
+**Probabilística**: Por eso muchas veces tenenemos que prepararle templates y checklists
+**Alucina** y **sicofante**: cada vez menos, pero aunque solo sea un 1%...
+**No tiene memoria**: Lo veremos
+**Conocimiento congelado**: Muchas veces parece tenerlo actualizado porque por detrás está usan un buscador
+{% /notes %}
 
 ---
 
@@ -147,6 +169,49 @@ Lo que diferencia uno de otro es el **“harness”**, que:
 - Lo mantiene “despierto”.
 
 Para que la ilusión de “agente” funcione, el agente no solo recibe los tokens que le enviamos, sino también todos los necesarios para entender lo que tiene a su disposición, y la situación en la que está siendo usado.
+{% notes %}
+- **Memoria:** Envíamos toda la conversación anterior
+- **Mantenerlo “despierto”:** Se utiliza un bucle (“loop”) que reenvía el mensaje a la IA repetidamente mientras no haya terminado, hasta un número máximo de veces. Así evita quedarse parado y puede gestionar tareas de larga duración.
+{% /notes %}
+
+
+---
+
+{% slide width="wide" /%}
+
+# Por dentro: no es "texto", son bloques
+
+Lo que el modelo recibe y devuelve es **JSON estructurado**. El mensaje, el "pensar" y las herramientas van **por separado**:
+
+```json
+{
+  "messages": [
+    { "role": "user", "content": "¿Qué tiempo hace en Madrid?" },
+
+    { "role": "assistant", "content": [
+      { "type": "thinking",  "thinking": "Necesito el tiempo de Madrid → uso la herramienta." },
+      { "type": "text",      "text": "Voy a consultarlo." },
+      { "type": "tool_use",  "name": "get_weather", "input": { "ciudad": "Madrid" } }
+    ]},
+
+    { "role": "user", "content": [
+      { "type": "tool_result", "content": "18°C, soleado" }
+    ]}
+  ]
+}
+```
+
+{% callout title="¿Y esto qué más me da a mí?" emoji="🤔" variant="warning" %}
+Porque quiero que entiendas que **la IA no "HACE" realmente nada**. Lo que lo hace es el arnés, que interpreta ese texto que recibe. Y a veces lo interpreta en tu ordenador (Cowork / Code), a veces lo interpreta en la nube (Chat).
+
+- y porque si programas un chatbot (para ti o tu(s) clientes(s)), te conviene saber cómo funciona
+{% /callout %}
+
+
+
+- **`text`** → el mensaje que ves.
+- **`thinking`** → los tokens de "pensar" (normalmente ocultos).
+- **`tool_use`** → la llamada a una herramienta; su **`tool_result`** vuelve como otro bloque.
 
 ---
 
@@ -241,9 +306,14 @@ Hay arneses que no tienen nada que ver con programar: Open Design. En mi opinió
 {% /column %}
 {% /columns %}
 
-+ Ahora (oficialmente) Claude Design
+{% callout title="Ahora también..." emoji="🎨" variant="info" %}
+Ahora (oficialmente) Claude Design 
+{% /callout %}
+
 
 La gran diferencia: **Chat no tiene “manos”** en tu ordenador; **Code (y Cowork) sí**.
+
+Porque chat vive en la nube, mientras que Claude y Cowork en tu ordenador (+ nube Code)
 ---
 # Mini ejercicio 
 
@@ -251,12 +321,12 @@ La gran diferencia: **Chat no tiene “manos”** en tu ordenador; **Code (y Cow
 {% prompt title="Pidele a Chat, luego a Cowork, y luego a Code lo siguiente:" %}
 Crea un archivo test.txt vacío en el escritorio
 {% /prompt %}
-- Chat no puede
-- Cowork puede
-- Code puede y es más "techy"
 
 {% /callout %}
 
+- Chat no puede
+- Cowork puede
+- Code puede y es más "techy"
 ---
 
 # Por qué nos vamos a centrar en Claude Code
@@ -264,7 +334,8 @@ Crea un archivo test.txt vacío en el escritorio
 - **No solo “genera texto”:** además *hace trabajo*.
 - **Más “en bruto”:** da más libertad al modelo.
 - **Es donde llegan antes las cosas** (no necesariamente algo bueno).
-- **Es donde trabajo yo.**
+
+Si tras este workshop os sentís cómodos con la terminal, habréis ganado acceso a muchísimas herramientas sin tener que "aprender" ninguna. En lugar de aprender todos los arneses, aprende los básico de la terminal y deja que la IA se encargue de los detalles.
 
 Dicho esto, en las primeras sesiones también veremos los otros harneses, porque facilitan tareas muy prácticas.
 
@@ -289,6 +360,15 @@ Supongo que lo tenéis claro, pero…
 E insisto: es acumulado. Cada vez que escribes un mensaje, estás mandando (¡y pagando!) ese **y todo lo anterior otra vez**.
 
 A los que tengáis Mac: Codexbar.
+
+{% callout title="Modelo nuevo: Fable" emoji="🆕" variant="info" %}
+Estos días hay un modelo nuevo, **Fable**, disponible para suscripciones hasta (aprox.) el **22 de junio**. Ojo: consume **el doble** que Opus de tus límites.
+{% /callout %}
+
+{% notes %}
+- Es **muy común** que los proveedores saquen modelos así "a prueba" por tiempo limitado, y que de pronto **dupliquen límites**, bajen precios, etc.
+- Es la **batalla OpenAI ↔ Anthropic**: se van pisando los lanzamientos. Conviene moverse con ello y no casarse con nada.
+{% /notes %}
 
 ---
 
@@ -353,18 +433,26 @@ Vereis que la misma cosa se puede hacer de diferentes maneras. No está definido
 
 # Un paseo por la aplicación de escritorio
 
-- Proyectos
-- Artefactos
-- Thinking
-- Customize
+- Proyectos: Chat vs Cowork
+- Artefactos: "cosas" que podemos crear embebidas en Claude
+- Thinking: Antes automático, ahora elegimos (entiendon que es un máx)
+- Customize: Dónde ahora han ido los "conectores"
+- Avanzados veremos en siguiente sesión
+- Pinned
 - **Settings importantes:**
   - Language
-  - Capabilities > Memory (probándolo)
-  - …
+  - Capabilities 
+     - > Memory (probándolo)
+     - Load tools when needed
+     - Visuals ON
+     - Domain allowlist, comentar (estoy pensando si abrirlo 100%)
+     - Skills: movidos 🫠
+  - General: computer use ON
+
 
 ---
 
-# ¡Y hasta aquí la teoría!
+# ¡Ejercicio! 🏗️
 
 Hagamos un ejercicio muy sencillo para que los que no habéis usado Claude Code (de momento, a través de Cowork) veáis la potencia que tiene.
 
@@ -388,6 +476,9 @@ Pulsa **▶ Play** cuando todos estéis listos; suena al acabar. Antes de empeza
 
 # Conclusiones de los ejercicios
 
+- Veamos juntos mi generación:
+    - No necesita leer todo el PDF
+    - Entiende los gráficos
 - **Chat** no puede tocar tu ordenador; **Cowork sí**.
 - Posiblemente cada uno de nosotros ha obtenido un resultado distinto…
 - …y si quisiéramos que lo hiciese igual, tendríamos que describírselo cada vez.
@@ -405,25 +496,24 @@ Esto es poco eficiente, así que el siguiente paso es…
 # Por qué personalizar Claude
 
 - **Pasarle contexto de nuestra situación particular:**
-  - Decisiones importantes.
-  - Explicación de decisiones importantes, para que infiera otras.
+  - Decisiones importantes y explicación, para que infiera otras.
 - **Darle conocimiento de cómo hacemos las cosas:**
-  - Vocabulario propio.
-  - Qué incluye nuestro margen de contribución (CM2).
+  - Vocabulario propio. Ej. Qué es el CM2? Qué colecciones tiene nuestra tienda? Quienes son mis principales clientes?
 - **Darle herramientas que de forma nativa no tiene:**
-  - Publicar un anuncio en Meta.
+  - Generar imágenes, publicar un anuncio en Meta.
 - **Decirle cómo quiero que me responda:**
   - *“No soy programador, no uses vocabulario muy técnico.”*
 - **Decirle lo que NO debe hacer** (pero no es “imperativo”):
   - No muevas los presupuestos de Google Ads.
+- **Adaptar la capacidad a la tarea** Pensar: Opus, traducir... Sonnet?
 
-En resumen, no tenerle que contar, cada vez que iniciemos una sesión, algo que es imposible que Claude sepa si no se lo decimos.
+En resumen: inyectarle contexto (claude.md, skills) o darle capacidades (mcps, skill).
 
 ---
 
 # CLAUDE.md a distintos niveles
 
-Como hemos dicho antes, los `CLAUDE.md` existen a distintos niveles: **a nivel de usuario** y **a nivel de proyecto**.
+Los `CLAUDE.md` (o su equivalente en la app de escritorio) existen a distintos niveles: **a nivel de usuario** y **a nivel de proyecto**.
 
 {% columns %}
 {% column highlight=false %}
@@ -435,7 +525,10 @@ Como hemos dicho antes, los `CLAUDE.md` existen a distintos niveles: **a nivel d
 {% /column %}
 {% /columns %}
 
+Cowork tiene añade otro nivel más (instrucciones de Cowork)
+
 En **Claude Code** son archivos **anidados** en tu disco: el de usuario está arriba del todo y aplica a TODO lo de abajo.
+Es lo mismo (que ya vimos, pero en la app de escritorio)
 
 ```
 ~/                                # tu usuario · lo de aquí aplica a TODO
@@ -460,6 +553,7 @@ En **Claude Code** son archivos **anidados** en tu disco: el de usuario está ar
 - **Referencias con `@`:** puedes apuntar a otros archivos… pero ojo, **se cargan enteros igual**.
 - **No te pases de ~200 líneas:** ¡recuerda que va en **cada mensaje**!
 - **Lo opcional, no lo metas entero:** si algo tiene que estar pero no siempre hace falta, **nombra el archivo e indica dónde encontrarlo**.
+- **Organízalo en secciones**
 
 ---
 
@@ -473,6 +567,7 @@ Una **skill** es, literalmente, una "capacidad" que añadimos al modelo: **promp
 - **Herramientas enlazadas a un proceso:** scripts, logos, etc., que no quieres que "pululen" sueltos. Los paquetizas.
 
 No son más que archivos que el agente sabe dónde encontrar, y que "inyectan" esa capacidad en el contexto cuando la mencionas.
+
 
 ---
 
@@ -503,6 +598,9 @@ mi-skill/
 
 # El contexto: qué es y por qué nos importa
 
+
+Si las skill solo "inyecta contexto" (que luego veremos que puede hacer más cosas), podríamos ponerlo en claude.md pero...recuerda que el contexto es limitado!
+
 El **contexto** es todos los tokens que el modelo ve cuando le enviamos un mensaje. Incluye, entre otros:
 
 - El **system prompt**.
@@ -510,6 +608,7 @@ El **contexto** es todos los tokens que el modelo ve cuando le enviamos un mensa
 - Las **herramientas disponibles**: abrir archivo, buscar, editar, fetch…
 - **Archivos** y descripciones de **imágenes** que le hayamos adjuntado.
 - **Toda la conversación** hasta ahora.
+- y las skills...?
 
 Es decir, es **MUCHO más** que nuestro mensaje. Y es **limitado**.
 
@@ -530,6 +629,8 @@ Las skills ocupan contexto… pero implementan un concepto llamado **"progressiv
 
 Esto nos permite meter skills **sin machacar el contexto**.
 
+Es decir, el claude.md siempre está, la skill se "carga a demanda"
+
 ---
 
 # "Mi Claude no hace caso a mis skills"
@@ -547,6 +648,12 @@ El agente hace —o no hace— algo en función de nuestras instrucciones y de *
 - Comprueba que no esté en modo **"name-only"** (lo veremos).
 - Mejora la **descripción** y el *when to use*.
 - Añade una línea en el **`CLAUDE.md`**.
+
+---
+
+# Ejercicios: personaliza tu Claude (Desktop)
+
+{% timer minutes=10 label="Tiempo del ejercicio" /%}
 
 ---
 
@@ -624,6 +731,30 @@ Ejemplos: **Notion, Gmail, Calendar, Drive, GitHub, tu base de datos…**
 
 ---
 
+# MCPs nativos ("Anthropic & Partners")
+
+![Directory → Connectors → Anthropic & Partners: Canva, Notion, Gmail, Drive…](/cms-assets/decks/intro-to-synced-slides/mcps-nativos.png)
+
+---
+
+# Añadir marketplace de terceros
+
+![Connectors → Create plugin → Add marketplace](/cms-assets/decks/intro-to-synced-slides/add-marketplace.png)
+
+---
+
+# Pero… ¿Qué es un plugin?
+
+![Plugin "Marketing" en el Directory: sus skills y sus connectors (MCPs)](/cms-assets/decks/intro-to-synced-slides/que-es-un-plugin.png)
+
+Un plugin no es más que un **conjunto de skills y conectores (MCPs)** metidos en un **paquete**, para que sean más fáciles de **instalar, compartir y activar**.
+
+---
+
+# MCPs locales
+
+---
+
 # Ejercicio (conmigo): añadiendo un MCP complicado
 
 - Los MCPs **oficiales** son muy fáciles de instalar — ahí poco os puedo aportar.
@@ -673,6 +804,12 @@ Algunos:
 Yo uso **Zapier**, pero creo que las tres tienen **plan gratuito**.
 
 Si no encuentras un MCP por la vía oficial… **¡quizá esté ahí!**
+
+---
+
+# Veamos Zapier
+
+[mcp.zapier.com/mcp/servers/…/config](https://mcp.zapier.com/mcp/servers/b9f29a06-384a-4a6f-82ed-9dc3a388852b/config)
 
 ---
 
