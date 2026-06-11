@@ -59,7 +59,8 @@ const DEFAULT_CONTENT = `${CONTENT_STRUCTURE} ${CONTENT_WIDTH.normal} ${CONTENT_
 
 // `bg` directive value → a token-scope class. The class redefines the design
 // tokens for the slide subtree, so background, prose, AND components adapt.
-const SCHEME_CLASS: Record<string, string> = {
+// Exported so the overview thumbnails can tint themselves with the same scope.
+export const SCHEME_CLASS: Record<string, string> = {
   brand: 'slide-theme-brand',
   dark: 'dark',
 };
@@ -70,6 +71,8 @@ type SlideStageProps = {
   overlay?: ReactNode;
   theme?: SlideTheme;
   slidesMeta?: SlideMeta[];
+  /** Hide the on-slide "n / total" counter (e.g. on the audience surface). */
+  hideCounter?: boolean;
 };
 
 export function SlideStage({
@@ -78,6 +81,7 @@ export function SlideStage({
   overlay,
   theme,
   slidesMeta,
+  hideCounter,
 }: SlideStageProps) {
   const lastIndex = Math.max(slides.length - 1, 0);
   const current = Math.min(Math.max(index, 0), lastIndex);
@@ -93,7 +97,7 @@ export function SlideStage({
   );
 
   // Counter reads `text-muted-foreground`, so it adapts with the theme scope.
-  const counter = theme?.hideCounter ? null : (
+  const counter = hideCounter || theme?.hideCounter ? null : (
     <div className='pointer-events-none absolute bottom-6 right-6 text-sm tabular-nums text-muted-foreground'>
       {current + 1} / {slides.length}
     </div>

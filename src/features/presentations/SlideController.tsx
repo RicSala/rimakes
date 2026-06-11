@@ -12,12 +12,40 @@ import {
 import { deckChannel, SLIDE_EVENT, type SlidePayload } from './channel';
 import { PresentationProvider } from './presentation-context';
 import { getPusherClient } from './pusher.client';
-import { SlideStage, type SlideMeta, type SlideTheme } from './SlideStage';
+import {
+  SCHEME_CLASS,
+  SlideStage,
+  type SlideMeta,
+  type SlideTheme,
+} from './SlideStage';
 
 // Keep the (<=30min) cache channel warm so late joiners stay correct on long talks.
 const HEARTBEAT_MS = 4 * 60 * 1000;
 
 const DEFAULT_THUMBNAIL_CONTENT = 'markdoc prose px-6 py-6 text-primary';
+
+// Per-deck, presenter-only list of slides to skip. It lives in localStorage, not
+// the realtime channel: viewers never navigate, so a hidden slide simply never
+// gets broadcast and they never see it — no protocol/viewer change needed.
+const HIDDEN_STORAGE_PREFIX = 'deck-hidden:';
+
+/**
+ * Read a deck's persisted hidden slides. Indices are absolute, so editing the
+ * deck can shift them — unhide/re-hide to correct. Returns an empty set on the
+ * server (no localStorage) or any parse error.
+ */
+function loadHidden(slug: string): Set<number> {
+  if (typeof window === 'undefined') return new Set();
+  try {
+    const raw = window.localStorage.getItem(`${HIDDEN_STORAGE_PREFIX}${slug}`);
+    if (!raw) return new Set();
+    const parsed: unknown = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return new Set(parsed.filter((n): n is number => typeof n === 'number'));
+    }
+  } catch {}
+  return new Set();
+}
 
 type SlideControllerProps = {
   slug: string;
@@ -37,17 +65,27 @@ type SlideControllerProps = {
 function SlideThumbnail({
   number,
   active,
+  hidden,
   onSelect,
+  onToggleHidden,
   contentClass,
+  schemeClass,
   children,
 }: {
-  number: number;
+  /** Position in the visible run (1..N); null for hidden slides, shown as "—". */
+  number: number | null;
   active: boolean;
+  /** Presenter-only skip flag. A hidden slide is never broadcast, so viewers —
+   *  who only ever see the slide we send — never see it. */
+  hidden: boolean;
   onSelect: () => void;
+  onToggleHidden: () => void;
   contentClass: string;
+  /** Per-slide theme scope (e.g. `slide-theme-brand`) so `bg-background` tints. */
+  schemeClass?: string;
   children: ReactNode;
 }) {
-  const ref = useRef<HTMLButtonElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
@@ -66,30 +104,80 @@ function SlideThumbnail({
     return () => observer.disconnect();
   }, [revealed]);
 
+  // Opening the overview (this mounts) on the active slide — or advancing while
+  // it's open — centers the current thumbnail, so on a long deck you instantly
+  // see where you are instead of scanning for the highlighted cell.
+  useEffect(() => {
+    if (active) {
+      ref.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  }, [active]);
+
+  // The cell is a <div> (not the jump <button>) so the eye toggle can sit inside
+  // it as a real sibling <button> — nesting buttons would be invalid HTML.
   return (
-    <button
-      ref={ref}
-      type='button'
-      onClick={onSelect}
-      aria-current={active}
-      className={`group relative aspect-[16/10] overflow-hidden rounded-lg border-2 bg-background text-left transition ${
-        active
-          ? 'border-primary ring-2 ring-primary'
-          : 'border-border hover:border-primary/50'
-      }`}
-    >
-      {revealed ? (
+    <div ref={ref} className='group relative aspect-[16/10]'>
+      <button
+        type='button'
+        onClick={onSelect}
+        aria-current={active}
+        className={`absolute inset-0 overflow-hidden rounded-lg border-2 text-left transition ${
+          active
+            ? 'z-10 scale-[1.04] border-primary shadow-xl ring-4 ring-primary ring-offset-2 ring-offset-background'
+            : 'border-border hover:border-primary/50'
+        }`}
+      >
+        {/* The scheme scope tints the fill + content but stops short of the
+            button, so the active border/ring keep using the root tokens and stay
+            visible even over a brand/dark thumbnail. */}
         <div
-          className='pointer-events-none absolute left-0 top-0 origin-top-left scale-[0.32]'
-          style={{ width: '312.5%', height: '312.5%' }}
+          className={`absolute inset-0 bg-background ${schemeClass ?? ''} ${
+            hidden ? 'grayscale' : ''
+          }`}
         >
-          <div className={contentClass}>{children}</div>
+          {revealed ? (
+            <div
+              className='pointer-events-none absolute left-0 top-0 origin-top-left scale-[0.32]'
+              style={{ width: '312.5%', height: '312.5%' }}
+            >
+              <div className={contentClass}>{children}</div>
+            </div>
+          ) : null}
         </div>
+        {/* A flat gray veil — not a fade — so a hidden slide reads clearly grayed
+            out in the grid even when its own background is white or brand. */}
+        {hidden ? (
+          <div className='pointer-events-none absolute inset-0 bg-gray-500/45' />
+        ) : null}
+        <span className='absolute bottom-1 right-1 rounded bg-background/80 px-1.5 text-xs font-medium tabular-nums'>
+          {number ?? '—'}
+        </span>
+      </button>
+
+      {hidden ? (
+        <span className='pointer-events-none absolute left-1 top-1 z-10 rounded bg-foreground/80 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-background shadow-sm'>
+          Oculta
+        </span>
       ) : null}
-      <span className='absolute bottom-1 right-1 rounded bg-background/80 px-1.5 text-xs font-medium tabular-nums'>
-        {number}
-      </span>
-    </button>
+
+      <button
+        type='button'
+        onClick={onToggleHidden}
+        aria-pressed={hidden}
+        title={
+          hidden
+            ? 'Mostrar — volverá a verla todo el mundo'
+            : 'Ocultar — no la verá nadie'
+        }
+        className={`absolute right-1 top-1 z-10 rounded bg-background/80 px-1.5 py-0.5 text-xs shadow-sm transition hover:bg-background ${
+          hidden
+            ? 'opacity-100'
+            : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100'
+        }`}
+      >
+        {hidden ? '🙈' : '👁'}
+      </button>
+    </div>
   );
 }
 
@@ -113,6 +201,10 @@ export function SlideController({
   const [index, setIndex] = useState(0);
   const [overview, setOverview] = useState(false);
   const [showNotes, setShowNotes] = useState(true);
+  // Presenter-only skip list for this deck, seeded from localStorage. Mirrored
+  // into a ref so the stable nav callbacks read the latest set.
+  const [hidden, setHidden] = useState<Set<number>>(() => loadHidden(slug));
+  const hiddenRef = useRef<Set<number>>(hidden);
   // Where the speaker-notes panel sits (viewport top-left). null = default corner.
   // It's plain state, so the panel stays put across slide changes (the controller
   // never unmounts) without needing localStorage.
@@ -153,6 +245,59 @@ export function SlideController({
       publish(clamped);
     },
     [count, publish, setBoth]
+  );
+
+  // Nearest non-hidden slide from `from` walking in `dir` (+1 / -1). -1 if none.
+  const seekVisible = useCallback(
+    (from: number, dir: 1 | -1, skip: Set<number>) => {
+      for (let i = from + dir; i >= 0 && i < count; i += dir) {
+        if (!skip.has(i)) return i;
+      }
+      return -1;
+    },
+    [count]
+  );
+
+  // Prev/next step over hidden slides instead of landing on them.
+  const goNext = useCallback(() => {
+    const next = seekVisible(indexRef.current, 1, hiddenRef.current);
+    if (next >= 0) go(next);
+  }, [seekVisible, go]);
+
+  const goPrev = useCallback(() => {
+    const prev = seekVisible(indexRef.current, -1, hiddenRef.current);
+    if (prev >= 0) go(prev);
+  }, [seekVisible, go]);
+
+  // Toggle a slide's hidden flag and persist it. Hiding the slide we're currently
+  // showing also advances the room to the next visible slide, so it disappears for
+  // viewers right away (they only ever render the slide we broadcast).
+  const toggleHidden = useCallback(
+    (target: number) => {
+      const isHidingCurrent =
+        target === indexRef.current && !hiddenRef.current.has(target);
+
+      setHidden((prev) => {
+        const next = new Set(prev);
+        if (next.has(target)) next.delete(target);
+        else next.add(target);
+        try {
+          localStorage.setItem(
+            `${HIDDEN_STORAGE_PREFIX}${slug}`,
+            JSON.stringify([...next])
+          );
+        } catch {}
+        return next;
+      });
+
+      if (isHidingCurrent) {
+        const skip = new Set(hiddenRef.current).add(target);
+        let dest = seekVisible(target, 1, skip);
+        if (dest < 0) dest = seekVisible(target, -1, skip);
+        if (dest >= 0) go(dest);
+      }
+    },
+    [slug, seekVisible, go]
   );
 
   // Jump straight to any slide (from the overview) and close the grid.
@@ -201,6 +346,11 @@ export function SlideController({
     }
   }, []);
 
+  // Keep the ref in sync so stable nav callbacks read the latest hidden set.
+  useEffect(() => {
+    hiddenRef.current = hidden;
+  }, [hidden]);
+
   // Recover the current slide if the presenter refreshes — the cache channel
   // replays the last event — and stay consistent with our own broadcasts.
   useEffect(() => {
@@ -246,22 +396,40 @@ export function SlideController({
         event.key === ' '
       ) {
         event.preventDefault();
-        go(indexRef.current + 1);
+        goNext();
       } else if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
         event.preventDefault();
-        go(indexRef.current - 1);
+        goPrev();
       }
     };
 
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [go]);
+  }, [goNext, goPrev]);
 
   // Heartbeat keeps the cache channel warm.
   useEffect(() => {
     const id = setInterval(() => publish(indexRef.current), HEARTBEAT_MS);
     return () => clearInterval(id);
   }, [publish]);
+
+  // Disable prev/next when no visible slide remains in that direction.
+  const hasPrev = seekVisible(index, -1, hidden) >= 0;
+  const hasNext = seekVisible(index, 1, hidden) >= 0;
+
+  // Sequence numbers that skip hidden slides, so the grid + counter show the run
+  // the audience actually sees (1..N) instead of raw positions. Hidden → null.
+  const visibleNumbers: (number | null)[] = [];
+  let runningVisible = 0;
+  for (let i = 0; i < count; i += 1) {
+    if (hidden.has(i)) {
+      visibleNumbers.push(null);
+    } else {
+      runningVisible += 1;
+      visibleNumbers.push(runningVisible);
+    }
+  }
+  const visibleCount = runningVisible;
 
   const overlay = (
     <>
@@ -284,17 +452,31 @@ export function SlideController({
           </div>
 
           <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4'>
-            {slides.map((slide, slideIndex) => (
-              <SlideThumbnail
-                key={slideIndex}
-                number={slideIndex + 1}
-                active={slideIndex === index}
-                onSelect={() => jumpTo(slideIndex)}
-                contentClass={thumbnailContent}
-              >
-                {slide}
-              </SlideThumbnail>
-            ))}
+            {slides.map((slide, slideIndex) => {
+              // Mirror SlideStage: a slide's `bg` scheme tints the thumbnail so
+              // brand/dark slides stand out in the grid. With a scope active,
+              // invert the prose so the content stays legible on the dark fill.
+              const bg = slidesMeta?.[slideIndex]?.bg;
+              const schemeClass = bg ? SCHEME_CLASS[bg] ?? '' : '';
+              return (
+                <SlideThumbnail
+                  key={slideIndex}
+                  number={visibleNumbers[slideIndex]}
+                  active={slideIndex === index}
+                  hidden={hidden.has(slideIndex)}
+                  onSelect={() => jumpTo(slideIndex)}
+                  onToggleHidden={() => toggleHidden(slideIndex)}
+                  contentClass={
+                    schemeClass
+                      ? `${thumbnailContent} prose-invert`
+                      : thumbnailContent
+                  }
+                  schemeClass={schemeClass}
+                >
+                  {slide}
+                </SlideThumbnail>
+              );
+            })}
           </div>
         </div>
       ) : null}
@@ -344,8 +526,8 @@ export function SlideController({
       <div className='pointer-events-auto fixed inset-x-0 bottom-0 z-50 flex items-center justify-center gap-3 p-4'>
         <button
           type='button'
-          onClick={() => go(indexRef.current - 1)}
-          disabled={index <= 0}
+          onClick={goPrev}
+          disabled={!hasPrev}
           className='rounded-md border border-border bg-background px-4 py-2 text-sm font-medium shadow-sm transition disabled:opacity-40'
         >
           ← Prev
@@ -356,12 +538,14 @@ export function SlideController({
           title='Overview — jump to any slide (o)'
           className='min-w-24 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium tabular-nums shadow-sm transition hover:border-primary/50'
         >
-          {overview ? 'Close' : `⊞ ${index + 1} / ${count}`}
+          {overview
+            ? 'Close'
+            : `⊞ ${visibleNumbers[index] ?? '–'} / ${visibleCount}`}
         </button>
         <button
           type='button'
-          onClick={() => go(indexRef.current + 1)}
-          disabled={index >= count - 1}
+          onClick={goNext}
+          disabled={!hasNext}
           className='rounded-md border border-border bg-background px-4 py-2 text-sm font-medium shadow-sm transition disabled:opacity-40'
         >
           Next →

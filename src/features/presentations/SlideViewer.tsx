@@ -30,6 +30,7 @@ export function SlideViewer({
         index={index}
         theme={theme}
         slidesMeta={slidesMeta}
+        hideCounter
       />
     </PresentationProvider>
   );
