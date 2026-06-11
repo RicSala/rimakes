@@ -33,8 +33,7 @@ Pasar de *"la IA es un chat"* a *"la IA es un trabajador proactivo"*.
 
 - Que salgáis con **mínimo 3 horas ahorradas por semana**.
 - Que salgáis del workshop con un poco de **hype** por las cosas que podríais hacer.
-- Desbloquear una **nueva habilidad**.
-- Que podáis (empezar a) haceros vuestro **"personal software"**.
+- Desbloquear una **nueva habilidad** (personal software)
 
 Lo haremos paso a paso, desde la app de escritorio hasta hacer una pequeña aplicación con la terminal (veréis que es lo mismo pero "vestido de otra forma").
 
@@ -49,9 +48,11 @@ Yo os enseño la puerta, pero el trabajo de cruzarla es vuestro — con mi compa
 
 # Encuadre: Metodología
 
+De muy básico, a crear software personal (50% Claude - 50% "personal software" )
+
 **La estructura:**
 
-- **4 sesiones de 2h**, de chat a app: 2 en app, 2 en terminal.
+- **4 sesiones de 2h**, 2 en app, 2 en terminal.
 - **Individuales (1:1)** — para traer cosas tipo:
   - *"¿Cómo enfocarías esto que nos quita X tiempo?"*
   - *"Estoy haciéndome una app y estoy atascado en X."*
@@ -83,7 +84,7 @@ Y de hecho, algunos tenéis necesidades e ideas de como solventarlas parecidas.
 
 ---
 
-{% slide width="wide" /%}
+{% slide width="wide" tags="interactivo" /%}
 
 # ¿Quién es quién?
 
@@ -335,7 +336,7 @@ Crea un archivo test.txt vacío en el escritorio
 - **Más “en bruto”:** da más libertad al modelo.
 - **Es donde llegan antes las cosas** (no necesariamente algo bueno).
 
-Si tras este workshop os sentís cómodos con la terminal, habréis ganado acceso a muchísimas herramientas sin tener que "aprender" ninguna. En lugar de aprender todos los arneses, aprende los básico de la terminal y deja que la IA se encargue de los detalles.
+Si tras este workshop os sentís cómodos con la terminal, habréis ganado acceso a **muchísimas** herramientas **sin tener que "aprender" ninguna**. En lugar de aprender todos los arneses, aprende los básico de la terminal y deja que la IA se encargue de los detalles.
 
 Dicho esto, en las primeras sesiones también veremos los otros harneses, porque facilitan tareas muy prácticas.
 
@@ -351,7 +352,7 @@ Supongo que lo tenéis claro, pero…
   - ¡Y es acumulado!
 - **Dos formas de pagar:**
   - Suscripción: lo que espero que tengáis. Más barato.
-  - “API” / por uso.
+  - “API” / por uso. **Hay funcionalidades que van por aquí!**
 - **La suscripción tiene límites**, los más importantes:
   - Cada 5 horas (“session”).
   - Semanal.
@@ -374,7 +375,9 @@ Estos días hay un modelo nuevo, **Fable**, disponible para suscripciones hasta 
 
 # La app de escritorio = "terminal vestida"
 
-Veréis que todo lo que vemos en la app de escritorio tiene su “paralelo” cuando nos vayamos a la terminal, pero he pensado que ayudaría a hacerlo más digerible verlo así.
+Veréis que todo lo que vemos en la app de escritorio tiene su “paralelo” cuando nos vayamos a la terminal.
+
+La terminal es más potente, pero verlo aquí hace que luego sea más fácil pasar a la terminal.
 
 **Claude Cowork es “Claude Code vestido de oficina”:**
 
@@ -431,18 +434,32 @@ Vereis que la misma cosa se puede hacer de diferentes maneras. No está definido
 
 ---
 
+{% slide width="wide" tags="interactivo" /%}
+
+# ¿Te quedas con los cuatro?
+
+{% match title="Une cada concepto con lo que hace" instructions="Toca un concepto y luego lo que hace (o al revés); pulsa «Comprobar» al terminar." %}
+{% pair left="CLAUDE.md" right="Memoria del proyecto que Claude lee al arrancar" /%}
+{% pair left="Skills" right="Instrucciones para una tarea; las invocas con /nombre" /%}
+{% pair left="MCPs" right="Enchufe estándar a apps y datos externos" /%}
+{% pair left="Subagents" right="Delegar en paralelo, con su propio contexto" /%}
+{% /match %}
+
+---
+
 # Un paseo por la aplicación de escritorio
 
 - Proyectos: Chat vs Cowork
+- Acaban de meter Claude Design (antes web). No lo he tocado.
 - Artefactos: "cosas" que podemos crear embebidas en Claude
 - Thinking: Antes automático, ahora elegimos (entiendon que es un máx)
 - Customize: Dónde ahora han ido los "conectores"
-- Avanzados veremos en siguiente sesión
+- Avanzados veremos en siguiente sesión: tareas programadas, trabajo remoto, mini apps
 - Pinned
 - **Settings importantes:**
   - Language
   - Capabilities 
-     - > Memory (probándolo)
+     - Memory (probándolo)
      - Load tools when needed
      - Visuals ON
      - Domain allowlist, comentar (estoy pensando si abrirlo 100%)
@@ -452,19 +469,28 @@ Vereis que la misma cosa se puede hacer de diferentes maneras. No está definido
 
 ---
 
+# Algunos shortcuts
+
+- **`cmd + 1`** → ir a Chat.
+- **`cmd + 2`** → ir a Cowork.
+- **`cmd + b`** → Mostrar/ocultar **b**arra lateral
+- **`cmd + k`** → *quick search*.
+
+En Cowork, tenéis un vista de como va cada agente que está trabajando, con su estado (pending o "esperándote")
+
+En el *quick search*, buscar un **proyecto**.
+
+---
+
 # ¡Ejercicio! 🏗️
 
 Hagamos un ejercicio muy sencillo para que los que no habéis usado Claude Code (de momento, a través de Cowork) veáis la potencia que tiene.
 
 **Ejercicios:**
 
-- [Organizar el caos](https://app.notion.com/p/Organiza-el-caos-3790bcf552548013b6bccfa6c3cf14c3)
-- [Preparar P&L](https://app.notion.com/p/Prepara-P-L-3790bcf55254801b95ecd3ae47230506)
-- [Sacar insights](https://app.notion.com/p/Saca-insights-3790bcf5525480e588bbea0dbafb48c2)
-
----
-
-# Ejercicio — ¡manos a la obra!
+- [Organizar el caos](https://wonderful-court-bea.notion.site/Organiza-el-caos-3790bcf552548013b6bccfa6c3cf14c3)
+- [Preparar P&L](https://wonderful-court-bea.notion.site/Prepara-P-L-3790bcf55254801b95ecd3ae47230506)
+- [Sacar insights](https://wonderful-court-bea.notion.site/Saca-insights-3790bcf5525480e588bbea0dbafb48c2)
 
 {% timer minutes=5 label="Tiempo del ejercicio" /%}
 
@@ -517,11 +543,11 @@ Los `CLAUDE.md` (o su equivalente en la app de escritorio) existen a distintos n
 
 {% columns %}
 {% column highlight=false %}
-![](/cms-assets/decks/intro-to-synced-slides/image.png)
+![Settings → General → Instructions for Claude (nivel usuario)](/cms-assets/decks/intro-to-synced-slides/instrucciones-usuario.png)
 {% /column %}
 
 {% column highlight=false %}
-![](/cms-assets/decks/intro-to-synced-slides/image.png)
+![Settings → Cowork → Global instructions (nivel Cowork)](/cms-assets/decks/intro-to-synced-slides/instrucciones-cowork.png)
 {% /column %}
 {% /columns %}
 
@@ -550,6 +576,7 @@ Es lo mismo (que ya vimos, pero en la app de escritorio)
 # Escribiendo tu CLAUDE.md
 
 - **¿Usuario o proyecto?** Piensa primero a qué nivel va lo que vas a escribir.
+- **Progressive disclosure:** no hace falta que se lo des todo de golpe…
 - **Referencias con `@`:** puedes apuntar a otros archivos… pero ojo, **se cargan enteros igual**.
 - **No te pases de ~200 líneas:** ¡recuerda que va en **cada mensaje**!
 - **Lo opcional, no lo metas entero:** si algo tiene que estar pero no siempre hace falta, **nombra el archivo e indica dónde encontrarlo**.
@@ -588,6 +615,8 @@ mi-skill/
 **Frontmatter:** el bloque que ponemos al inicio del archivo (YAML, entre `---`) para configurar cómo se usa esa skill:
 
 - nombre, descripción, modelo, *thinking effort*, …
+
+**[💻] Veamos una skill de la app de escritorio.**
 
 {% notes %}
 - Crear una skill. Descargarla y enseñarles lo que hay dentro.
@@ -651,9 +680,56 @@ El agente hace —o no hace— algo en función de nuestras instrucciones y de *
 
 ---
 
+{% slide tags="interactivo" /%}
+
+# Repaso: personalizar tu Claude
+
+Responde en tu pantalla 👇 (al final ves tu puntuación).
+
+{% quiz title="Repaso del Módulo 2" %}
+{% question text="¿Dónde pones algo que aplica a TODOS tus proyectos?" %}
+{% option correct=true %}En el **CLAUDE.md de usuario** (el de arriba del todo){% /option %}
+{% option %}En el CLAUDE.md de la carpeta del proyecto{% /option %}
+{% option %}En una skill{% /option %}
+{% explanation %}
+El de **usuario** está en la raíz y aplica a TODO lo de abajo; el de **proyecto** solo a esa carpeta.
+{% /explanation %}
+{% /question %}
+{% question text="¿Qué es, en esencia, una skill?" %}
+{% option correct=true %}Un **prompt** (+ opcional programa y recursos) que se carga **a demanda**{% /option %}
+{% option %}Un modelo de IA más potente{% /option %}
+{% option %}Una conexión a una app externa{% /option %}
+{% explanation %}
+Skill = prompt + [programa] + [recursos]. A diferencia del CLAUDE.md (siempre presente), se **carga cuando hace falta**.
+{% /explanation %}
+{% /question %}
+{% question text="¿Qué hace el 'progressive disclosure' de una skill?" %}
+{% option correct=true %}El agente solo ve **nombre y descripción** hasta que la necesita{% /option %}
+{% option %}Carga la skill entera en cada mensaje{% /option %}
+{% option %}Oculta la skill a otros usuarios{% /option %}
+{% explanation %}
+Así puedes tener muchas skills **sin machacar el contexto**: el cuerpo se lee solo cuando el agente detecta que aplica.
+{% /explanation %}
+{% /question %}
+{% question text="Tu skill no se invoca. ¿Qué revisas primero?" %}
+{% option correct=true %}La **descripción** / *when-to-use* y que no esté en modo **name-only**{% /option %}
+{% option %}El modelo que estás usando{% /option %}
+{% option %}Tu conexión a internet{% /option %}
+{% explanation %}
+Que la invoque depende de nombre, descripción y *when-to-use* (y de la atención del modelo). Mejóralos o añade una línea en el CLAUDE.md.
+{% /explanation %}
+{% /question %}
+{% /quiz %}
+
+---
+
 # Ejercicios: personaliza tu Claude (Desktop)
 
-📓 [Ejercicios módulo 2](https://app.notion.com/p/Ejercicios-3790bcf5525480298260c66870a13354)
+**Ejercicios:**
+
+- [Personaliza tu CLAUDE.md](https://wonderful-court-bea.notion.site/3790bcf5525480a39204e6ebc34837f6)
+- [Crear skills en Cowork](https://wonderful-court-bea.notion.site/3790bcf5525480199d5fe6c1a12c88ac)
+- [Crea dos proyectos reales](https://wonderful-court-bea.notion.site/3790bcf552548086b900f810940277f9)
 
 {% timer minutes=10 label="Tiempo del ejercicio" /%}
 
@@ -673,6 +749,24 @@ Pero no es muy útil si no se puede **comunicar con el mundo**…
 
 ---
 
+# Ejercicio (conmigo): Claude crea y publica anuncios en Meta
+
+Este es algo más complicado, pero creo que **viene bien verlo juntos** para que, cuando nos juntemos en las individuales, **tengáis ideas**.
+
+Lo haremos **paso a paso**:
+
+- ¿Podemos **generar imágenes**?
+- ¿Podemos **interactuar con Meta**?
+- ¿Lo empaquetamos como **skill**…? ¿O hacemos un **proyecto** y lo metemos en el `CLAUDE.md`? ¿O un **subagente**? 🤯
+
+{% prompt title="Pide a Claude que te guíe" %}
+Guíame para añadirte Replicate como mcp: https://replicate.com/docs/reference/mcp
+
+No soy técnico, y lo quiero añadir a Claude Cowork, a ser posible por la interfaz de usuario en lugar de tocar archivos de configuración
+{% /prompt %}
+
+---
+
 {% slide width="full" /%}
 
 # ¿Cómo conectamos Claude al mundo?
@@ -686,17 +780,21 @@ Leer y escribir en tu disco — lo que ya hemos hecho.
 El "enchufe" estándar a apps externas (Notion, Gmail…).
 {% /column %}
 
-{% column title="Extensión de Chrome" badge="MUY lento" %}
+{% column title="Extensión de Chrome" badge="MUY lento" highlight=true %}
 Claude maneja tu navegador.
 {% /column %}
 
-{% column title="Computer use" badge="Beta" %}
+{% column title="Skills" highlight=true %}
+Pueden "envolver" herramientas para conectarnos.
+{% /column %}
+
+{% column title="Computer use" badge="Beta" highlight=true %}
 Controla el ordenador como un humano (ratón y teclado).
 {% /column %}
 {% /columns %}
 
 {% columns %}
-{% column title="Extensiones" badge="Escondido" %}
+{% column title="Extensiones" badge="Escondido" highlight=true %}
 …
 {% /column %}
 
@@ -722,20 +820,48 @@ Un **MCP** (*Model Context Protocol*) es un estándar para conectar Claude a una
 Ejemplos: **Notion, Gmail, Calendar, Drive, GitHub, tu base de datos…**
 
 **Ojo:** cada MCP mete sus herramientas en el **contexto**. Activar muchos a la vez lo llena (¿recuerdas la *"dumb zone"*?) — enchufa solo los que necesites.
+{% callout title="Esto cada vez es menos verdad!" emoji="🤔" variant="info" %}
+Recientemente han añadido un "buscar tools" a Claude, de forma que en lugar de cargarlas todas, solo carga las que necesita en función de la conversación, buscándolas con el "buscar tools"
+{% /callout %}
+
 
 ---
 
 # Veamos cómo añadir MCPs
 
 - **Los fáciles:** conectores **"oficiales"** disponibles en la propia app.
-- **Marketplaces de terceros:** añádelos para descubrir muchos más.
 - **Los "no oficiales":** encontrarlos y añadirlos a mano.
+- **Marketplaces de terceros:** añádelos para descubrir muchos más.
 
 ---
 
 # MCPs nativos ("Anthropic & Partners")
 
 ![Directory → Connectors → Anthropic & Partners: Canva, Notion, Gmail, Drive…](/cms-assets/decks/intro-to-synced-slides/mcps-nativos.png)
+
+---
+
+# Oficiales de terceros
+
+- Me refiero a MCPs que son de la **propia herramienta** que intentas conectar, pero **no están en el listado de Claude**. Normalmente tienen una **página explicando cómo conectarlos**.
+
+{% callout title="¿Cómo los encuentras?" emoji="🔎" variant="info" %}
+Pide a Claude (o googlea) **"[Herramienta] MCP"**.
+{% /callout %}
+
+![Documentación oficial de Resend: "MCP Server"](/cms-assets/decks/intro-to-synced-slides/oficiales-terceros.png)
+
+---
+
+# MCPs no oficiales
+
+- Muchos de estos MCPs no oficiales los puedes encontrar en **GitHub**.
+
+{% callout title="¿Qué es GitHub?" emoji="🐙" variant="info" %}
+GitHub es un **"directorio de repositorios"** al que cualquier persona puede subir su proyecto para que otros colaboren o lo usen. **Pídele a Claude que lo revise antes de instalarlo.**
+{% /callout %}
+
+![Repositorio "adloop" en GitHub: stars, forks, commits y ficheros](/cms-assets/decks/intro-to-synced-slides/github-mcp.png)
 
 ---
 
@@ -753,7 +879,16 @@ Un plugin no es más que un **conjunto de skills y conectores (MCPs)** metidos e
 
 ---
 
-# MCPs locales
+{% slide width="wide" tags="interactivo" /%}
+
+# ¿Dónde encuentro cada tipo de MCP?
+
+{% match title="Une cada tipo de MCP con dónde lo encuentras" instructions="Toca un tipo y luego dónde se encuentra (o al revés); pulsa «Comprobar» al terminar." %}
+{% pair left="Nativos (Anthropic & Partners)" right="Ya en el listado de Claude" /%}
+{% pair left="Oficiales de terceros" right="En su web oficial (búscalo: «[Herramienta] MCP»)" /%}
+{% pair left="No oficiales" right="En GitHub (revísalo antes de instalar)" /%}
+{% pair left="Marketplace" right="Un directorio que añades para descubrir muchos" /%}
+{% /match %}
 
 ---
 
@@ -895,33 +1030,36 @@ Como comentamos, una skill puede llevar —además de un prompt o recursos— **
 - **API "típica"** (REST) y **bien documentada**.
 - **GraphQL.**
 
-**Comparemos ClickUp con Notion** 💻
-
 ---
 
-# Ejercicio (conmigo): Claude crea y publica anuncios en Meta
+# Veamos un ejemplo: este workshop
 
-Este es algo más complicado, pero creo que **viene bien verlo juntos** para que, cuando nos juntemos en las individuales, **tengáis ideas**.
-
-Lo haremos **paso a paso**:
-
-- ¿Podemos **generar imágenes**?
-- ¿Podemos **interactuar con Meta**?
-- ¿Lo empaquetamos como **skill**…? ¿O hacemos un **proyecto** y lo metemos en el `CLAUDE.md`? ¿O un **subagente**? 🤯
-
-{% prompt title="Pide a Claude que te guíe" %}
-Guíame para añadirte Replicate como mcp: https://replicate.com/docs/reference/mcp
-
-No soy técnico, y lo quiero añadir a Claude Cowork, a ser posible por la interfaz de usuario en lugar de tocar archivos de configuración
-{% /prompt %}
+![Workspace de Notion del workshop: output, wiki, Raw, Meta… todo el material del curso](/cms-assets/decks/intro-to-synced-slides/ejemplo-workshop-notion.png)
 
 ---
 
 # Ejercicios!
 
-📓 [Ejercicios módulo 3](https://app.notion.com/p/Ejercicios-3790bcf5525480298260c66870a13354)
+**Ejercicios:**
+
+- [Actualiza lo anterior](https://wonderful-court-bea.notion.site/37c0bcf5525480d6a073e601e8ddc026)
+- [Conecta Notion](https://wonderful-court-bea.notion.site/3790bcf552548069a0ffda9afeaa0ba7)
+- [Conecta tu stack tecnológico](https://wonderful-court-bea.notion.site/3790bcf5525480c8a7b1f0130fe3cfec)
+- [Reporte mensual](https://wonderful-court-bea.notion.site/3790bcf55254800eaedefa6c2dc21a11)
 
 {% timer minutes=10 label="Tiempo del ejercicio" /%}
+
+---
+
+{% slide tags="si da tiempo" /%}
+
+# Firecrawl
+
+---
+
+{% slide tags="si da tiempo" /%}
+
+# Lead scrapping
 
 ---
 
@@ -960,6 +1098,8 @@ No conozco vuestro caso de uso, así que *feel free* de sustituirlo por el vuest
 {% /callout %}
 
 ---
+
+{% slide tags="interactivo" /%}
 
 # Repaso: ¿nos quedamos con lo importante?
 
@@ -1001,6 +1141,8 @@ El Chat conversa pero no toca tus ficheros; **Code (y Cowork) accede a tu ordena
 {% /quiz %}
 
 ---
+
+{% slide tags="interactivo" /%}
 
 # Una más, rapidita 🃏
 

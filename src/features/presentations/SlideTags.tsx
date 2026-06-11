@@ -2,6 +2,7 @@ import {
   AlertTriangle,
   BookOpen,
   GraduationCap,
+  MousePointerClick,
   Tag,
   Wrench,
   Zap,
@@ -38,6 +39,15 @@ const TAG_STYLES: Record<string, TagStyle> = {
   warning: {
     Icon: AlertTriangle,
     className: 'border-red-300/60 bg-red-100 text-red-900',
+  },
+  // A saturated gradient pill (instead of the light-on-tint chips above) so the
+  // "do something on your screen" slides — quizzes & matches — stand out as
+  // special. The soft inner ring + drop shadow give it a polished, raised feel,
+  // and the white text reads cleanly over both the white and indigo backgrounds.
+  interactivo: {
+    Icon: MousePointerClick,
+    className:
+      'border-transparent bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-md shadow-fuchsia-500/25 ring-1 ring-inset ring-white/25',
   },
 };
 
