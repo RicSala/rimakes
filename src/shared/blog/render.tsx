@@ -5,13 +5,18 @@ import {
   CustomMarkdocComponents,
   CustomMarkdocTags,
 } from '@/shared/blog/custom-components';
-import { MarkdocNodes } from '@/shared/blog/markdoc-nodes';
+import { MarkdocNodes, NewTabLinkNode } from '@/shared/blog/markdoc-nodes';
 
 // A raw Markdoc string (legacy) or a pre-parsed node from the Keystatic reader
 // (returned when reading the `content` field with `resolveLinkedFiles`).
 export type MarkdocSource = string | { node: Node };
 
-export function renderMarkdoc(source: MarkdocSource) {
+type RenderOptions = {
+  /** Open links in a new tab — decks opt in so attendees don't navigate away. */
+  openLinksInNewTab?: boolean;
+};
+
+export function renderMarkdoc(source: MarkdocSource, options?: RenderOptions) {
   const ast = typeof source === 'string' ? Markdoc.parse(source) : source.node;
   const config = {
     tags: {
@@ -19,6 +24,7 @@ export function renderMarkdoc(source: MarkdocSource) {
     },
     nodes: {
       ...MarkdocNodes,
+      ...(options?.openLinksInNewTab ? { link: NewTabLinkNode } : {}),
     },
   };
 

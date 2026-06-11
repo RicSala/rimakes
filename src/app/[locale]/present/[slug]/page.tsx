@@ -33,7 +33,9 @@ export default async function PresentPage({ params }: Props) {
 
   const parsed = splitNodeIntoSlides(deck.content.node).map(extractSlideMeta);
   const slides = parsed.map(({ node }, slideIndex) => (
-    <div key={slideIndex}>{renderMarkdoc({ node })}</div>
+    <div key={slideIndex}>
+      {renderMarkdoc({ node }, { openLinksInNewTab: true })}
+    </div>
   ));
   const slidesMeta = parsed.map(({ meta }) => meta);
 

@@ -1,5 +1,5 @@
 import type { Config, Node, RenderableTreeNode } from '@markdoc/markdoc';
-import { Tag } from '@markdoc/markdoc';
+import { nodes, Tag } from '@markdoc/markdoc';
 
 function generateID(
   children: Array<RenderableTreeNode>,
@@ -70,8 +70,28 @@ const fence = {
   },
 };
 
+// A link that opens in a new tab. Used for slide decks (opt-in via renderMarkdoc)
+// so attendees don't navigate away from the live presentation when they open a
+// link from a slide; `rel` hardens the spawned tab. Keeps the default link
+// attribute schema (href required, title) for validation.
+const newTabLink = {
+  ...nodes.link,
+  transform(node: Node, config: Config) {
+    const attributes = node.transformAttributes(config);
+    const children = node.transformChildren(config);
+    return new Tag(
+      'a',
+      { ...attributes, target: '_blank', rel: 'noopener noreferrer' },
+      children
+    );
+  },
+};
+
 export const MarkdocNodes = {
   fence,
   heading,
   image,
 };
+
+/** Opt-in `link` override that opens links in a new tab (see renderMarkdoc). */
+export const NewTabLinkNode = newTabLink;

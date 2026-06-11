@@ -34,14 +34,18 @@ export default async function ControlPage({ params, searchParams }: Props) {
 
   const parsed = splitNodeIntoSlides(deck.content.node).map(extractSlideMeta);
   const slides = parsed.map(({ node }, slideIndex) => (
-    <div key={slideIndex}>{renderMarkdoc({ node })}</div>
+    <div key={slideIndex}>
+      {renderMarkdoc({ node }, { openLinksInNewTab: true })}
+    </div>
   ));
   const slidesMeta = parsed.map(({ meta }) => meta);
   // Presenter-only: rendered here (the secret-gated /control screen) and never on
   // the audience viewer, which doesn't read `notes` at all.
   const notes = parsed.map(({ notes: slideNotes }, slideIndex) =>
     slideNotes ? (
-      <div key={slideIndex}>{renderMarkdoc({ node: slideNotes })}</div>
+      <div key={slideIndex}>
+        {renderMarkdoc({ node: slideNotes }, { openLinksInNewTab: true })}
+      </div>
     ) : null
   );
 
