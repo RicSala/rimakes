@@ -537,6 +537,49 @@ En resumen: inyectarle contexto (claude.md, skills) o darle capacidades (mcps, s
 
 ---
 
+{% slide tags="interactivo" /%}
+
+# Repaso: personalizar tu Claude
+
+Responde en tu pantalla 👇 (al final ves tu puntuación).
+
+{% quiz title="Repaso del Módulo 2" %}
+{% question text="¿Dónde pones algo que aplica a TODOS tus proyectos?" %}
+{% option %}En el CLAUDE.md de la carpeta del proyecto{% /option %}
+{% option correct=true %}En el CLAUDE.md de usuario (el de arriba del todo){% /option %}
+{% option %}En una skill{% /option %}
+{% explanation %}
+El de **usuario** está en la raíz y aplica a TODO lo de abajo; el de **proyecto** solo a esa carpeta.
+{% /explanation %}
+{% /question %}
+{% question text="¿Qué es, en esencia, una skill?" %}
+{% option %}Un modelo de IA más potente{% /option %}
+{% option %}Una conexión a una app externa{% /option %}
+{% option correct=true %}Un prompt (+ opcional programa y recursos) que se carga a demanda{% /option %}
+{% explanation %}
+Skill = prompt + [programa] + [recursos]. A diferencia del CLAUDE.md (siempre presente), se **carga cuando hace falta**.
+{% /explanation %}
+{% /question %}
+{% question text="¿Qué hace el 'progressive disclosure' de una skill?" %}
+{% option correct=true %}El agente solo ve nombre y descripción hasta que la necesita{% /option %}
+{% option %}Carga la skill entera en cada mensaje{% /option %}
+{% option %}Oculta la skill a otros usuarios{% /option %}
+{% explanation %}
+Así puedes tener muchas skills **sin machacar el contexto**: el cuerpo se lee solo cuando el agente detecta que aplica.
+{% /explanation %}
+{% /question %}
+{% question text="Tu skill no se invoca. ¿Qué revisas primero?" %}
+{% option %}El modelo que estás usando{% /option %}
+{% option correct=true %}La descripción / when-to-use y que no esté en modo name-only{% /option %}
+{% option %}Tu conexión a internet{% /option %}
+{% explanation %}
+Que la invoque depende de nombre, descripción y *when-to-use* (y de la atención del modelo). Mejóralos o añade una línea en el CLAUDE.md.
+{% /explanation %}
+{% /question %}
+{% /quiz %}
+
+---
+
 # CLAUDE.md a distintos niveles
 
 Los `CLAUDE.md` (o su equivalente en la app de escritorio) existen a distintos niveles: **a nivel de usuario** y **a nivel de proyecto**.
@@ -570,6 +613,19 @@ Es lo mismo (que ya vimos, pero en la app de escritorio)
         ├── …
         └── CLAUDE.md            # ← nivel proyecto (solo esta carpeta)
 ```
+
+---
+
+# Hablando de proyectos…
+
+- Los proyectos de Cowork son una forma de **organizar tu trabajo**.
+- **Aíslan la memoria:** no se "contaminan" entre ellos (el proyecto de un cliente no genera memorias de otro cliente).
+- Tienen su **propio `CLAUDE.md`** (y un `MEMORY.md` escondido).
+- **[💻] MEMORIA: veamos cómo funciona** (tanto sin como con proyecto).
+
+{% callout title="Esto va evolucionando" emoji="🚧" variant="info" %}
+Hay casos de uso evidentes que aún no están claros: skills por proyecto, herramientas por proyecto, etc.
+{% /callout %}
 
 ---
 
@@ -677,49 +733,6 @@ El agente hace —o no hace— algo en función de nuestras instrucciones y de *
 - Comprueba que no esté en modo **"name-only"** (lo veremos).
 - Mejora la **descripción** y el *when to use*.
 - Añade una línea en el **`CLAUDE.md`**.
-
----
-
-{% slide tags="interactivo" /%}
-
-# Repaso: personalizar tu Claude
-
-Responde en tu pantalla 👇 (al final ves tu puntuación).
-
-{% quiz title="Repaso del Módulo 2" %}
-{% question text="¿Dónde pones algo que aplica a TODOS tus proyectos?" %}
-{% option correct=true %}En el **CLAUDE.md de usuario** (el de arriba del todo){% /option %}
-{% option %}En el CLAUDE.md de la carpeta del proyecto{% /option %}
-{% option %}En una skill{% /option %}
-{% explanation %}
-El de **usuario** está en la raíz y aplica a TODO lo de abajo; el de **proyecto** solo a esa carpeta.
-{% /explanation %}
-{% /question %}
-{% question text="¿Qué es, en esencia, una skill?" %}
-{% option correct=true %}Un **prompt** (+ opcional programa y recursos) que se carga **a demanda**{% /option %}
-{% option %}Un modelo de IA más potente{% /option %}
-{% option %}Una conexión a una app externa{% /option %}
-{% explanation %}
-Skill = prompt + [programa] + [recursos]. A diferencia del CLAUDE.md (siempre presente), se **carga cuando hace falta**.
-{% /explanation %}
-{% /question %}
-{% question text="¿Qué hace el 'progressive disclosure' de una skill?" %}
-{% option correct=true %}El agente solo ve **nombre y descripción** hasta que la necesita{% /option %}
-{% option %}Carga la skill entera en cada mensaje{% /option %}
-{% option %}Oculta la skill a otros usuarios{% /option %}
-{% explanation %}
-Así puedes tener muchas skills **sin machacar el contexto**: el cuerpo se lee solo cuando el agente detecta que aplica.
-{% /explanation %}
-{% /question %}
-{% question text="Tu skill no se invoca. ¿Qué revisas primero?" %}
-{% option correct=true %}La **descripción** / *when-to-use* y que no esté en modo **name-only**{% /option %}
-{% option %}El modelo que estás usando{% /option %}
-{% option %}Tu conexión a internet{% /option %}
-{% explanation %}
-Que la invoque depende de nombre, descripción y *when-to-use* (y de la atención del modelo). Mejóralos o añade una línea en el CLAUDE.md.
-{% /explanation %}
-{% /question %}
-{% /quiz %}
 
 ---
 
