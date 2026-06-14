@@ -1,143 +1,91 @@
-# Plan: Training menu + password-gated deck + self-navigable public slides
+# Plan: Separate self-paced review deck (live deck stays synced & untouched)
 
 ## Context
 
-The first workshop session went well and attendees asked for the slides. Today:
+**v1 (shipped to `main`) is broken.** It made the *live* viewer
+(`/present/intro-to-synced-slides`) double as a review surface: it still followed the
+presenter over Pusher **and** let the audience self-navigate. The defect: when the
+presenter opens `/control` to **prepare the next session**, every move broadcasts on the
+deck's Pusher channel (`cache-deck-<slug>`), so anyone reviewing past slides gets yanked
+to the presenter's current slide. Live-sync and self-paced review can't share one deck.
 
-- The live deck is the **Markdoc** deck `Session 1` at `/present/intro-to-synced-slides`
-  (the `/claude` short link redirects here). The viewer (`SlideViewer`) is **passive** —
-  it only follows the presenter over Pusher, so attendees who open the URL can't move at all.
-- The deck URL is **public** (no gate); only the `/control` presenter screen is secret-gated.
-- We covered material only up to the slide **"Pero… ¿Qué es un plugin?"**
-  (`content/decks/intro-to-synced-slides/index.mdoc:887`).
+**Fix (the user's proposal):** keep the live deck exactly as it was (synced, for running
+sessions), and serve the already-covered material as a **separate, self-paced route that
+never subscribes to Pusher** and only renders slides marked `public`. No content copy —
+it reads the same deck via `getDeck` and filters. The password gate + Training page move
+to that review route.
 
-We want three things:
+## Revert (back to pre-v1 behaviour)
 
-1. **Protect the workshop material with a password** (`ClaudeRocks`). Gate the deck **URL**,
-   done in the **server component** (cookie check) — explicitly *not* in middleware.
-2. **A "Training" menu item** in the site nav → a page with a card for the training →
-   clicking it asks for the password.
-3. **Let attendees move among the covered slides on their own.** Add a per-slide `public`
-   flag; attendees can step ←/→ among public slides. During a live session the presenter's
-   moves always win (everyone mirrors the projected slide) — keep it simple, no "browse lock".
+- `src/features/presentations/SlideViewer.tsx` → the original **passive** viewer
+  (`useSyncedSlide` only; no local index, no ←/→, no overlay).
+- `src/app/[locale]/present/[slug]/page.tsx` → original (drop the training gate and the
+  `publicThrough` resolution; just build slides + meta → `<SlideViewer>`). The live deck
+  is **open again** (see *Decision* below) and untouched by the presenter-prep problem.
 
-Leak of the *content* is explicitly a non-concern ("I don't care if other people see these
-slides; I'm sharing the password"), so the gate is a light shared-password cookie, and all
-slides may stay in the client HTML.
+## Keep (already built — reused by the review route)
 
----
+- **Slide model `public` / `publicThrough`:** `SlideStage.tsx` (`SlideMeta.public`),
+  `splitSlides.ts` (extract `public`), `custom-components.tsx` + `keystatic.config.ts`
+  (the `public` attr/checkbox + `publicThrough` deck field), and the deck frontmatter
+  `publicThrough: 47`.
+- **Password gate infra:** `src/features/training/{access.ts,actions.ts,PasswordForm.tsx,
+  TrainingGate.tsx}` and `src/shared/components/ui/dialog.tsx`.
+- **Training entry point:** the Navbar "Training" item, `/training` page, navbar
+  dictionaries, and the `/training` i18n pathname.
 
-## 1. Password gate (server-component cookie, no middleware)
+## Add — the self-paced review route
 
-New env var (already chosen by the user):
+- `src/features/presentations/ReviewViewer.tsx` (new, `'use client'`): local `index`
+  state, ←/→ + PageUp/Down keys, and **← Anterior / n·N / Siguiente →** buttons over the
+  slides it's handed. **No `useSyncedSlide`, no Pusher slide subscription.** Wrap in
+  `PresentationProvider slug={` + "`review-${slug}`" + `}` so any in-slide `Timer` uses a
+  **separate** channel and can't be driven by the live presenter. Renders via
+  `SlideStage` (reused) with `hideCounter` + the overlay.
+- `src/app/[locale]/present/[slug]/review/page.tsx` (new, server): password-gated via
+  `hasTrainingAccess()` → `<TrainingGate redirectTo={'/present/'+slug+'/review'} />` on
+  miss. Then `getDeck` → `splitNodeIntoSlides`+`extractSlideMeta` → **filter to public
+  slides** (`meta.public === true || i < (deck.publicThrough ?? 0)`) → render only those
+  → `<ReviewViewer>`. `notFound()` if nothing is public yet. Reuses the full-screen
+  `present/layout.tsx`.
+- Repoint the Training card: `src/app/[locale]/(unauth)/training/page.tsx` →
+  `deckPath = '/present/intro-to-synced-slides/review'` (the card links/unlocks to the
+  review route, not the live deck).
 
-- `TRAINING_PASSWORD="ClaudeRocks"` → add to `.env.local` (gitignored) and to **Vercel** env
-  for production. (Reuses the existing env-var pattern alongside `PRESENTATION_CONTROL_SECRET`.)
+## Decision: the live deck stays open
 
-New files under `src/features/training/`:
+Recommend reverting the live deck to **open** (no password), matching "keep the deck as
+it was" + "I don't care if others see these slides." `/claude` keeps pointing at the live
+deck for running sessions. The protected, navigable material is the gated review route.
+*(If you'd rather gate the live deck too, it's a one-line add — leave the `hasTrainingAccess`
+check on `present/[slug]/page.tsx`.)*
 
-- `access.ts` (server-only helpers):
-  - `TRAINING_COOKIE = 'training_access'`.
-  - `accessToken()` → `sha256(process.env.TRAINING_PASSWORD)` via `node:crypto` `createHash`
-    (so the literal password never lands in a cookie and the value isn't trivially forgeable).
-  - `hasTrainingAccess()` → reads `cookies()` from `next/headers`, returns
-    `cookie?.value === accessToken()`.
-- `actions.ts` (`'use server'`):
-  - `unlockTraining(prevState, formData)` — compares `formData.get('password')` to
-    `TRAINING_PASSWORD`. On match: `cookies().set(TRAINING_COOKIE, accessToken(), { httpOnly:true,
-    secure:true, sameSite:'lax', path:'/', maxAge: 60*60*24*30 })` then `redirect(redirectTo)`.
-    On mismatch: return `{ error: 'Contraseña incorrecta' }`. `redirectTo` comes from a hidden field.
+## Docs
 
-New client component `src/features/training/PasswordForm.tsx`:
+Update `content/decks/CLAUDE.md` + `src/features/presentations/ARCHITECTURE.md`: the live
+viewer is **passive/synced** again; the covered material is the **self-paced, gated
+`/present/<slug>/review`** route (no Pusher). Adjust the "Public slides" / "Access"
+sections accordingly.
 
-- `useActionState(unlockTraining, …)`, a single password `Input`, submit `Button`, inline error.
-- Hidden `redirectTo` field. Reused in two places (the inline gate and the `/training` dialog).
-
-Gate the **viewer** route only — `src/app/[locale]/present/[slug]/page.tsx`:
-
-- After `setRequestLocale`, `if (!(await hasTrainingAccess())) return <TrainingGate redirectTo={'/present/' + slug} />;`
-  before building slides. `TrainingGate` = a centered card wrapping `PasswordForm`.
-- Reading `cookies()` makes this route dynamic; that's fine (deck content is tiny). Verify the
-  build still succeeds with `generateStaticParams` present (params stay static, render is dynamic).
-- **Do NOT** touch `src/app/[locale]/present/[slug]/control/page.tsx` (presenter stays gated by
-  `PRESENTATION_CONTROL_SECRET`) or `src/middleware.ts`.
-
-## 2. "Training" nav item + `/training` page
-
-- `src/shared/components/Navbar.tsx` — add `{ label: 'training', href: '/training', regex: '^/training' }`
-  to `MENU_ITEMS` (uses plain `next/link` like the other items).
-- Add the label to the navbar dictionaries:
-  `src/shared/components/dictionaries/{es,en}/navbar.json` → `"training": "Training"`.
-- New route `src/app/[locale]/(unauth)/training/page.tsx` (server component, follows the
-  `(unauth)` layout conventions):
-  - A heading + one `Card` (`src/shared/components/ui/card.tsx`) for **"Sesión 1 · Introducción a Claude"**.
-  - If `hasTrainingAccess()` → the card is a direct `Link` to `/present/intro-to-synced-slides`.
-  - Else → the card opens a password `Dialog` containing `PasswordForm` (redirectTo = the deck).
-- New UI primitive `src/shared/components/ui/dialog.tsx` — thin wrapper over the already-installed
-  `@radix-ui/react-dialog` (mirror the existing `ui/sheet.tsx`); there is no Dialog yet.
-- Optionally add `'/training': '/training'` to `pathnames` in
-  `src/shared/internationalization/i18n/config.ts` for consistency (route works without it).
-
-## 3. Per-slide `public` flag + self-navigation among public slides
-
-Wire a new `public` attribute through the existing `{% slide %}` directive pipeline:
-
-- `src/features/presentations/SlideStage.tsx` — add `public?: boolean` to the `SlideMeta` type.
-- `src/features/presentations/splitSlides.ts` — in `extractSlideMeta`, read `attrs.public`
-  (Boolean) into `meta.public` (same loop that already handles `bg`/`tags`/`width`).
-- `src/shared/blog/custom-components.tsx` — add `public: { type: Boolean }` to the `slide` tag's
-  `attributes` (required or Markdoc/Keystatic validation rejects the attribute).
-- `src/keystatic.config.ts` — add `public: fields.checkbox(...)` to the `slide` block schema
-  (required because `getDeck` validates through Keystatic, even for hand-authored `.mdoc`).
-
-Enhance the **viewer** to navigate among public slides — `src/features/presentations/SlideViewer.tsx`
-(used by both `/present` and `/talk`; `/talk` passes no `slidesMeta`, so it stays passive — no regression):
-
-- Keep `useSyncedSlide(slug)` but hold a local `index`:
-  `const synced = useSyncedSlide(slug); const [index, setIndex] = useState(synced);
-   useEffect(() => setIndex(synced), [synced]);`
-  → the presenter's moves always snap everyone to the projected slide (live mirror preserved).
-- Compute `publicIndexes = slides.map((_,i)=>i).filter(i => slidesMeta?.[i]?.public)`.
-- Only when `publicIndexes.length >= 2`, render prev/next controls (passed via `SlideStage`'s
-  existing `overlay` prop, which both stage branches already render) and bind ←/→ keys:
-  - **next** = smallest public index `> index`; **prev** = largest public index `< index`;
-    disable at the ends. (Between presenter moves the attendee can roam public slides; the next
-    presenter event re-asserts the live slide.)
-- Keep `hideCounter` for the live audience look; the prev/next control itself shows position.
-
-Mark the covered slides public in `content/decks/intro-to-synced-slides/index.mdoc`:
-
-- For every slide from the first ("# Antes de nada…") **through** "# Pero… ¿Qué es un plugin?"
-  (`:887`), ensure a leading `{% slide ... public=true /%}`:
-  - slides that already have a `{% slide … /%}` → add `public=true`;
-  - slides without one → insert `{% slide public=true /%}` at the top.
-- Leave every slide **after** the plugin slide non-public (not yet covered).
-- Going forward each week: marking a newly-covered slide is just adding `public=true` to its
-  `{% slide %}` directive.
-
----
-
-## Files touched (summary)
+## Files
 
 | Area | Files |
 |---|---|
-| Password gate | `src/features/training/{access.ts,actions.ts,PasswordForm.tsx}` (new); `.env.local` |
-| Deck gate | `src/app/[locale]/present/[slug]/page.tsx` (+ a small `TrainingGate` card, inline or colocated) |
-| Nav + page | `src/shared/components/Navbar.tsx`; `dictionaries/{es,en}/navbar.json`; `src/app/[locale]/(unauth)/training/page.tsx` (new); `src/shared/components/ui/dialog.tsx` (new); maybe `i18n/config.ts` |
-| Public slides | `SlideStage.tsx`, `splitSlides.ts`, `custom-components.tsx`, `keystatic.config.ts`, `SlideViewer.tsx`; `content/decks/intro-to-synced-slides/index.mdoc` |
+| Revert | `SlideViewer.tsx`; `present/[slug]/page.tsx` |
+| New | `ReviewViewer.tsx`; `present/[slug]/review/page.tsx` |
+| Repoint | `(unauth)/training/page.tsx` (deck path) |
+| Keep as-is | slide-model + training-gate + nav files from v1 |
+| Docs | `content/decks/CLAUDE.md`; `presentations/ARCHITECTURE.md` |
 
 ## Verification
 
-1. `pnpm type:check` and `pnpm lint` clean; `pnpm build` succeeds (confirm the gated viewer
-   route builds despite reading cookies).
-2. `pnpm dev`, then:
-   - **Gate:** open `/present/intro-to-synced-slides` (and `/claude`) in a fresh/incognito tab →
-     password card appears. Wrong password → inline error. `ClaudeRocks` → deck renders; reload →
-     still unlocked (cookie). `/present/.../control?key=<secret>` still works without the cookie.
-   - **Nav:** click the "Training" nav item → card → password → deck. Press ←/→ and the buttons →
-     move only among the covered (public) slides; the slides after "¿Qué es un plugin?" are
-     unreachable via self-nav.
-   - **Live mirror:** open `/control?key=<secret>` in one window and the viewer in another; moving
-     the presenter snaps the viewer to the projected slide even after the viewer self-navigated.
-3. Open `/keystatic` → Presentations → confirm the deck still loads and the new `public` checkbox
-   shows on the Slide settings block.
+1. `pnpm type:check`, `pnpm lint`, `pnpm build` clean.
+2. Dev server, two windows:
+   - **Live deck unchanged:** open `/present/intro-to-synced-slides` (open, no gate) and
+     `/present/.../control?key=<secret>`; moving the presenter still moves the viewer.
+   - **Review route:** open `/present/intro-to-synced-slides/review` → password gate →
+     `ClaudeRocks` → self-paced deck of **only** slides 1–47; ←/→ work; the slides after
+     "¿Qué es un plugin?" are absent entirely.
+   - **The fix:** with the review route open in one window, move the presenter's
+     `/control` in another → the **review route does NOT move** (decoupled from Pusher).
+   - Training page card → review route.

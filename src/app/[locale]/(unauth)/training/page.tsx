@@ -8,8 +8,10 @@ type Props = {
   params: Promise<{ locale: Locale }>;
 };
 
-// The live workshop deck attendees open (also where /claude redirects).
-const SESSION_DECK_PATH = '/present/intro-to-synced-slides';
+// The self-paced review deck (covered material only, no live sync). The live,
+// presenter-synced viewer lives at /present/intro-to-synced-slides (open, via
+// /claude) and is intentionally NOT what this card links to.
+const SESSION_DECK_PATH = '/present/intro-to-synced-slides/review';
 
 export default async function TrainingPage({ params }: Props) {
   const { locale } = await params;

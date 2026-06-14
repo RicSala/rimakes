@@ -18,7 +18,7 @@ It has two parts:
 ---
 title: Intro to synced slides
 description: A short demo deck.
-publicThrough: 12   # optional — audience may self-navigate slides 1–12
+publicThrough: 12   # optional — slides 1–12 appear in the self-paced review deck
 ---
 # First slide
 
@@ -37,10 +37,12 @@ safe — it stays part of the code and never splits.
 
 ### Where it shows up
 
-- **Viewer (audience):** `/present/<slug>` — follows the presenter. **Password-gated**
-  (see *Access* below). If the deck marks slides `public`, the audience can also step
-  ←/→ through those on their own (see *Public slides* below) — but the presenter's live
-  moves still snap everyone back to the projected slide.
+- **Viewer (audience):** `/present/<slug>` — passively follows the presenter (open, no
+  password). For **running sessions**.
+- **Review (self-paced):** `/present/<slug>/review` — a **separate**, **password-gated**
+  surface showing only the covered (`public`) slides, with ←/→ navigation and **no live
+  sync** (see *Public slides* and *Access* below). This is what attendees use to **review
+  after a session**; prepping the live deck on `/control` can't disturb it.
 - **Presenter / control:** `/present/<slug>/control?key=<PRESENTATION_CONTROL_SECRET>`
   — drives the deck. Arrow keys / on-screen buttons / `o` (overview grid) navigate;
   every move is broadcast over Pusher so the whole room follows. Refreshing a
@@ -68,10 +70,10 @@ slide's chrome. It is optional and is not rendered inline.
 - **`width`** — content column width. `normal` (default, readable prose line
   length) · `wide` · `full`. Widen for **comparisons / wide tables** so they
   aren't cramped; leave normal for text slides.
-- **`public`** — `true` lets the **audience navigate to this slide on their own**
-  (covered material). See *Public slides & audience navigation* below. To open a
-  whole leading run at once, prefer the deck-level `publicThrough` over flagging
-  every slide.
+- **`public`** — `true` adds this slide to the **self-paced review deck**
+  (`/present/<slug>/review`), the audience-navigable copy of the covered material. See
+  *Public slides & the review deck* below. To add a whole leading run at once, prefer the
+  deck-level `publicThrough` over flagging every slide.
 
 ## Available components
 
@@ -82,7 +84,7 @@ copyable block. Don't wrap ordinary content in components for decoration.
 
 | Component | Syntax | Attributes |
 |---|---|---|
-| **Slide settings** | `{% slide bg="brand" tags="A, B" /%}` | `bg`: `none` \| `brand` \| `dark`; `tags`: comma-separated; `width`: `normal` \| `wide` \| `full`; `public`: `true` (audience-navigable) |
+| **Slide settings** | `{% slide bg="brand" tags="A, B" /%}` | `bg`: `none` \| `brand` \| `dark`; `tags`: comma-separated; `width`: `normal` \| `wide` \| `full`; `public`: `true` (adds slide to the review deck) |
 | **Callout** | `{% callout title="…" emoji="👋" variant="info" %}…body…{% /callout %}` | `title`, `emoji`, `variant`: `default` \| `info` \| `warning` \| `error` \| `success` |
 | **Prompt** | `{% prompt title="…" %}…body…{% /prompt %}` | `title` — collapsible + copy-to-clipboard block |
 | **Speaker notes** | `{% notes %}…body…{% /notes %}` | presenter-only — see below; no attributes |
@@ -105,37 +107,36 @@ copyable block. Don't wrap ordinary content in components for decoration.
 > (e.g. `{% callout variant="info" %}`, which is intentionally blue) keep their
 > color regardless of the scheme.
 
-## Public slides & audience navigation
+## Public slides & the review deck
 
-By default the audience viewer just **follows the presenter**. To let attendees move
-through already-covered slides on their own (e.g. when you share the deck for review
-after a session), mark slides **public** — two ways, and a slide counts as public if
-**either** applies:
+The audience viewer (`/present/<slug>`) just **follows the presenter** — attendees never
+move on their own, so prepping the next session on `/control` can never desync a live
+room. To let attendees review **already-covered** slides at their own pace, the same
+content is **also** served self-paced at **`/present/<slug>/review`**, which renders
+**only the slides marked public** (no content is copied — it reads the same deck and
+filters). Mark slides public two ways; a slide is public if **either** applies:
 
-- **A leading run — `publicThrough` (frontmatter):** set it to the number of covered
-  slides, e.g. `publicThrough: 12` makes slides **1–12** navigable. This is the usual
-  knob — **bump the number as the course progresses** (one line, no per-slide edits).
-- **One-off slides — `{% slide public=true /%}`:** flag an individual slide anywhere
+- **A leading run — `publicThrough` (frontmatter):** the number of covered slides, e.g.
+  `publicThrough: 12` puts slides **1–12** in the review deck. The usual knob — **bump it
+  as the course progresses** (one line, no per-slide edits).
+- **One-off slides — `{% slide public=true /%}`:** add an individual slide anywhere
   (handy for a public slide outside the leading run).
 
-When a deck has **≥2 public slides**, the viewer shows **← Anterior / Siguiente →**
-controls and binds the **←/→** keys; they step **only** among public slides (non-public
-ones are skipped and can't be reached on the audience's own). **The presenter still
-wins:** every live move snaps the whole room back to the projected slide, so during a
-session everyone mirrors what's on screen — self-navigation is for between/after moves.
-A deck with no public slides behaves exactly as before (passive). `publicThrough` is
-folded into each slide's `public` meta in `present/[slug]/page.tsx`; the nav logic lives
-in `SlideViewer.tsx`.
+The review deck has **← Anterior / Siguiente →** buttons + **←/→** keys and **no Pusher
+connection at all**, so it's completely decoupled from a live session — moving the live
+deck never moves a reviewer. It's built in `present/[slug]/review/page.tsx` (filters to
+public slides) + `ReviewViewer.tsx` (the self-paced surface). The live viewer
+(`SlideViewer.tsx`) stays passive and unchanged.
 
 ## Access (password gate)
 
-The audience viewer (`/present/<slug>`) is gated by a **shared password**
-(`TRAINING_PASSWORD` env var): the first visit shows a password card, and a correct
-entry stores a hashed cookie (~30 days) that reveals the deck. It's a **soft** gate (the
-content isn't a secret) enforced in the viewer's **server component** — not middleware.
-The presenter `/control` screen is **not** affected (it keeps its own
-`PRESENTATION_CONTROL_SECRET`). Attendees can also reach the deck from the site's
-**Training** page (`/training`) → the session card → the same password. Set
+The **review deck** (`/present/<slug>/review`) is gated by a **shared password**
+(`TRAINING_PASSWORD` env var): the first visit shows a password card, and a correct entry
+stores a hashed cookie (~30 days) that reveals it. It's a **soft** gate (the content
+isn't a secret) enforced in the route's **server component** — not middleware. The
+**live** viewer (`/present/<slug>`) and the presenter `/control` screen are **not** gated
+(`/control` keeps its own `PRESENTATION_CONTROL_SECRET`). Attendees reach the review deck
+from the site's **Training** page (`/training`) → the session card → the password. Set
 `TRAINING_PASSWORD` in `.env.local` **and** in Vercel for production. Wiring lives in
 `src/features/training/` (`access.ts`, `actions.ts`, `PasswordForm.tsx`,
 `TrainingGate.tsx`).

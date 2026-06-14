@@ -29,10 +29,9 @@ and passes them down; the viewer page never reads notes — that is the whole
 privacy model** (presenter-only data is computed only where the secret lives, so
 it never reaches the audience's HTML).
 
-The **viewer page** does two extra things: it folds the deck's `publicThrough`
-frontmatter into each slide's `public` meta (a leading run the audience may
-self-navigate), and it is **password-gated** via `hasTrainingAccess()` — see
-*Access gate* below.
+The audience viewer (`/present/<slug>`) is **passive** (presenter-synced, open). A
+**separate** self-paced route, `/present/<slug>/review`, serves only the covered
+(`public`) slides and is password-gated — see *Audience review & access gate* below.
 
 ## Realtime sync (Pusher)
 
@@ -110,22 +109,25 @@ A component produced by a **node transform** instead of a `{% tag %}` (e.g.
 Markdown (a fenced block, an `![](…)` image) and `markdoc-nodes.ts` rewrites it to
 the component.
 
-## Audience navigation & access gate
+## Audience review & access gate
 
-- **Self-navigation:** the viewer is no longer strictly passive. A slide is *public*
-  when its `{% slide public=true /%}` is set **or** its index falls in the deck's
-  `publicThrough` leading run (resolved server-side in the viewer page). With ≥2 public
-  slides, `SlideViewer` renders ←/→ controls + key bindings that step **only** among
-  public slides. The presenter still wins: `useSyncedSlide` updates snap the local index
-  back to the broadcast slide, so a live move re-mirrors the whole room. A deck with no
-  public slides behaves exactly as before (passive).
-- **Access gate:** `/present/<slug>` (the viewer) is gated by a shared password.
+- **Two surfaces, one deck.** The live viewer (`/present/<slug>`, `SlideViewer`) is
+  **passive** — it only follows the presenter, so prepping the next session on `/control`
+  can't desync a live room. A **separate** route, `/present/<slug>/review`
+  (`ReviewViewer`), serves the same deck **self-paced** with ←/→ controls and **no Pusher
+  subscription**, so a presenter moving `/control` can't move a reviewer. Its
+  `PresentationProvider` slug is namespaced `review-<slug>` so an in-slide `Timer` uses
+  its own channel too.
+- **Which slides.** The review page renders **only** public slides — a leading run via
+  the deck's `publicThrough` frontmatter, plus any per-slide `{% slide public=true /%}`.
+  No content is copied; it reads the same `getDeck` and filters.
+- **Access gate.** `/present/<slug>/review` is gated by a shared password.
   `hasTrainingAccess()` (`features/training/access.ts`) compares a hashed cookie to
   `sha256(TRAINING_PASSWORD)`; on miss the page renders `<TrainingGate>` instead of the
   deck. `unlockTraining` (`features/training/actions.ts`, a server action) validates the
   password, sets the cookie (~30 days), and redirects back. Reading the cookie makes the
-  viewer route **dynamic**. The `/control` page is unaffected (own
-  `PRESENTATION_CONTROL_SECRET`). The site's `/training` page is the front door.
+  review route **dynamic**. The live viewer and `/control` are **not** gated. The site's
+  `/training` page is the front door.
 
 ## File map
 
@@ -133,14 +135,16 @@ the component.
 |---|---|
 | `content/decks/<slug>/index.mdoc` | Deck source. One file = one deck. |
 | `content/decks/CLAUDE.md` | Authoring guide (components, syntax). Points here for internals. |
-| `src/app/[locale]/present/[slug]/page.tsx` | **Viewer** route (server): password-gated (`hasTrainingAccess`); folds `publicThrough`→per-slide `public`; build slides + meta → `<SlideViewer>`. |
+| `src/app/[locale]/present/[slug]/page.tsx` | **Viewer** route (server): build slides + meta → `<SlideViewer>`. Open, presenter-synced. |
+| `src/app/[locale]/present/[slug]/review/page.tsx` | **Review** route (server): password-gated; filters to `public` slides → `<ReviewViewer>`. |
 | `src/app/[locale]/present/[slug]/control/page.tsx` | **Presenter** route (server): secret-gated; also builds `notes[]` → `<SlideController>`. |
 | `src/app/[locale]/present/layout.tsx` | Full-screen layout for both. |
 | `src/app/api/present/[slug]/route.ts` | POST publish endpoint (secret-gated). Broadcasts slide `index` or timer payload. |
 | `src/features/presentations/decks.ts` | Keystatic reader: `getDeck`, `getDeckSlugs`. |
 | `src/features/presentations/splitSlides.ts` | `splitNodeIntoSlides` + `extractSlideMeta` (peels `{% slide %}`→meta, `{% notes %}`→notes). |
 | `src/features/presentations/SlideStage.tsx` | Renders current slide; applies `bg` scheme + `width`; counter; entrance anim. Exports `SlideMeta`. |
-| `src/features/presentations/SlideViewer.tsx` | `'use client'` audience viewer; `useSyncedSlide` (presenter moves snap/win) + ←/→ self-nav among `public` slides; wraps in `PresentationProvider` (slug). |
+| `src/features/presentations/SlideViewer.tsx` | `'use client'` passive viewer; `useSyncedSlide`; wraps in `PresentationProvider` (slug). |
+| `src/features/presentations/ReviewViewer.tsx` | `'use client'` self-paced review surface; local ←/→ nav, **no Pusher**; `PresentationProvider` (`review-<slug>`). |
 | `src/features/presentations/SlideController.tsx` | `'use client'` presenter: publishes moves, keyboard/overview nav, notes panel; provider (slug + secret). |
 | `src/features/presentations/useSyncedSlide.ts` | Viewer hook: subscribe to slide channel → current index. |
 | `src/features/presentations/channel.ts` | Channel names + event names + payload types (`SLIDE_EVENT`, `TIMER_EVENT`, `deckChannel`, `timerChannel`). |
@@ -167,7 +171,8 @@ the component.
 ## Env vars
 
 - `PRESENTATION_CONTROL_SECRET` — gates the `/control` page **and** the publish API.
-- `TRAINING_PASSWORD` — shared password gating the audience viewer (`/present/<slug>`)
-  and the Training page. Stored as a hashed cookie; set it in Vercel for production.
+- `TRAINING_PASSWORD` — shared password gating the **review** deck
+  (`/present/<slug>/review`) and the Training page. Stored as a hashed cookie; set it in
+  Vercel for production.
 - `NEXT_PUBLIC_PUSHER_KEY`, `NEXT_PUBLIC_PUSHER_CLUSTER` — browser subscribe (public).
 - `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_SECRET`, `PUSHER_CLUSTER` — server publish.
