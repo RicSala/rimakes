@@ -12,6 +12,7 @@ export const routing = defineRouting({
     '/#open-source': '/#open-source',
     '/blog': '/blog',
     '/blog/[slug]': '/blog/[slug]',
+    '/training': '/training',
     '/work-with-me': {
       es: '/trabaja-conmigo',
       en: '/work-with-me',

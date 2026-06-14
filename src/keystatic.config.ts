@@ -68,6 +68,9 @@ const markdocComponents = {
         ],
         defaultValue: 'normal',
       }),
+      public: fields.checkbox({
+        label: 'Public — audience can navigate to this slide on their own',
+      }),
     },
   }),
   // Side-by-side comparison cards. `columns` wraps two or more `column`s.
@@ -236,6 +239,13 @@ export const keystaticConfig = config({
         description: fields.text({
           label: 'Description',
           multiline: true,
+        }),
+        // The audience can self-navigate the first N slides (covered material).
+        // Bump this as the course progresses. Per-slide `{% slide public=true /%}`
+        // still works for one-off public slides outside this leading run.
+        publicThrough: fields.integer({
+          label: 'Public through slide # (audience can self-navigate slides 1..N)',
+          validation: { isRequired: false },
         }),
         content: fields.markdoc({
           // Slides are one document split on `---` (a thematic break) at present time.

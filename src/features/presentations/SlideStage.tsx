@@ -24,6 +24,12 @@ export type SlideMeta = {
   tags?: string[];
   /** Content width preset, e.g. 'wide' / 'full' (for comparisons / tables). */
   width?: string;
+  /**
+   * Marks a slide the audience may navigate to on their own (e.g. material
+   * already covered). The viewer can step ←/→ among `public` slides; the
+   * presenter's live moves still override (everyone mirrors the projected slide).
+   */
+  public?: boolean;
 };
 
 // Code-deck fallback (used only if a theme omits `stage`).

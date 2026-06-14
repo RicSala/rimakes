@@ -116,6 +116,8 @@ export const CustomMarkdocTags: Record<string, Schema> = {
       bg: { type: String },
       tags: { type: String },
       width: { type: String },
+      // Lets the audience navigate to this slide on their own (covered material).
+      public: { type: Boolean },
     },
   },
   columns: {

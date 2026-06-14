@@ -17,7 +17,7 @@ client surface:
 getDeck(slug)                       // Keystatic reader → parsed Markdoc AST
   → splitNodeIntoSlides(node)       // split body on top-level `---` (hr) → Node[]
   → extractSlideMeta(slide)         // per slide → { node, meta, notes }
-        • peels the `{% slide %}` directive into meta (bg, tags, width)
+        • peels the `{% slide %}` directive into meta (bg, tags, width, public)
         • peels `{% notes %}` out into a separate `notes` node
   → renderMarkdoc({ node })         // → one React element per slide
   → <SlideViewer> | <SlideController>   // both render <SlideStage>
@@ -28,6 +28,11 @@ slide's meta to theme/size it. **The control page additionally renders `notes[]`
 and passes them down; the viewer page never reads notes — that is the whole
 privacy model** (presenter-only data is computed only where the secret lives, so
 it never reaches the audience's HTML).
+
+The **viewer page** does two extra things: it folds the deck's `publicThrough`
+frontmatter into each slide's `public` meta (a leading run the audience may
+self-navigate), and it is **password-gated** via `hasTrainingAccess()` — see
+*Access gate* below.
 
 ## Realtime sync (Pusher)
 
@@ -105,20 +110,37 @@ A component produced by a **node transform** instead of a `{% tag %}` (e.g.
 Markdown (a fenced block, an `![](…)` image) and `markdoc-nodes.ts` rewrites it to
 the component.
 
+## Audience navigation & access gate
+
+- **Self-navigation:** the viewer is no longer strictly passive. A slide is *public*
+  when its `{% slide public=true /%}` is set **or** its index falls in the deck's
+  `publicThrough` leading run (resolved server-side in the viewer page). With ≥2 public
+  slides, `SlideViewer` renders ←/→ controls + key bindings that step **only** among
+  public slides. The presenter still wins: `useSyncedSlide` updates snap the local index
+  back to the broadcast slide, so a live move re-mirrors the whole room. A deck with no
+  public slides behaves exactly as before (passive).
+- **Access gate:** `/present/<slug>` (the viewer) is gated by a shared password.
+  `hasTrainingAccess()` (`features/training/access.ts`) compares a hashed cookie to
+  `sha256(TRAINING_PASSWORD)`; on miss the page renders `<TrainingGate>` instead of the
+  deck. `unlockTraining` (`features/training/actions.ts`, a server action) validates the
+  password, sets the cookie (~30 days), and redirects back. Reading the cookie makes the
+  viewer route **dynamic**. The `/control` page is unaffected (own
+  `PRESENTATION_CONTROL_SECRET`). The site's `/training` page is the front door.
+
 ## File map
 
 | Path | Role |
 |---|---|
 | `content/decks/<slug>/index.mdoc` | Deck source. One file = one deck. |
 | `content/decks/CLAUDE.md` | Authoring guide (components, syntax). Points here for internals. |
-| `src/app/[locale]/present/[slug]/page.tsx` | **Viewer** route (server): build slides + meta → `<SlideViewer>`. |
+| `src/app/[locale]/present/[slug]/page.tsx` | **Viewer** route (server): password-gated (`hasTrainingAccess`); folds `publicThrough`→per-slide `public`; build slides + meta → `<SlideViewer>`. |
 | `src/app/[locale]/present/[slug]/control/page.tsx` | **Presenter** route (server): secret-gated; also builds `notes[]` → `<SlideController>`. |
 | `src/app/[locale]/present/layout.tsx` | Full-screen layout for both. |
 | `src/app/api/present/[slug]/route.ts` | POST publish endpoint (secret-gated). Broadcasts slide `index` or timer payload. |
 | `src/features/presentations/decks.ts` | Keystatic reader: `getDeck`, `getDeckSlugs`. |
 | `src/features/presentations/splitSlides.ts` | `splitNodeIntoSlides` + `extractSlideMeta` (peels `{% slide %}`→meta, `{% notes %}`→notes). |
 | `src/features/presentations/SlideStage.tsx` | Renders current slide; applies `bg` scheme + `width`; counter; entrance anim. Exports `SlideMeta`. |
-| `src/features/presentations/SlideViewer.tsx` | `'use client'` passive viewer; `useSyncedSlide`; wraps in `PresentationProvider` (slug). |
+| `src/features/presentations/SlideViewer.tsx` | `'use client'` audience viewer; `useSyncedSlide` (presenter moves snap/win) + ←/→ self-nav among `public` slides; wraps in `PresentationProvider` (slug). |
 | `src/features/presentations/SlideController.tsx` | `'use client'` presenter: publishes moves, keyboard/overview nav, notes panel; provider (slug + secret). |
 | `src/features/presentations/useSyncedSlide.ts` | Viewer hook: subscribe to slide channel → current index. |
 | `src/features/presentations/channel.ts` | Channel names + event names + payload types (`SLIDE_EVENT`, `TIMER_EVENT`, `deckChannel`, `timerChannel`). |
@@ -137,9 +159,15 @@ the component.
 | `src/keystatic.config.ts` | Decks collection + `markdocComponents` editor schemas. **Register new tags here too.** |
 | `src/app/[locale]/globals.css` | Design tokens + `.slide-theme-brand` / `.dark` scopes + `.markdoc` styles. |
 | `src/features/presentations/code-decks/` + `templates/` + `src/app/[locale]/talk/…` | The separate **code-deck** system (`/talk/<slug>`): one React component per slide, same realtime layer. |
+| `src/features/training/access.ts` | `hasTrainingAccess()` / `trainingAccessToken()` — cookie gate helpers (server). |
+| `src/features/training/actions.ts` | `unlockTraining` server action: validate password → set hashed cookie → redirect. |
+| `src/features/training/PasswordForm.tsx` + `TrainingGate.tsx` | Shared password form (client) + the deck's inline gate card. |
+| `src/app/[locale]/(unauth)/training/` | The **Training** page (`/training`): a card that links to / unlocks the deck. |
 
 ## Env vars
 
 - `PRESENTATION_CONTROL_SECRET` — gates the `/control` page **and** the publish API.
+- `TRAINING_PASSWORD` — shared password gating the audience viewer (`/present/<slug>`)
+  and the Training page. Stored as a hashed cookie; set it in Vercel for production.
 - `NEXT_PUBLIC_PUSHER_KEY`, `NEXT_PUBLIC_PUSHER_CLUSTER` — browser subscribe (public).
 - `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_SECRET`, `PUSHER_CLUSTER` — server publish.

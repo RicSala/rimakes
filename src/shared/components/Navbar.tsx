@@ -61,6 +61,11 @@ const MENU_ITEMS = [
     href: '/blog',
     regex: '^/blog',
   },
+  {
+    label: 'training',
+    href: '/training',
+    regex: '^/training',
+  },
 ] as const;
 
 export const MenuContent = ({ className }: { className?: string }) => {

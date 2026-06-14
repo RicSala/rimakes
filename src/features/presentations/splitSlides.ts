@@ -67,6 +67,9 @@ export function extractSlideMeta(slide: Node): {
       ) {
         meta.width = attrs.width;
       }
+      if (meta.public === undefined && typeof attrs.public === 'boolean') {
+        meta.public = attrs.public;
+      }
       continue; // drop the directive from the rendered content
     }
     if (child.type === 'tag' && child.tag === 'notes') {
