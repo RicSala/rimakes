@@ -13,15 +13,25 @@ import { hasTrainingAccess } from '@/features/training/access';
 import { TrainingGate } from '@/features/training/TrainingGate';
 import { renderMarkdoc } from '@/shared/blog/render';
 
-// Unlinked, password-gated companion to the review viewer — keep it out of search.
-export const metadata: Metadata = {
-  robots: { index: false, follow: false },
-};
-
 type Props = {
   params: Promise<{ slug: string; locale: Locale }>;
   searchParams: Promise<{ print?: string }>;
 };
+
+/**
+ * The page title doubles as the default "Save as PDF" filename, so derive it
+ * from the deck rather than letting it fall back to the app-wide default. Also
+ * keep this unlinked, password-gated route out of search.
+ */
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const deck = await getDeck(slug);
+  const title = deck?.title ? `${deck.title} — Diapositivas` : slug;
+  return {
+    title,
+    robots: { index: false, follow: false },
+  };
+}
 
 /**
  * A continuous, printable handout of the **covered** material — the same public
