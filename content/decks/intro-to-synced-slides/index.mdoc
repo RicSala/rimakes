@@ -1186,3 +1186,179 @@ MCP = *Model Context Protocol*: el estándar para conectar Claude a Notion, GitH
 Aprenderemos a crearnos **pequeñas aplicaciones**…
 
 …y a que nuestro Claude nos reciba **todas las mañanas con un trabajo hecho**.
+
+---
+
+# Repasemos memoria de Claude
+
+Llamamos "memoria" a **varias cosas distintas**. Conviene separarlas:
+
+- 🟧 **Instrucciones / CLAUDE.md** — el contexto que **pones tú**; siempre presente. *(ya lo hemos visto)*
+- 🟦 **Búsqueda entre chats** — Claude **recupera y cita** conversaciones pasadas. *(solo Chat, planes de pago)*
+- 🟪 **El sistema de memoria** — lo que Claude recuerda **solo**: por **archivos** (`MEMORY.md`, en Cowork y Code) o **autoconsolidado cada ~24 h** (solo Chat).
+
+Orden: **🟧 ya visto** (repaso rápido) → **🟦 búsqueda** (la fácil) → **🟪 sistema de memoria** (el que más lía).
+
+{% notes %}
+- Diapo de **consolidación**: el footgun es creer que la memoria es una sola cosa.
+- "Memoria" mezcla tres cosas: lo que pones tú (CLAUDE.md), lo que se destila solo (sistema de memoria) y la búsqueda entre chats.
+- Code también tiene auto-memory; no hace falta entrar — esta sesión es la app.
+- Código de color: 🟧 CLAUDE.md · 🟦 búsqueda · 🟪 sistema de memoria (se repite en cada slide).
+- Recordatorio: la memoria es lo que más cambia; lo que ves en la app manda sobre la doc.
+{% /notes %}
+
+---
+
+# 🟧 Instrucciones / CLAUDE.md
+
+**Ya visto.** El contexto que **pones tú** y Claude lee **siempre**.
+
+- A nivel de **usuario** (todos tus proyectos) y de **proyecto** (solo esa carpeta).
+- Para no repetirte: convenciones, vocabulario, cómo quieres que te responda.
+- Es **determinista** (va en cada mensaje) — al revés que el sistema de memoria, que lo redacta el propio Claude.
+
+{% notes %}
+- Tick rápido: ya lo trabajamos en el Módulo 2; aquí solo lo situamos dentro de "memoria".
+{% /notes %}
+
+---
+
+# 🟦 Búsqueda entre chats
+
+La más sencilla de las tres: Claude puede **recuperar tus conversaciones pasadas** y traerse lo que dijisteis, **con cita incluida**.
+
+- **Pídeselo en lenguaje normal:** *"¿qué dije sobre…?"*, *"encuentra la conversación donde hablamos de…"*.
+- Aparece como una herramienta ("buscar en chats") y **cita** de qué conversación lo saca.
+- **Busca** en tus chats sueltos; dentro de un proyecto, en los chats de ese proyecto.
+- **No se hereda entre ámbitos:** un chat **sin proyecto no es "global"** (no entra en los proyectos), y lo que dices en un proyecto **no** sale a lo general. *(Igual en Chat y Cowork.)*
+- Se enciende en **Settings → Capabilities → "Search and reference chats"**. **Solo planes de pago.**
+
+{% prompt title="Pídeselo así" %}
+¿Qué quedamos sobre el formato del reporte en nuestra conversación de la semana pasada?
+{% /prompt %}
+
+{% callout title="No la confundas con la memoria" emoji="💡" variant="info" %}
+La **búsqueda** recupera **conversaciones concretas** (y las cita); el **sistema de memoria** es un **perfil** que se construye solo. Son cosas distintas.
+{% /callout %}
+
+{% notes %}
+- Idea fuerza: **búsqueda = recupera conversaciones concretas y las cita**; **memoria = un perfil que se destila solo**. No es lo mismo.
+- Normalmente se la pides tú; al ser una "tool", Claude **también puede dispararla sola** cuando ve que viene al caso (no lo afirmes como regla — la doc lo enmarca como algo que pides).
+- Si alguien no la ve: revisar el toggle en Capabilities (y que es de pago).
+{% /notes %}
+
+---
+
+{% slide bg="none" width="wide" /%}
+
+# 🟪 El sistema de memoria
+
+Lo que Claude recuerda **solo** — **dos métodos, según el entorno:**
+
+{% columns %}
+{% column title="🧠 Solo Chat" subtitle="Autoconsolidada · cada ~24 h" badge="Perfil, en la nube" %}
+- Claude **destila solo** un perfil tuyo de tus chats.
+- Más **caja negra**: lo gestiona él; lo revisas en **Manage memory**.
+- **Sincroniza** entre dispositivos.
+{% /column %}
+
+{% column title="📄 Cowork y Code" subtitle="Memoria por archivos" badge="MEMORY.md" %}
+- Claude **escribe sus notas** en un archivo (`MEMORY.md`) y lo lee al arrancar.
+- **Local y por proyecto; lo ves y lo puedes editar.**
+- Como el `CLAUDE.md`… pero lo redacta **Claude**, no tú.
+{% /column %}
+{% /columns %}
+
+*La memoria **🧠 autoconsolidada** es **el mismo sistema en web (claude.ai), escritorio y móvil**, sincronizado entre los tres. (La **📄 por archivos** vive en **local**.)*
+
+El sistema de memoria **no se comparte entre proyectos** **ni** baja de lo general a un proyecto: algo que creas **fuera** del scope de un proyecto **no** se añade a cada proyecto individual.
+
+
+{% callout emoji="🚧" variant="warning" %}
+**Esto puede cambiar pronto:** Anthropic ya prueba una memoria **por archivos** también para Chat.
+{% /callout %}
+
+{% notes %}
+- Dos mecanismos: **archivo (`MEMORY.md`, Cowork/Code)** vs **autoconsolidado 24 h (solo Chat)**.
+- El gancho: archivo = **transparente, tuyo, local**; autoconsolidado = **gestionado por Claude, en la nube**.
+- Paralelo útil: `CLAUDE.md` lo escribes tú; `MEMORY.md` lo escribe Claude.
+- [💻] Demo: enseñar el `MEMORY.md` de un proyecto de Cowork; y Manage memory en Chat.
+- ⚠️ La memoria de **Cowork no está documentada** oficialmente: lo que contamos aquí lo inferimos de la doc de **Code** + experiencia.
+- Aislamiento **bidireccional**: ni entre proyectos, ni de general → proyecto.
+{% /notes %}
+
+---
+
+{% slide width="normal" /%}
+
+# El mapa de la memoria
+
+![Mapa de la memoria: el CLAUDE.md de usuario envuelve Chat (memoria consolidada) y Cowork (MEMORY.md); cada proyecto tiene su propia memoria; las ✗ marcan que no se comparte entre proyectos ni entre Chat y Cowork.](/cms-assets/decks/intro-to-synced-slides/mapa-memoria.png)
+
+---
+
+# Tropiezos típicos
+
+- Le cuentas algo en un **chat general** (fuera de proyectos) creyendo que **todas** tus conversaciones lo heredarán… y luego, **dentro de un proyecto**, esa info **no está**. *(Un chat «general» no es «global».)*
+- **Incógnito** (icono 👻) **no guarda** nada: ni en el historial ni en la memoria.
+- *"Entendido, lo recuerdo"* **no** es lo mismo que guardado → compruébalo en **Settings → Capabilities → Manage memory**.
+- ¿Algo que Claude deba cumplir **siempre**, al pie de la letra? Va en **Instrucciones / `CLAUDE.md`**, no en la memoria automática (que comprime y se difumina).
+
+---
+
+# Ojo: esto cambia rápido
+
+Todo esto está **en plena evolución**: es muy probable que cambie de un mes para otro.
+
+**Lo que ves en la app manda** sobre cualquier guía o tutorial (este incluido).
+
+{% callout title="Lo que viene: «Memory Files»" emoji="🆕" variant="info" %}
+Anthropic ya ha dejado ver una **revisión de la memoria**: más basada en **archivos** y con la idea de que **tú elijas** cómo recuerda Claude. **Anunciada, aún no desplegada.**
+{% /callout %}
+
+Quédate con el **concepto** (dos métodos + dónde aplican), no con el botón exacto.
+
+{% notes %}
+- Cierre de la sección: bajar la expectativa de "esto es fijo".
+- "Memory Files" = lo que vimos en la guía; es **anuncio/preview, no disponible** aún — no prometer fechas.
+- Guiño: encaja con el método **📄 por archivos** — el file-based llegando también a Chat.
+{% /notes %}
+
+---
+
+# Cuidado con lo que leas por ahí
+
+Hay **mucha documentación no oficial** sobre la memoria de Cowork… y la mayoría de lo que encontrarás explica en realidad la **memoria de Chat**, que **no funciona igual**.
+
+- ¿Se unificarán algún día los dos sistemas? Ni idea… pero parece que **vamos hacia el sistema de archivos** (el de Cowork). *(Vuelve a pasar lo mismo: Cowork = Code vestido de oficina.)*
+- Lo que sí está claro: **Cowork y Code funcionan distinto que Chat** (archivos vs autoconsolidado).
+
+{% callout title="Ojo: no luches contra Claude" emoji="⚠️" variant="warning" %}
+Mucha gente intenta **fabricarse su propio sistema de memoria** —meter "toda su vida" en Cowork, montar esquemas para gestionar la memoria entre proyectos…— y acaba **trabajando en contra** de cómo Claude lo hace de forma nativa.
+
+Empieza por lo **nativo** (`CLAUDE.md`, `MEMORY.md`, proyectos); añade complejidad **solo si te hace falta**.
+{% /callout %}
+
+{% notes %}
+- Cierre del tema, dos avisos: (1) la mayoría de docs son de Chat, no de Cowork; (2) no sobre-ingenierizar.
+- El antipatrón: pelearse con el sistema nativo en vez de apoyarse en él.
+- Enlaza con personalización: lo nativo (CLAUDE.md / skills / proyectos) suele bastar.
+{% /notes %}
+
+---
+
+{% slide tags="bugs" /%}
+
+# Bugs actuales (a 15.06.2026)
+
+Cosas que hoy fallan en Cowork (y que seguramente arreglen pronto):
+
+- **Empezar desde «new task»** dentro de un proyecto **no carga los `CLAUDE.md`** de las carpetas del proyecto.
+- **No hay un ON/OFF para la memoria de Cowork:** aparece al buscar en *Settings*, pero el interruptor en sí no existe.
+- **El toggle está compartido con Chat:** si desactivas *Capabilities → Generate memory from chat history*, desactivas **también la de Cowork**.
+
+{% notes %}
+- Es una beta; estos bugs los he visto yo estos días — pueden estar arreglados para cuando lo veáis.
+- El 1º muerde si trabajáis con subcarpetas que tienen su propio CLAUDE.md.
+- El 3º enlaza con la slide del sistema de memoria: Cowork y Chat comparten ese interruptor.
+{% /notes %}
