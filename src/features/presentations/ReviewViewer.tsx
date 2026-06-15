@@ -78,6 +78,22 @@ export function ReviewViewer({
         >
           Siguiente →
         </button>
+        <button
+          type='button'
+          // Opens the (hidden, gated) continuous handout in a new tab; `?print=1`
+          // makes it auto-open the print dialog, so this stays a one-click "Save
+          // as PDF". Pathname-relative so we don't need the locale here.
+          onClick={() =>
+            window.open(
+              `${window.location.pathname}/handout?print=1`,
+              '_blank',
+              'noopener'
+            )
+          }
+          className='rounded-md border border-border bg-background px-4 py-2 text-sm font-medium shadow-sm transition'
+        >
+          Descargar PDF
+        </button>
       </div>
     ) : undefined;
 

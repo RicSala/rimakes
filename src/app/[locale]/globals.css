@@ -206,3 +206,25 @@
     transform-origin: 70% 70%;
   }
 }
+
+/*
+ * Print rules for the continuous handout (`/present/[slug]/review/handout`).
+ * The slides flow as content-sized cards, so pages break wherever the flow
+ * lands; `break-inside: avoid` keeps a normal-length slide whole, while a slide
+ * taller than the page splits gracefully instead of being clipped. `print-color-
+ * adjust: exact` keeps the brand/dark card backgrounds in the PDF (browsers
+ * strip backgrounds by default).
+ */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+  .handout-root,
+  .handout-root * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .handout-card {
+    break-inside: avoid;
+  }
+}

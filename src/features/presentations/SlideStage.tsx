@@ -1,6 +1,17 @@
 import type { ReactNode } from 'react';
 
 import { SlideTags } from './SlideTags';
+import {
+  CONTENT_COLOR_LIGHT,
+  CONTENT_STRUCTURE,
+  CONTENT_WIDTH,
+  resolveSlideAppearance,
+  SCHEME_CLASS,
+} from './slideStyles';
+
+// Re-exported so existing importers (e.g. overview thumbnails) keep working
+// after the per-slide style constants moved to `slideStyles`.
+export { SCHEME_CLASS };
 
 export type SlideTheme = {
   /** Classes on the full-screen stage wrapper. */
@@ -43,33 +54,7 @@ const KEYSTATIC_STAGE = 'relative min-h-screen w-full bg-background text-foregro
 const KEYSTATIC_FRAME =
   'relative mx-auto flex min-h-screen w-full flex-col items-center justify-center px-6 py-20 sm:px-12';
 
-// Per-slide `width`: the frame caps the chrome, the content caps the column. Both
-// widen together so comparisons/tables (`{% slide width="wide" /%}`) get room
-// while normal prose keeps a readable line length.
-const FRAME_WIDTH: Record<string, string> = {
-  normal: 'max-w-4xl',
-  wide: 'max-w-6xl',
-  full: 'max-w-7xl',
-};
-const CONTENT_WIDTH: Record<string, string> = {
-  normal: 'max-w-3xl',
-  wide: 'max-w-5xl',
-  full: 'max-w-6xl',
-};
-
-const CONTENT_STRUCTURE =
-  'markdoc prose prose-lg w-full prose-h1:text-4xl prose-h1:font-bold prose-h2:text-3xl prose-h2:font-bold';
-const CONTENT_COLOR_LIGHT =
-  'text-primary prose-a:text-primary prose-headings:text-primary';
 const DEFAULT_CONTENT = `${CONTENT_STRUCTURE} ${CONTENT_WIDTH.normal} ${CONTENT_COLOR_LIGHT}`;
-
-// `bg` directive value → a token-scope class. The class redefines the design
-// tokens for the slide subtree, so background, prose, AND components adapt.
-// Exported so the overview thumbnails can tint themselves with the same scope.
-export const SCHEME_CLASS: Record<string, string> = {
-  brand: 'slide-theme-brand',
-  dark: 'dark',
-};
 
 type SlideStageProps = {
   slides: ReactNode[];
@@ -124,15 +109,11 @@ export function SlideStage({
   // subtree, so the background, prose (via prose-invert), and any components
   // (Callout, Prompt, code) re-theme coherently off the same tokens.
   const meta = slidesMeta?.[current];
-  const schemeClass = meta?.bg ? SCHEME_CLASS[meta.bg] ?? '' : '';
-  const widthKey = meta?.width && CONTENT_WIDTH[meta.width] ? meta.width : 'normal';
-  const contentClass = `${CONTENT_STRUCTURE} ${CONTENT_WIDTH[widthKey]} ${
-    schemeClass ? 'prose-invert' : CONTENT_COLOR_LIGHT
-  }`;
+  const { schemeClass, contentClass, frameWidth } = resolveSlideAppearance(meta);
 
   return (
     <div className={`${KEYSTATIC_STAGE} ${schemeClass}`.trim()}>
-      <div className={`${KEYSTATIC_FRAME} ${FRAME_WIDTH[widthKey]}`}>
+      <div className={`${KEYSTATIC_FRAME} ${frameWidth}`}>
         {meta?.tags?.length ? <SlideTags labels={meta.tags} /> : null}
         {animatedContent(contentClass)}
         {counter}
