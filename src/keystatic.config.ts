@@ -1,7 +1,18 @@
 import { createElement } from 'react';
-import { CircleDot } from 'lucide-react';
+import { CircleDot, Highlighter } from 'lucide-react';
 import { collection, config, fields } from '@keystatic/core';
 import { block, mark, wrapper } from '@keystatic/core/content-components';
+
+// Marker colors for the `{% highlight %}` mark, as hex so the Keystatic editor
+// can render the real swipe inline (the admin app isn't styled by Tailwind, so
+// `style` must carry concrete CSS). Mirrors HIGHLIGHT_COLORS in Highlight.tsx.
+const HIGHLIGHT_HEX: Record<string, string> = {
+  yellow: '#fde047',
+  green: '#86efac',
+  blue: '#7dd3fc',
+  pink: '#f9a8d4',
+  orange: '#fdba74',
+};
 
 const blogDir = 'content/blog';
 const blogAssetPath = '/cms-assets/blog';
@@ -31,6 +42,35 @@ const markdocComponents = {
         defaultValue: 'info',
       }),
     },
+  }),
+  // Inline marker-pen highlight. As a `mark` it lives in the inline formatting
+  // toolbar (like bold/italic): select text, toggle it on, and it's yellow by
+  // default. `style` renders the real color inside the editor; to use another
+  // color, set `color` in the .mdoc source. Mirror of the `highlight` tag in
+  // src/shared/blog/custom-components.tsx.
+  highlight: mark({
+    label: 'Resaltar',
+    icon: createElement(Highlighter),
+    tag: 'mark',
+    schema: {
+      color: fields.select({
+        label: 'Color',
+        options: [
+          { label: 'Amarillo', value: 'yellow' },
+          { label: 'Verde', value: 'green' },
+          { label: 'Azul', value: 'blue' },
+          { label: 'Rosa', value: 'pink' },
+          { label: 'Naranja', value: 'orange' },
+        ],
+        defaultValue: 'yellow',
+      }),
+    },
+    style: ({ value }) => ({
+      backgroundColor: HIGHLIGHT_HEX[value.color] ?? HIGHLIGHT_HEX.yellow,
+      color: '#171717',
+      borderRadius: '0.25em',
+      padding: '0 0.15em',
+    }),
   }),
   'code-editor': block({
     label: 'Code editor',

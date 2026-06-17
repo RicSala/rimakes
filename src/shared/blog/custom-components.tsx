@@ -17,6 +17,7 @@ import {
 import { Timer } from '@/features/presentations/Timer';
 import { ZoomableImage } from '@/features/presentations/ZoomableImage';
 import { Callout } from '@/shared/components/Callout';
+import { Highlight } from '@/shared/components/Highlight';
 import { Prompt } from '@/shared/components/Prompt';
 
 type Component = ComponentType<Record<string, unknown>>;
@@ -40,6 +41,10 @@ const INLINE_CHILDREN = [
 
 export const CustomMarkdocComponents: Record<string, Component> = {
   Callout: Callout as Component,
+  // `{% highlight %}` is an inline marker-pen highlight (default yellow). It's a
+  // Keystatic `mark`, so it's authored by selecting text and toggling the toolbar
+  // button — the `color` attribute is set in source for the rare non-yellow run.
+  Highlight: Highlight as Component,
   CodeBlock: MarkdocCodeBlock as Component,
   CodeEditor: MarkdocCodeEditor as Component,
   Prompt: Prompt as Component,
@@ -92,6 +97,20 @@ export const CustomMarkdocTags: Record<string, Schema> = {
       variant: {
         type: String,
         matches: ['default', 'info', 'warning', 'error', 'success'],
+      },
+    },
+  },
+  // Inline highlight (a Keystatic `mark`). `inline: true` so it renders within a
+  // paragraph instead of being treated as a block; INLINE_CHILDREN lets it wrap
+  // text plus other inline marks (bold, links, code…). `color` defaults to yellow.
+  highlight: {
+    render: 'Highlight',
+    inline: true,
+    children: INLINE_CHILDREN,
+    attributes: {
+      color: {
+        type: String,
+        matches: ['yellow', 'green', 'blue', 'pink', 'orange'],
       },
     },
   },

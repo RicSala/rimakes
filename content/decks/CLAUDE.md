@@ -87,6 +87,7 @@ copyable block. Don't wrap ordinary content in components for decoration.
 | **Slide settings** | `{% slide bg="brand" tags="A, B" /%}` | `bg`: `none` \| `brand` \| `dark`; `tags`: comma-separated; `width`: `normal` \| `wide` \| `full`; `public`: `true` (adds slide to the review deck) |
 | **Callout** | `{% callout title="…" emoji="👋" variant="info" %}…body…{% /callout %}` | `title`, `emoji`, `variant`: `default` \| `info` \| `warning` \| `error` \| `success` |
 | **Prompt** | `{% prompt title="…" %}…body…{% /prompt %}` | `title` — collapsible + copy-to-clipboard block |
+| **Highlight** | `{% highlight %}…texto…{% /highlight %}` | inline marker-pen highlight, **default yellow**; `color`: `yellow` \| `green` \| `blue` \| `pink` \| `orange` |
 | **Speaker notes** | `{% notes %}…body…{% /notes %}` | presenter-only — see below; no attributes |
 | **Timer** | `{% timer minutes="5" label="…" /%}` | synced countdown — see below; `minutes`, `seconds`, `label`, `id` (self-closing) |
 | **Columns** | `{% columns %}{% column title="…" %}…{% /column %}…{% /columns %}` | comparison cards — see below; `column` takes `title`, `subtitle`, `badge`, `highlight` |
@@ -106,6 +107,24 @@ copyable block. Don't wrap ordinary content in components for decoration.
 > automatically adapt to a slide's `bg` scheme. Components with hardcoded colors
 > (e.g. `{% callout variant="info" %}`, which is intentionally blue) keep their
 > color regardless of the scheme.
+
+## Highlight (resaltado tipo rotulador)
+
+Resalta una parte del texto como con un rotulador. Es **formato inline** (un
+`mark` de Keystatic, como negrita/cursiva): en el editor seleccionas el texto y
+pulsas el botón 🖍 de la barra — queda **amarillo por defecto**.
+
+```mdoc
+Lo importante es {% highlight %}esta idea concreta{% /highlight %}, no el resto.
+```
+
+- **Default amarillo**, sin atributos. Para otro color, añade `color` en el
+  `.mdoc`: `{% highlight color="green" %}…{% /highlight %}`.
+- **Colores:** `yellow` (default) · `green` · `blue` · `pink` · `orange`.
+- Es un **rotulador**: los colores son intencionados, así que **no** cambian con
+  el `bg` de la slide (el texto resaltado va siempre en oscuro para que se lea
+  sobre fondo claro u oscuro). Puede contener negrita/enlaces/`code`.
+- Componente: `src/shared/components/Highlight.tsx`.
 
 ## Public slides & the review deck
 

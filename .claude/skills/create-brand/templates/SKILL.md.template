@@ -1,0 +1,45 @@
+<!-- ════════════════════════════════════════════════════════════════════════
+  TEMPLATE · SKILL.md wrapper — OPTIONAL
+
+  ▸ WHY THIS FILE IS NAMED ".template"
+    A skill package may contain only ONE file named exactly `SKILL.md` (the
+    generator's own, at the package root). So this wrapper is named
+    `SKILL.md.template` to avoid being a second one. When you USE it, copy it to
+    the output kit AS `SKILL.md` (drop the `.template`).
+
+  ▸ WHEN TO USE IT
+    Only if the user wants the brand kit exposed as a Claude Code skill. The kit
+    works perfectly WITHOUT it (referenced from a CLAUDE.md, or opened directly —
+    see `index.md`). If the user doesn't want a skill, just don't create it.
+
+  ▸ HOW TO USE IT
+    • Copy this file into the kit as `SKILL.md` (without `.template`).
+    • Replace the frontmatter `name`/`description` and every "NAME", then DELETE
+      the comment blocks. Keep the frontmatter as valid YAML between the --- fences.
+    • This file holds NO brand content — it is a thin POINTER to `./index.md`.
+      Do NOT paste strategy/voice/visual content here.
+    • DONE = output file is named `SKILL.md`, no comment blocks, no "NAME", body
+      still just points to index.md.
+  ════════════════════════════════════════════════════════════════════════ -->
+
+---
+name: brand-NAME
+description: REPLACE — when to load this brand kit. Be specific and trigger-worthy.
+---
+
+<!-- ✏️ REPLACE the frontmatter above. EXAMPLE (Vela):
+
+---
+name: brand-vela
+description: Use when writing or reviewing ANY content for Vela — blog posts, landing pages, decks, emails, social posts, release notes, in-app copy, or docs. Load this to keep voice, tone, terminology, and visuals on-brand. Triggers when producing Vela-facing copy or when the user says "make this sound like Vela".
+---
+
+-->
+
+# Brand kit — NAME (skill wrapper)
+
+This skill is a thin pointer. The actual brand kit is plain Markdown in this same folder.
+
+**→ Read [`./index.md`](./index.md) and follow it.** It points to `strategy.md`, `voice.md`,
+`visual.md`, `examples.md`, and `assets/README.md`. Apply them to anything you produce for
+NAME, then run the self-check in `index.md`.

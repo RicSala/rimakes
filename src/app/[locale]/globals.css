@@ -228,3 +228,129 @@
     break-inside: avoid;
   }
 }
+
+/*
+ * "Mapa de trabajo agéntico" — a deliberately hand-set editorial palette, scoped
+ * to its own route so it doesn't touch the rest of the site. Warm paper + ink and
+ * earthy accents on purpose: no indigo, no purple gradient, no glass — i.e. the
+ * opposite of the default "AI-generated" look. The four families get one accent
+ * each; everything else is ink, paper and hairline rules.
+ */
+.mapa-root {
+  --paper: #f4f0e7;
+  --paper-2: #ece5d6;
+  --card: #fbf9f3;
+  --ink: #211c15;
+  --ink-soft: #6d6454;
+  --ink-faint: #a89e8a;
+  --rule: #ddd4c2;
+  --rule-strong: #c7bca5;
+
+  /* family accents — earthy, distinct, deliberate */
+  --c-lens: #8a7d62; /* warm grey-olive — the framing */
+  --c-surface: #2f6b5e; /* pine green — where you work */
+  --c-core: #b1421f; /* terracotta — the 4 pieces (the hero) */
+  --c-capability: #9a6a16; /* ochre — what you assemble */
+
+  --c-lens-soft: #ebe6d8;
+  --c-surface-soft: #e0ebe6;
+  --c-core-soft: #f4e2d8;
+  --c-capability-soft: #f1e8d2;
+
+  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino,
+    'Book Antiqua', Georgia, 'Times New Roman', serif;
+
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+.mapa-root ::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.mapa-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+/* fine ledger-style top rule used to head sections, editorial-style */
+.mapa-eyebrow {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+/* compact, hairline action button (e.g. "Descargar PDF") — sharp corners to
+ * match the editorial squares, no gradient/shadow. */
+.mapa-btn {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--ink-soft);
+  border: 1px solid var(--rule-strong);
+  background: transparent;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+  cursor: pointer;
+}
+.mapa-btn:hover {
+  color: var(--ink);
+  border-color: var(--ink-soft);
+  background: var(--card);
+}
+
+/*
+ * Print / "Guardar como PDF": keep the on-screen design. Force the warm palette
+ * to actually render, drop the full-height shells so we don't get a blank first
+ * page, and hold the two-column blocks + cards together across page breaks.
+ * Scoped to .mapa-root so it never touches the rest of the site's printing.
+ */
+@media print {
+  .mapa-root {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    min-height: 0 !important;
+  }
+  .mapa-root .min-h-screen {
+    min-height: 0 !important;
+  }
+  /* hold the index + principles at two columns regardless of print width */
+  .mapa-root .md\:columns-2 {
+    columns: 2 !important;
+    column-gap: 2.5rem !important;
+  }
+  /* don't strand a heading at the bottom of a page */
+  .mapa-root h1,
+  .mapa-root h2,
+  .mapa-root h3 {
+    break-after: avoid;
+  }
+  .mapa-root li,
+  .mapa-root figure,
+  .mapa-root aside,
+  .mapa-root .break-inside-avoid {
+    break-inside: avoid;
+  }
+}
+
+/*
+ * "Dónde poner el contexto": el PDF útil es solo la matriz, y en horizontal (en
+ * vertical no entran las 7 columnas). El resto de la página — cabecera, regla de
+ * decisión, precedencia y nota final — se oculta al imprimir con `print:hidden`
+ * en el JSX. La orientación se acota a su propia named page para NO afectar al
+ * PDF vertical de /mapa-agentico.
+ */
+@media print {
+  @page mapa-contexto-page {
+    size: landscape;
+    margin: 10mm;
+  }
+  /* Apply the landscape named page to the WHOLE document root (not the matrix
+   * mid-document) — otherwise the orientation switch brackets the table with
+   * blank portrait pages before & after. */
+  .mapa-contexto-root {
+    page: mapa-contexto-page;
+  }
+}

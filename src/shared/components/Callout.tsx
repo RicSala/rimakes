@@ -58,14 +58,30 @@ const calloutContainerVariants = cva(
   }
 );
 
-const calloutDescriptionVariants = cva('text-sm text-muted-foreground', {
-  variants: {
-    variant: {
-      default: '',
-      info: 'text-blue-800',
-      warning: 'text-yellow-800',
-      error: 'text-red-800',
-      success: 'text-green-800',
+// Tailwind preflight strips paragraph margins and list markers, and the callout
+// card is `not-prose`, so a multi-paragraph or bulleted body renders cramped and
+// unmarked. Re-add just the block styles that make the Markdown body read as
+// polished prose — deliberately NOT pulling in the typography plugin, whose own
+// colors would fight the callout's intentional per-variant color.
+const calloutBodyProse = cn(
+  'space-y-3',
+  '[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1',
+  '[&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1',
+  '[&_a]:font-medium [&_a]:underline [&_a]:underline-offset-2',
+  '[&_code]:rounded [&_code]:bg-black/10 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.85em]'
+);
+
+const calloutDescriptionVariants = cva(
+  cn('text-sm text-muted-foreground', calloutBodyProse),
+  {
+    variants: {
+      variant: {
+        default: '',
+        info: 'text-blue-800',
+        warning: 'text-yellow-800',
+        error: 'text-red-800',
+        success: 'text-green-800',
+      },
     },
-  },
-});
+  }
+);

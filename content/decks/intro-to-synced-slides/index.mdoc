@@ -763,24 +763,6 @@ Pero no es muy útil si no se puede **comunicar con el mundo**…
 
 ---
 
-# Ejercicio (conmigo): Claude crea y publica anuncios en Meta
-
-Este es algo más complicado, pero creo que **viene bien verlo juntos** para que, cuando nos juntemos en las individuales, **tengáis ideas**.
-
-Lo haremos **paso a paso**:
-
-- ¿Podemos **generar imágenes**?
-- ¿Podemos **interactuar con Meta**?
-- ¿Lo empaquetamos como **skill**…? ¿O hacemos un **proyecto** y lo metemos en el `CLAUDE.md`? ¿O un **subagente**? 🤯
-
-{% prompt title="Pide a Claude que te guíe" %}
-Guíame para añadirte Replicate como mcp: https://replicate.com/docs/reference/mcp
-
-No soy técnico, y lo quiero añadir a Claude Cowork, a ser posible por la interfaz de usuario en lugar de tocar archivos de configuración
-{% /prompt %}
-
----
-
 {% slide width="full" /%}
 
 # ¿Cómo conectamos Claude al mundo?
@@ -797,23 +779,15 @@ El "enchufe" estándar a apps externas (Notion, Gmail…).
 {% column title="Extensión de Chrome" badge="MUY lento" highlight=true %}
 Claude maneja tu navegador.
 {% /column %}
+{% /columns %}
 
-{% column title="Skills" highlight=true %}
-Pueden "envolver" herramientas para conectarnos.
+{% columns %}
+{% column title="Web scraper" subtitle="Firecrawl" badge="Lo vemos" highlight=true %}
+Extraer el contenido de páginas web.
 {% /column %}
 
 {% column title="Computer use" badge="Beta" highlight=true %}
 Controla el ordenador como un humano (ratón y teclado).
-{% /column %}
-{% /columns %}
-
-{% columns %}
-{% column title="Extensiones" badge="Escondido" highlight=true %}
-…
-{% /column %}
-
-{% column title="Web scraper" subtitle="Firecrawl" %}
-Extraer el contenido de páginas web.
 {% /column %}
 
 {% column title="API calls, SDKs…" badge="Avanzado" %}
@@ -843,8 +817,9 @@ Recientemente han añadido un "buscar tools" a Claude, de forma que en lugar de 
 
 # Veamos cómo añadir MCPs
 
-- **Los fáciles:** conectores **"oficiales"** disponibles en la propia app.
-- **Los "no oficiales":** encontrarlos y añadirlos a mano.
+- **MCPs nativos:** conectores **"oficiales"** disponibles en la propia app.
+- **Oficiales de terceros:** conectores **"oficiales"** que no están en la app de Claude pero son de la propia herramienta.
+- **MCPs no oficiales:** encontrarlos y añadirlos a mano.
 - **Marketplaces de terceros:** añádelos para descubrir muchos más.
 
 ---
@@ -906,12 +881,36 @@ Un plugin no es más que un **conjunto de skills y conectores (MCPs)** metidos e
 
 ---
 
-# Ejercicio (conmigo): añadiendo un MCP complicado
+# Ejercicio (conmigo): conecta tus MCPs básicos
 
-- Los MCPs **oficiales** son muy fáciles de instalar — ahí poco os puedo aportar.
+Antes de complicarnos, vamos a conectar los MCPs que **todos deberíamos tener** — los más útiles en el día a día:
+
+- **Gmail**
+- **Calendar**
+- **Notion**
+- **Google Drive**
+- **Resend.com** — si quieres que tu Claude pueda **mandar emails** ([guía paso a paso](https://wonderful-court-bea.notion.site/Claude-te-env-a-emails-3820bcf552548024b94ae262db085194))
+- **Zapier** — hub de MCPs, ¡te vendrá bien!
+- **Stretch: Google Ads** — si tienes cuenta de Google Ads y ya tienes todos los anteriores, puedes intentar este. Es bastante más complejo (Claude controla toda tu cuenta de Google Ads). 👉 *siguiente slide*
+
+{% callout title="¿Cómo los conecto?" emoji="🔌" variant="info" %}
+**Gmail, Calendar, Notion y Drive** son **nativos**: los activas desde el listado de Claude. **Resend** es **oficial de terceros** — lo conectas desde su web (lo vimos hace un momento). Si te atascas, **pídele a Claude que te guíe paso a paso** (recuérdale que no eres developer).
+{% /callout %}
+
+---
+
+{% slide tags="stretch" /%}
+
+# Stretch (opcional): añadir un MCP complicado
+
+¿Ya tienes todos los de arriba? Si además **tienes cuenta de Google Ads**, prueba este stretch:
+
+- Los MCPs **oficiales** son muy fáciles de instalar.
 - Pero hay quien hace MCPs **"no oficiales"** para cubrir esas necesidades, e instalarlos **no es tan directo**.
-- Ejemplo: el MCP **oficial de Google Ads** solo expone herramientas de **lectura**…
+- Ejemplo: el MCP **oficial de Google Ads** solo expone herramientas de **lectura**…y así poco útil es
 - …pero veamos **este**: [github.com/kLOsk/adloop](https://github.com/kLOsk/adloop)
+
+Veamos lo que hay que hacer para **instalarlo** y lo que **desbloquea**. 💻
 
 {% callout title="Ojo con lo que instalas" emoji="⚠️" variant="warning" %}
 Mira **forks** y **stars**, y pídele a Claude que **revise si es seguro** de instalar antes de hacerlo.
@@ -934,17 +933,59 @@ Es lo normal: si no os da tiempo y queréis terminarlo, lo vemos en sesiones ind
 - Dile que te lleve paso a paso
 {% /callout %}
 
+Cuesta instalarlo, pero una vez está... este mcp + metodología + tareas programadas... = podemos llegar a delegar gran parte de la gestión de la cuenta a la ia
+
+
+
+---
+
+# Ejercicio (conmigo): Claude crea y publica anuncios en Meta
+
+Lo mismo con una cuenta de Meta ads.
+
+**Todo proceso se puede descomponer en actividades**. Si descomponemos el proceso en actividades sencillas, le damos las herramientas y el contexto necesarios y lo podemos programar, podemos automatizar (o agilizar mucho) la actividad.
+
+Por ejemplo, imagina que quiero que la ai gestione mi cuenta de Meta ads. Necesitaríamos (simplieficando):
+
+- Generar creatividades
+- Subirlas a Facebook Ads
+- Que cada día, la ia revisase cómo van, y actuase en consecuencia.
+
+El "playbook" de como optimizar una cuenta es, básicamente, un prompt
+El "que ocurra cada día", lo veremos en un rato
+
+Centrémonos en el "generar creatividades". Y concretamente **creatividades con nuestra cara** porque queremos trabajar la marca personal
+
+Necesitamos:
+- Generar imágenes - un **mcp** a un modelo de imagen
+- Conectarnos a Meta ads - un **mcp** de Meta Ads
+- Una marca - esto puede ser una **skill**, o el **claude.md** de un proyecto si la marca vive en ese proyecto
+- Una guía de como hacerlo - de nuevo, esto puede ser una **skill** o un **claude.md** según queramos estructurarlo
+
+Es largo de setear, pero una vez lo tienes, Claude es perfectamente capaz de generar creatividades decentes y publicarlas [💻]
+
+{% prompt title="Pide a Claude que te guíe" %}
+Guíame para añadirte Replicate como mcp: https://replicate.com/docs/reference/mcp
+
+No soy técnico, y lo quiero añadir a Claude Cowork, a ser posible por la interfaz de usuario en lugar de tocar archivos de configuración
+{% /prompt %}
 
 ---
 
 # MCPs de MCPs
 
-Ir añadiendo MCPs a tu app tiene **inconvenientes**:
+Ir añadiendo MCPs a tu Claude tiene **inconvenientes**:
 
 - **Cargan el contexto** (aunque esto está cada vez mejor gestionado — lo podemos ver).
-- **No todos están entre los oficiales**, y no todo el mundo se siente cómodo con la vía alternativa…
+- **No todos existen**: Por ejemplo, Holded está pending
+- No todo el mundo se siente cómodo con la vía alternativa… (github)
 
 Así que han aparecido apps que son **"directorios de MCP para tu agente"**: un único MCP que da acceso a **muchas** herramientas y **solo las carga cuando el modelo las pide** (¡hoy Claude también lo hace así!).
+
+Ventajas:
+- Una única autenticación (obviamente tienes que conectar tus cuentas a Zapier/Nango)
+- MCPs que aún no existen en oficial los tienes fácil (sin tener que usar github)
+- En lugar de darte 100 herramientas, te dan 1* tipo "buscarHerramienta"**
 
 Algunos:
 
@@ -954,7 +995,7 @@ Algunos:
 
 Yo uso **Zapier**, pero creo que las tres tienen **plan gratuito**.
 
-Si no encuentras un MCP por la vía oficial… **¡quizá esté ahí!**
+Si no encuentras un MCP por la vía oficial… **¡quizá esté ahí!** (Holded en Zapier)
 
 ---
 
@@ -964,11 +1005,77 @@ Si no encuentras un MCP por la vía oficial… **¡quizá esté ahí!**
 
 ---
 
+# Subagentes
+
+Otro "Claude" **al que el principal le delega trabajo**.
+
+- **Tienen su propio contexto**: el agente principal de transmite solo lo que necesita saber, y el subagente devuelve solo el resultado de la tarea.
+- Ejemplo: estas trabajando con Claude con Opus y quieres traducir toda una sección de la web. En lugar de hacerlo en el hilo que estás (que ocuparía mucho contexto y no hace falta que lo haga Opus), **el agente principal puede delegarlo en un subagente más barato, en un hilo aparte**, que lo haga este y avise cuando esté hecho
+- Claude (y Codex) vienen **algunos predefinidos**. En **Code** puedes **crear nuevos tipos**; en **Cowork**, de momento, **no** (usas los que hay).
+- Brillan en: 
+  - Tareas **paralelizables** (que se pueden trocear, cada uno a un trozo)
+  - Research **que quieres asegurar es correcto** (cada subagente hace un research ind. y luego combina)
+  - Tareas **largas pero que no necesitan el contexto** de la conversación principal (por ejemplo, traducir una app)
+
+[💻] Probemos a buscar los 5 mejores resturantes de Madrid, Barcelona, Zaragoza, Sevilla, Valencia y Bilbao
+{% prompt title="Buscar los 5 mejores resturantes de Madrid, Barcelona, Zaragoza, Sevilla, Valencia y Bilbao" %}
+Quiero buscar los 5 mejores resturantes de Madrid, Barcelona, Zaragoza, Sevilla, Valencia y Bilbao
+
+Invoca subagentes para cada ciudad y crea una tabla resumen con los 5 mejores resturantes de cada ciudad
+
+{% /prompt %}
+
+{% callout title="Trabajan «a ciegas»" emoji="🙈" variant="info" %}
+No los "gestionamos nosotros", los invoca el agente principal y les da el contexto que necesitan
+{% /callout %}
+
+
+---
+
+# Resumen de lo visto hasta ahora
+
+- **Los 4 primitivos** principales: `CLAUDE.md`, **skills**, **MCPs** y **subagentes**.
+  - **CLAUDE.md**: Nos permite inyectar contexto al inicio de la conversación, a nivel de usuario o de proyecto.
+  - **Skills**: Tb para inyectar contexto, pero empaquetado de otra manera. Además más fácil de compartir (es un archivo)
+  - **MCPs** = Conectores para interactuar con el mundo, los hay de distintos tipos
+  - **Subagentes**: agentes secundarios, con su propio contexto, hablan con el principal
+- Tienen características distintas, pero **muchas veces consigues lo mismo por distinta vía** (ej. traductor)
+- **Cowork** (la app de escritorio) es **Code "vestido de oficina"**: como Code, tiene un **CLAUDE.md de usuario** y uno **por proyecto**.
+- **Protege el contexto**: mantén el `CLAUDE.md` **breve** — y las skills también.
+- ¿Algo muy largo? **Extráelo** y déjalo como **referencia**: *"si necesitas X, mira el archivo Y"*.
+
+{% callout emoji="🧩" variant="info" %}
+Estas son las piezas básicas, y existen en los principales agentes (Claude, Codex). **Lo potente es la combinación.**
+{% /callout %}
+
+
+---
+
+# Plan para hoy
+
+- Otras formas de conectar Claude con el mundo: para cuando lo demás no funciona
+- Memoria de Chat y Cowork: Diferencias y qué esperar
+- Tareas programadas
+- Trabajo remoto
+
+{% callout title="Claude para oficina!" emoji="📌" variant="info" %}
+Estos son: i) más específicos de Claude y ii) se usan poco a la hora de hacer apps, pero son útiles para el día a día
+{% /callout %}
+.
+
+{% callout title="Hazlo tuyo" emoji="🧩" variant="success" %}
+⚠️⚠️⚠️ Después de esto habremos visto **casi todos los primitivos** (básicos y avanzados) y os recomiendo dedicar un tiempo a **"adaptároslos a vuestro trabajo"**. Ninguno es "mágico" por sí solo; **combinados son potentes**.
+
+**¡Para eso están las individuales!** Agendad una o dos sesiones y nos sentamos juntos.
+{% /callout %}
+
+---
+
 # Claude toma el navegador: Chrome extension
 
 Es una forma más de que Claude interactúe con el mundo… pero es **útil para más cosas**.
 
-A veces la herramienta con la que queremos trabajar **no tiene otra vía** de exponerse a una IA. La extensión de Chrome funciona en **(casi) todas**.
+A veces la herramienta con la que queremos trabajar **no tiene otra vía** de exponerse a una IA. La extensión de Chrome funciona en **(casi) todas** (que son web).
 
 Pero es **mucho más lenta y gasta mucho más**:
 
@@ -979,56 +1086,141 @@ Es, en cierto modo, **el otro extremo de un MCP**: la vía cuando una herramient
 
 **Ejemplos:**
 
-- Contestar mensajes de **Instagram / LinkedIn / WhatsApp**.
-- No preparado: **nuestra propia app mientras la creamos** 🫠
+{% prompt title="Contestar mensajes de Instagram / LinkedIn / WhatsApp" %}
+Ve a mi Linkedin, y escribe un mensaje de bienvenida workshop de Claude a Guillem Garcia Galofré. Escríbele algo que sea relevante para él, no genérico.
+{% /prompt %}
 
 ---
 
-# Conectar vía API (1)
+# Y también tiene "rutinas" y tareas programadas
 
-Como he ido repitiendo: que los modelos sean **cada vez más listos** hace que cada vez sea **menos necesario** fabricarles herramientas *ad hoc*.
+- **No está conectado a ningún proyecto**, no tiene contexto, así que usadlo solo para cosas "separadas" del resto (tipo...un formulario que tenéis que rellenar cada día, etc.). Personalmente, lo he usado 1 para meter los datos de mi entreno.
 
-Así que otra forma de conectar Claude con el mundo es usar el sistema que los programadores llevan **años** usando: **las APIs**.
+**Ejemplo:** crear una rutina en [hevy.com](https://hevy.com).
 
-Como veremos más adelante, una webapp tiene un **frontend** (lo que ves) y un **backend** (lo que piensa y guarda los datos). Se comunican por una **API**: un conjunto de direcciones (como una URL) que sirven para **i)** obtener datos o **ii)** modificarlos. Quizá os suena:
-
-- `GET`
-- `POST`
-
-**Las IAs pueden usar esas direcciones directamente** para interactuar con el exterior (obviamente, necesitan tu "contraseña") — en lugar de pasar por un MCP.
+![Pantalla de inicio de Hevy: rutina "Empujes 1 – Pecho + Tríceps" con sus ejercicios](/cms-assets/decks/intro-to-synced-slides/rutina-hevy.png)
 
 ---
 
-# Conectar vía API (2)
+# Ejercicios!
 
-A veces los programadores, cuando llaman mucho a una API, crean (o usan) una **función**:
+**Ejercicios:**
 
-- En lugar de `http://…` → `getProduct(1234)`.
+- [Conecta Notion](https://wonderful-court-bea.notion.site/3790bcf552548069a0ffda9afeaa0ba7)
+- [Conecta tu stack tecnológico](https://wonderful-court-bea.notion.site/3790bcf5525480c8a7b1f0130fe3cfec)
+- [Reporte mensual](https://wonderful-court-bea.notion.site/3790bcf55254800eaedefa6c2dc21a11)
 
-Las IAs pueden hacer algo parecido: **crear ellas la función** o **usar funciones que otros ya hicieron** (las *librerías*).
-
-**Ventajas:**
-
-- **No tienes que hacer nada.**
-- La IA tiene la **misma libertad que un programador**: todo lo que la app expone por API, no solo lo que elijas exponer por MCP.
-
-**Desventajas:**
-
-- Requiere que sepas qué es un **token** y cómo "gestionarlo".
-- A veces **no quieres** que tenga tanta libertad.
+{% timer minutes=10 label="Tiempo del ejercicio" /%}
 
 ---
 
-# Skills de terceros como forma de conectar Claude
+# Web scraping
 
-Como comentamos, una skill puede llevar —además de un prompt o recursos— **programas**. Y, como vimos antes, los programadores ya tenían **formas establecidas** de "interactuar" con las apps (APIs, CLIs, SDKs).
+A veces la página / app de la que queremos obtener información **no quiere facilitarlo** (por ejemplo, si quieres sacar datos de **LinkedIn**).
 
-- Muchas veces, una skill **no es más que un envoltorio** de esas APIs y CLIs, con la explicación para que el modelo sepa usarlas.
-- Si eres **Notion**, quizá está claro cómo usar tu API y tu CLI… pero imaginaos que **VOSOTROS** desarrolláis una herramienta.
-- Vuestros desarrolladores crean la **API y el SDK**, y queréis que las IAs de vuestros clientes **sepan usarlos**.
-- Una opción: **empaquetarlo todo y distribuirlo como una skill**.
+Para "saltarlo" podríamos usar la **extensión de Chrome**, pero tiene desventajas — entre otras, que es **lenta**.
 
-**Así que, muchas veces, una skill no es más que un envoltorio para que la IA sepa usar algo.**
+Hay **herramientas** que nos permiten "saltarnos" las protecciones de LinkedIn (o que **otros** se las salten por nosotros).
+
+Veamos un ejemplo en el que intenté que mi Claude leyera el perfil de un conocido en LinkedIn 💻
+
+{% callout title="No soy abogado" emoji="⚖️" variant="warning" %}
+No tengo ni idea de las implicaciones a nivel legal de esto, así que… **use at your own risk**.
+{% /callout %}
+
+{% notes %}
+Demo en vivo — abrir la sesión «WEB SCRAPPING».
+{% /notes %}
+
+---
+# Scrapeando Linkedin
+
+Hay muchas técnicas para scrapear Linkedin, vamos a ver una de ellas para los que os dedicais a servicios profesionales y queráis crearos una lista de leads a contactar.
+
+---
+
+# Computer use
+
+- La IA **controla tu ordenador**, con lo cual puede hacer prácticamente de todo…
+- …pero **bloquea tu ordenador** temporalmente.
+- **Muy lento**: cada paso tiene que hacer un *screenshot*, entender qué está pasando, clicar…
+- Hay quien se compra un **Mac mini** para "dejarlo trabajando".
+- **Si hay otra vía, evítala.**
+- Para que sí es útil: si tienes algún programa antiguo en tu flujo de trabajo, o para que envíe mensajes de whatsapp por ti.
+
+Ejemplos:
+
+{% prompt title="Una app de escritorio que no tiene mcp ni web..." %}
+Ayúdame a crear un snippet de whisper flow que recoja mis datos de contacto. Todos mis emails, creálo en varias líneas como si fuera la firma de un email. Para ello, usa la herramienta "computer use"
+{% /prompt %}
+
+{% prompt title="Escribe un mensaje de WhatsApp al grupo de Claude Workshop" %}
+Escribe un mensaje simpático y conciso para avisar al grupo de WhatsApp de Claude Workshop de que la sesión va a empezar en 5 minutos. Para ello, usa la herramienta "computer use"
+{% /prompt %}
+
+
+---
+
+# Skills de terceros
+
+El otro día vimos cómo podemos crear **nuestras propias skills**. Y también cómo **instalar conectores**.
+
+Otra cosa que podemos hacer es **instalar skills que otros han desarrollado** (¡y customizarlas si queremos!).
+
+Hay varias vías, **muy similares a cómo añadimos MCPs** (por eso lo dejé para aquí):
+
+- Skills **"oficiales"** que encuentras en *customize*.
+- Skills que encuentras en **webs de terceros** (por ejemplo, pero no solo, **GitHub**) y "copia-pegas" o que te facilitan un fichero.
+- **Marketplaces de skills** que añades a tu Claude y "desbloquean" otros listados.
+
+{% callout title="Instalar skills de terceros es cargar el conocimiento de otro" emoji="📦" variant="info" %}
+Hasta ahora hemos usado las skills para definir procesos o empaquetar **nuestro** conocimiento. Instalar skills de terceros te permite **"cargar" el conocimiento de otros en tu Claude**.
+
+En programación se usa para enseñar a Claude a usar librerías (trozos de código que otros ya han creado y podemos usar). Pero en tu día a día (marketing, diseño, finanzas, ...) también son aplicables.
+
+Por ejemplo, si estás interesado en mejorar tu SEO, busca un experto en SEO y mira si ha creado una skill. O si quieres un análisis financiero o legal experto, puedes instalar las skills de finance de Anthropic
+
+{% /callout %}
+
+
+Veamos **un ejemplo**. 💻
+
+**"Oficiales"**: 
+- Anthropic Finance (escondido en plugins - porque instala más cosas)
+- Anthorpic Marketing (same)
+(Después de instalarlas, tienes que personalizarlas: "Yo no uso Slack, uso x, o yo no uso Amplitud, uso y")
+
+**Marketplaces:**
+
+- [phuryn/pm-skills](https://github.com/phuryn/pm-skills)
+- [Owl-Listener/designer-skills](https://github.com/Owl-Listener/designer-skills)
+
+{% callout title="Aviso" emoji="ℹ️" variant="info" %}
+Son solo **ejemplos** (ni idea de diseño 😅) — lo que quiero transmitir es la **idea**.
+{% /callout %}
+
+---
+
+# Generando imágenes
+
+- Claude **no "dibuja" por sí mismo**, pero puede **pedírselo a un modelo de imagen** y traerte el resultado a tu ordenador.
+- Muy útil en el día a día: **miniaturas, posts, mockups, ilustraciones, imágenes de producto…**
+- Existen una especie de **"librerías" de modelos** (Replicate, kie.ai, fal, Runware…): con **una sola cuenta** accedes a **muchos modelos** distintos.
+- Flujo: **describes** lo que quieres → Claude **genera e itera** → te **guarda los ficheros** en el ordenador.
+
+Veamos un ejemplo. 💻
+
+{% callout title="Para probarlo gratis (sin tarjeta) y por MCP" emoji="🎁" variant="info" %}
+- **Para tocar Flux y muchos modelos:** **Runware** — **$2 gratis sin tarjeta** y **MCP oficial**, pero solo con email de mpresa y no siempre.
+
+Yo uso y recomiendo Replicate (probando kie.ai)
+{% /callout %}
+
+{% notes %}
+  5) **Replicate** — MCP oficial fácil (`npx replicate-mcp`) pero **sin tier gratis / pide tarjeta** → descartado para no-card.
+  6) **kie.ai** — solo MCP comunitario; créditos gratis reportados pero importe sin verificar.
+- Re-verificar la semana antes: créditos/tarjeta de **Runware** y **fal** en vivo; que el MCP comunitario elegido (Pollinations / Gemini) instale y funcione.
+{% /notes %}
 
 ---
 
@@ -1052,34 +1244,98 @@ Como comentamos, una skill puede llevar —además de un prompt o recursos— **
 
 ---
 
-# Ejercicios!
+{% slide bg="brand" width="normal" /%}
 
-**Ejercicios:**
-
-- [Actualiza lo anterior](https://wonderful-court-bea.notion.site/37c0bcf5525480d6a073e601e8ddc026)
-- [Conecta Notion](https://wonderful-court-bea.notion.site/3790bcf552548069a0ffda9afeaa0ba7)
-- [Conecta tu stack tecnológico](https://wonderful-court-bea.notion.site/3790bcf5525480c8a7b1f0130fe3cfec)
-- [Reporte mensual](https://wonderful-court-bea.notion.site/3790bcf55254800eaedefa6c2dc21a11)
-
-{% timer minutes=10 label="Tiempo del ejercicio" /%}
+# Módulo 4: Trabajo remoto y automático
 
 ---
 
-{% slide tags="si da tiempo" /%}
+# "Despachando" trabajo: Dispatch
 
-# Firecrawl
+- Como hemos comentado, Cowork **depende de nuestro ordenador** (se ejecuta allí, no existe en el móvil).
+- Pero podemos **dejar el ordenador conectado** e interactuar con él mediante la función **dispatch**.
+- Ojo: dispatch **no está en un proyecto concreto**. Su potencia es que sabe **"despachar" la tarea al proyecto adecuado** — un proyecto que sí tiene **todo el contexto** que hace falta, aunque dispatch no lo tenga.
+- Dispatch es **"un agente al que le pedimos que encargue tareas"**: **enruta** cada tarea a quien corresponda.
+- **Limitación:** todo vive en **una sola conversación** (no hay hilos) → es **secuencial**, pero **lo gestiona bien**.
+
+Veamos un ejemplo y la **UI** para que veáis qué pasa por detrás. 💻
+
+{% callout title="¿Cómo decide a qué proyecto enrutar?" emoji="🧭" variant="info" %}
+Dispatch usa el **nombre del proyecto** y su **descripción** — **NO** entra en el `CLAUDE.md` del proyecto. Así que, para que funcione bien: **da nombres que tengan sentido** y **añade una breve descripción** a cada proyecto.
+{% /callout %}
 
 ---
 
-{% slide tags="si da tiempo" /%}
+# Ejercicio: Usando dispatch
 
-# Lead scrapping
+1. Ten **al menos dos proyectos** de temas distintos, con **nombres y descripciones relevantes**.
+2. Coge tu **teléfono** y, en la app de Claude, ve a **"Dispatch"**.
+3. Pídele algo referido a **uno** de esos proyectos → verás que lo **enruta** ("encauza") al que corresponde, con acceso a **todas sus herramientas**… ¡y **a tu ordenador**!
+4. Ojo: no eres "tú escribiendo al agente del proyecto". **Tú hablas con dispatch**, y él **delega** el trabajo (parecido a los **subagentes**).
+5. Prueba a **cerrar la app de Claude** mientras estás en dispatch desde el móvil… → **no puede contestar** (aunque tarda un poco en actualizar el "online").
+
+**Casos de uso:**
+
+- Lo obvio: **iniciar y gestionar tareas en remoto**.
+- Si tienes **toda tu vida organizada en Cowork**: interactúas con cada área **sin estar delante del ordenador** y **sin tener que elegir tú** el proyecto al que se refiere la pregunta/tarea.
+
+---
+
+# Tareas programadas
+
+- Para tareas que queremos que ocurran de forma **periódica** o **en el futuro**.
+- Tu ordenador debe estar **encendido y Claude abierto**; si no, se ejecutará **cuando lo abras**.
+- Se pueden crear **a mano o con IA**. Con IA es **más sencillo**, **se edita después** y además permite **"programaciones" que a mano no están disponibles** (¿bug?).
+- Pueden **pertenecer o no a un proyecto**. Si pertenecen, **heredan su contexto**.
+
+{% callout title="Créalas con IA, no a mano" emoji="🪄" variant="warning" %}
+La **"interfaz de botones"** para crear una tarea no ofrece todas las opciones. Si las creas primero **con IA**, podrás hacer cosas como programar una tarea **"one-off"**, o darle varias fechas sueltas y que cree él varias de golpe.
+{% /callout %}
+
+Hagamos alguna: **morning feed**, **email drafter** y una **one-off** (prep de consejo). 💻
+
+{% prompt title="Morning feed" %}
+Eres mi asistente de las mañanas. **De lunes a viernes a las 8:00**, prepárame un resumen breve para arrancar el día.
+
+Usa los conectores (MCPs) que tenga conectados y sean **relevantes** para preparar el día — los que sean, tú decides cuáles aplican.
+
+Dámelo en este orden:
+1. Lo más importante del día (3-5 puntos).
+2. Agenda de hoy, en orden cronológico.
+3. Correos que requieren respuesta.
+4. Una sugerencia de por dónde empezar.
+
+Sé conciso. No inventes: si un conector no está disponible, simplemente no incluyas esa parte.
+{% /prompt %}
+
+{% prompt title="Email drafter" %}
+**De lunes a viernes a las 8:00**, revisa mi bandeja de entrada y prepara **borradores de respuesta** para los correos que lo merezcan.
+
+Criterios:
+- Solo correos **recibidos en las últimas 24 horas**.
+- Solo los **importantes**: de personas reales que esperan respuesta. **Ignora** promociones, newsletters, notificaciones automáticas y remitentes no-reply.
+- Un borrador por correo, en el **idioma del correo original** y con un tono **profesional y cercano**.
+
+Para cada uno:
+- **Déjalo como borrador en Gmail — no lo envíes.**
+- Si te falta información para responder bien, deja el borrador empezado y marca entre [corchetes] lo que tengo que completar yo.
+
+Al final, dame la lista de borradores que has dejado para que los revise antes de enviar.
+{% /prompt %}
+
+{% prompt title="Prep de consejo (una sola vez)" %}
+El día antes del consejo del **15 de septiembre**, recopila los KPIs del trimestre desde **Notion**, cótejalos con el orden del día y prepárame un borrador de los puntos a decidir.
+{% /prompt %}
+
+{% callout title="Son ejemplos: adáptalos a lo tuyo" emoji="🧩" variant="info" %}
+Estos programas son **plantillas** para que veáis el caso de uso. Lo valioso es que los **afinéis a lo vuestro**: vuestros conectores, vuestros criterios y vuestro horario. Pídele a Claude que los ajuste contigo.
+{% /callout %}
 
 ---
 
 {% slide bg="brand" width="normal" /%}
 
-# Módulo 4: Tus primeras herramientas
+# Módulo 5: Tus primeras herramientas
 
 ---
 
@@ -1092,7 +1348,8 @@ Como comentamos, una skill puede llevar —además de un prompt o recursos— **
 
 **Desventaja:**
 
-- **No está conectada** a tus conectores (MCPs).
+- **No está conectada** a tus conectores (MCPs)... ¿o sí?
+
 
 **Veámoslo** 💻 — 🚚 · 🎹 · 🐍
 
@@ -1102,10 +1359,10 @@ Como comentamos, una skill puede llevar —además de un prompt o recursos— **
 
 Elige uno (o el que se te ocurra):
 
-- **ASCII art generator**
 - **Route optimizer** — optimizador de rutas
-- **Dashboard personal**
+- **Habit tracker**
 - **Directorio de artefactos**
+- O mejor... **Invéntate uno tú**, a ver a dónde puedes llevar a Claude
 
 {% callout title="Son ejemplos tontos a propósito" emoji="🙃" variant="info" %}
 No conozco vuestro caso de uso, así que *feel free* de sustituirlo por el vuestro. Lo que quiero es que veáis **qué puede y qué no puede hacer**.
@@ -1113,79 +1370,29 @@ No conozco vuestro caso de uso, así que *feel free* de sustituirlo por el vuest
 
 ---
 
-{% slide tags="interactivo" /%}
+# Cowork Artifacts
 
-# Repaso: ¿nos quedamos con lo importante?
-
-Responde en tu pantalla 👇 (al final ves tu puntuación).
-
-{% quiz title="Repaso de la sesión 1" %}
-{% question text="Cuando una LLM no sabe algo, ¿qué suele hacer?" %}
-{% option %}Te avisa de que no lo sabe{% /option %}
-{% option correct=true %}Se lo puede **inventar** y sonar muy convincente (alucina){% /option %}
-{% option %}Consulta internet automáticamente{% /option %}
-{% explanation %}
-**Alucina:** rellena el hueco con lo más probable, con mucha seguridad. Por eso conviene darle contexto y verificar.
-{% /explanation %}
-{% /question %}
-{% question text="¿Qué es un 'harness'?" %}
-{% option %}El modelo de IA en sí{% /option %}
-{% option correct=true %}El **bucle** que envuelve al modelo: memoria, herramientas, permisos{% /option %}
-{% option %}Un proveedor (Anthropic, OpenAI…){% /option %}
-{% explanation %}
-El modelo es el motor; el harness es lo que lo rodea. **Claude Code _es_ un harness.**
-{% /explanation %}
-{% /question %}
-{% question text="En la escalera de autonomía, ¿cuál es el salto clave?" %}
-{% option %}De autocompletar (0) a chat (2){% /option %}
-{% option correct=true %}De **generar** (3, flujo) a **actuar** (4, agente){% /option %}
-{% option %}De agente (4) a autónomo (5){% /option %}
-{% explanation %}
-El "wow" está en **3 → 4**: pasar de *generar* texto/pasos a *actuar* con herramientas, archivos y comandos.
-{% /explanation %}
-{% /question %}
-{% question text="De los tres harneses, ¿cuál tiene 'manos' en tu ordenador?" %}
-{% option %}Solo el Chat{% /option %}
-{% option correct=true %}Claude **Code** (y Cowork){% /option %}
-{% option %}Ninguno: todos solo conversan{% /option %}
-{% explanation %}
-El Chat conversa pero no toca tus ficheros; **Code (y Cowork) accede a tu ordenador y HACE**.
-{% /explanation %}
-{% /question %}
-{% /quiz %}
+- Hace 5 días se llamaban "Live Artifacts" para diferenciarlos de los de chat (estoy convencido de que Claude los acabará fusionando)
+- Similares a los artefactos de chat, pero…
+- **Puedes usar tus conectores**, lo que los hace **bastante más potentes** (lo están llevando al chat, pero a día de hoy "peta").
+- A dif de chat, estos **no son descargables** ni **"compartibles"** — por la limitación de los conectores.
+- Ejemplos: crearte un **dashboard de tu día, semana o mes**.
 
 ---
 
-{% slide tags="interactivo" /%}
+# Los artefactos están (también) moviéndose
 
-# Una más, rapidita 🃏
+- Esta semana los artefactos han **cambiado de nombre**…
+- …y los de **chat** parece que van a poder **conectarse con conectores**…
+- …y **embeberse en webs**.
 
-¿Te quedó claro lo de conectar Claude al mundo?
-
-{% quiz title="Comprobación exprés" mode="modal" %}
-{% question text="¿Qué es un MCP?" %}
-{% option correct=true %}Un **enchufe estándar** para dar a Claude acceso a apps y datos{% /option %}
-{% option %}Un modelo más potente{% /option %}
-{% option %}Un lenguaje de programación{% /option %}
-{% explanation %}
-MCP = *Model Context Protocol*: el estándar para conectar Claude a Notion, GitHub, tu BBDD…
-{% /explanation %}
-{% /question %}
-{% question text="¿Cuál es la forma MÁS fácil de exponer tu herramienta?" %}
-{% option correct=true %}Un **MCP** con la librería de Anthropic{% /option %}
-{% option %}Reescribir todo en GraphQL{% /option %}
-{% /question %}
-{% /quiz %}
+**Esto abre casos de uso muy potentes** — pero significa que **posiblemente cambie mucho** en las próximas semanas.
 
 ---
 
-{% slide bg="brand" /%}
+{% slide bg="brand" width="normal" /%}
 
-# Para el próximo día
-
-Aprenderemos a crearnos **pequeñas aplicaciones**…
-
-…y a que nuestro Claude nos reciba **todas las mañanas con un trabajo hecho**.
+# Módulo 6: La memoria de Claude
 
 ---
 
@@ -1194,7 +1401,7 @@ Aprenderemos a crearnos **pequeñas aplicaciones**…
 Llamamos "memoria" a **varias cosas distintas**. Conviene separarlas:
 
 - 🟧 **Instrucciones / CLAUDE.md** — el contexto que **pones tú**; siempre presente. *(ya lo hemos visto)*
-- 🟦 **Búsqueda entre chats** — Claude **recupera y cita** conversaciones pasadas. *(solo Chat, planes de pago)*
+- 🟦 **Búsqueda entre chats** — Claude **recupera y cita** conversaciones pasadas.
 - 🟪 **El sistema de memoria** — lo que Claude recuerda **solo**: por **archivos** (`MEMORY.md`, en Cowork y Code) o **autoconsolidado cada ~24 h** (solo Chat).
 
 Orden: **🟧 ya visto** (repaso rápido) → **🟦 búsqueda** (la fácil) → **🟪 sistema de memoria** (el que más lía).
@@ -1276,6 +1483,9 @@ El sistema de memoria **no se comparte entre proyectos** **ni** baja de lo gener
 
 {% callout emoji="🚧" variant="warning" %}
 **Esto puede cambiar pronto:** Anthropic ya prueba una memoria **por archivos** también para Chat.
+.
+
+**Mi opinión de momento**: las tengo desactivadas, y cuando quiero algo le pido que lo guarde 
 {% /callout %}
 
 {% notes %}
@@ -1294,6 +1504,41 @@ El sistema de memoria **no se comparte entre proyectos** **ni** baja de lo gener
 # El mapa de la memoria
 
 ![Mapa de la memoria: el CLAUDE.md de usuario envuelve Chat (memoria consolidada) y Cowork (MEMORY.md); cada proyecto tiene su propia memoria; las ✗ marcan que no se comparte entre proyectos ni entre Chat y Cowork.](/cms-assets/decks/intro-to-synced-slides/mapa-memoria.png)
+
+---
+
+# Integrando proyectos
+
+Una limitación actual de Cowork: si te organizas por **proyectos** (los de Claude), **ningún agente lo sabe "todo"** — los han hecho muy **estancos**.
+
+Está bien por aislamiento… pero **limita mucho** su utilidad.
+
+**Hay quien se inventa sistemas.** El más habitual: *pasa de los proyectos de Cowork, crea uno solo y dile a Claude que lea los archivos del proyecto cuando trabaje en él.*
+
+- Funciona — y **no tengo claro que no sea la mejor opción**: te permite **cambiar a otra IA** el día de mañana muy fácilmente.
+
+**Cómo lo gestiono yo de momento:**
+
+![Un proyecto "raíz" en Cowork que es a su vez una carpeta /projects: su CLAUDE.md enruta hacia cada subproyecto (Fitness, Personal, Viajes, Clientes…), cada uno con su propio CLAUDE.md](/cms-assets/decks/intro-to-synced-slides/proyecto-raiz.png)
+
+- Cada proyecto con su **`CLAUDE.md`** (como ya vimos).
+- Un proyecto **"raíz"** al que **añado a mano la carpeta de cada proyecto**.
+- En el raíz, una **tabla de rutas**.
+
+Es parecido, pero **seguimos usando los proyectos de Claude**:
+
+- **Cada proyecto es independiente:** si trabajo dentro, solo tiene **ese** contexto.
+- **El raíz los ve todos:** si trabajo ahí, **sabe de todo**.
+
+Veamos un ejemplo. 💻
+
+{% prompt title="Desde el proyecto raíz" %}
+¿Qué sabes de mis entrenamientos de los últimos 7 días?
+{% /prompt %}
+
+{% prompt title="…y cruzamos contextos" %}
+¿Y cómo cuadra eso con mis planes de finde?
+{% /prompt %}
 
 ---
 
@@ -1357,8 +1602,152 @@ Cosas que hoy fallan en Cowork (y que seguramente arreglen pronto):
 - **No hay un ON/OFF para la memoria de Cowork:** aparece al buscar en *Settings*, pero el interruptor en sí no existe.
 - **El toggle está compartido con Chat:** si desactivas *Capabilities → Generate memory from chat history*, desactivas **también la de Cowork**.
 
+{% callout title="No sois vosotros" emoji="🐛" variant="info" %}
+La app de escritorio es **"buggy"**: van rápido y rompen cosas. Es frustrante. Simplemente que lo sepáis, **para que no penséis que sois vosotros**. Pensad que salió hace **5 meses** y que prácticamente **acaba de salir de "preview"**.
+{% /callout %}
+
 {% notes %}
 - Es una beta; estos bugs los he visto yo estos días — pueden estar arreglados para cuando lo veáis.
 - El 1º muerde si trabajáis con subcarpetas que tienen su propio CLAUDE.md.
 - El 3º enlaza con la slide del sistema de memoria: Cowork y Chat comparten ese interruptor.
 {% /notes %}
+
+---
+
+{% slide tags="otra sesión" /%}
+
+# Conectar vía API (1)
+
+Como he ido repitiendo: que los modelos sean **cada vez más listos** hace que cada vez sea **menos necesario** fabricarles herramientas *ad hoc*.
+
+Así que otra forma de conectar Claude con el mundo es usar el sistema que los programadores llevan **años** usando: **las APIs**.
+
+Como veremos más adelante, una webapp tiene un **frontend** (lo que ves) y un **backend** (lo que piensa y guarda los datos). Se comunican por una **API**: un conjunto de direcciones (como una URL) que sirven para **i)** obtener datos o **ii)** modificarlos. Quizá os suena:
+
+- `GET`
+- `POST`
+
+**Las IAs pueden usar esas direcciones directamente** para interactuar con el exterior (obviamente, necesitan tu "contraseña") — en lugar de pasar por un MCP.
+
+---
+
+{% slide tags="otra sesión" /%}
+
+# Conectar vía API (2)
+
+A veces los programadores, cuando llaman mucho a una API, crean (o usan) una **función**:
+
+- En lugar de `http://…` → `getProduct(1234)`.
+
+Las IAs pueden hacer algo parecido: **crear ellas la función** o **usar funciones que otros ya hicieron** (las *librerías*).
+
+**Ventajas:**
+
+- **No tienes que hacer nada.**
+- La IA tiene la **misma libertad que un programador**: todo lo que la app expone por API, no solo lo que elijas exponer por MCP.
+
+**Desventajas:**
+
+- Requiere que sepas qué es un **token** y cómo "gestionarlo".
+- A veces **no quieres** que tenga tanta libertad.
+
+---
+
+{% slide tags="otra sesión" /%}
+
+# Skills de terceros como forma de conectar Claude
+
+Como comentamos, una skill puede llevar —además de un prompt o recursos— **programas**. Y, como vimos antes, los programadores ya tenían **formas establecidas** de "interactuar" con las apps (APIs, CLIs, SDKs).
+
+- Muchas veces, una skill **no es más que un envoltorio** de esas APIs y CLIs, con la explicación para que el modelo sepa usarlas.
+- Si eres **Notion**, quizá está claro cómo usar tu API y tu CLI… pero imaginaos que **VOSOTROS** desarrolláis una herramienta.
+- Vuestros desarrolladores crean la **API y el SDK**, y queréis que las IAs de vuestros clientes **sepan usarlos**.
+- Una opción: **empaquetarlo todo y distribuirlo como una skill**.
+
+**Así que, muchas veces, una skill no es más que un envoltorio para que la IA sepa usar algo.**
+
+---
+
+{% slide bg="brand" /%}
+
+# Próximo día, entramos en terminal
+
+- **Introducción a la terminal**
+- Ver cómo los **mismos conceptos** aplican en ese entorno
+- **Intro al desarrollo de apps**
+
+{% callout title="Reserva tus individuales" emoji="⚠️" variant="warning" %}
+Usa las **individuales** *antes* de empezar la parte de **hacer aplicaciones**: para **conectar tu stack**, **aclarar dudas** y **dejar sistemas funcionando**.
+{% /callout %}
+
+---
+
+{% slide tags="TODO interno" /%}
+
+# Mapa de trabajo agéntico
+
+{% callout title="Nota para nosotros (no es slide de sesión)" emoji="🗺️" variant="warning" %}
+Preparar un **mapa con todos los conceptos vistos** —skills, MCPs, artefactos, tareas programadas…— para ayudar al asistente a **"ubicarse"**. Sin él, puede resultar un poco *overwhelming*.
+{% /callout %}
+
+---
+
+{% slide bg="brand" width="normal" /%}
+
+# Módulo X: Desarrollamos juntos una aplicación
+
+---
+
+# ¿Por qué crear una app?
+
+- **Para hacer exactamente lo que te hace falta**, adaptado a TU proceso.
+- **Porque te ayudará a sentirte cómodo con la terminal** (que abre más puertas que Cowork).
+- **Porque creo que entramos en una fase de "personal software"**, donde programar va a ser una palanca enorme para quien la sepa usar.
+
+La app de escritorio va sacando cosas sueltas, que **tú** tienes que unir. Es posible, pero limitado.
+
+Aquí tú defines qué te hace falta, y **para hacerlo solo tienes que saber escribir y pensar**.
+
+---
+
+# Instalaciones
+
+Salimos de la app de escritorio y nos vamos a la **terminal**. Hace falta instalar unas pocas cosas (una sola vez):
+
+- **Claude Code** — el agente en la terminal. Nuestra herramienta principal.
+- **Node.js (+ npm)** — el "motor" para crear y arrancar aplicaciones web. *(Claude Code ya no lo necesita, pero para hacer apps sí.)*
+- **Git** — guarda el histórico de tu código (control de versiones). Recomendado, no obligatorio.
+- **Un editor de código** — VS Code. Opcional, pero lo hace todo más visual.
+- **Terminal** — ya viene con tu Mac (Terminal.app); en Windows, PowerShell.
+
+{% prompt title="Instalar Claude Code (Mac / Linux)" %}
+curl -fsSL https://claude.ai/install.sh | bash
+{% /prompt %}
+
+{% callout title="No lo hagas a solas: que te guíe Claude" emoji="🤝" variant="info" %}
+No te pelees con esto tú solo. Abre **Cowork** (que ya tienes) y pídele que te guíe paso a paso, pegándole pantallazos de lo que veas. Es justo el reflejo que queremos entrenar: cuando algo te atasca, **se lo pasas al agente**.
+{% /callout %}
+
+---
+{% slide tags="próxima sesión, decisión" /%}
+
+La próximo sesión pasaremos a la terminal. La primera hora la dedicaremos a ver como se traspasa todo esto a la terminal y a ver que es exactamente lo mismo. La segunda hora tenemos dos opciones:
+
+- A: Hacer juntos una mini app (luego haremos una de verdad)
+- B: Coger lo que hemos aprendido hasta ahora y hacer flujo más complejo (vendré con él hecho y os lo explico porque todos no dará tiempo)
+
+---
+
+{% slide tags="próxima sesión, idea" /%}
+
+# Idea de ejercicio: una mini app "chat con tus fuentes"
+
+Un **chat con un agente** que responde consultando **fuentes de conocimiento** (PDFs u otras). El **creador** mete las fuentes desde el **backend** y el agente las **consulta dinámicamente** según lo que pregunte el usuario.
+
+- **UI de chat** con la **AI SDK de Vercel** (y su librería de componentes de IA, **AI Elements**).
+- **Backend del creador**: aquí enchufas las fuentes (PDFs, notas, docs…).
+- **Agente**: decide qué fuente consultar en función de la pregunta.
+
+{% callout title="Candidata a primer ejercicio de la próxima sesión" emoji="📌" variant="warning" %}
+Recordatorio: probablemente lo arrancamos **al principio de la siguiente sesión**. Conecta con el "Custom GPT en Claude" que descartamos — esta es la versión "hazte tu propia app".
+{% /callout %}

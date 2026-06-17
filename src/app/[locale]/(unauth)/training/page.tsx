@@ -2,7 +2,9 @@ import type { Locale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 
 import { hasTrainingAccess } from '@/features/training/access';
+import { routing } from '@/shared/internationalization/i18n/config';
 import { TrainingCard } from './TrainingCard';
+import { ResourcesSection } from './ResourcesSection';
 
 type Props = {
   params: Promise<{ locale: Locale }>;
@@ -19,8 +21,23 @@ export default async function TrainingPage({ params }: Props) {
 
   const unlocked = await hasTrainingAccess();
 
+  // Locale-aware path (localePrefix is "as-needed": no prefix for the default
+  // locale, so we must not emit "/es/…").
+  const mapaHref =
+    locale === routing.defaultLocale
+      ? '/mapa-agentico'
+      : `/${locale}/mapa-agentico`;
+  const mapaContextoHref =
+    locale === routing.defaultLocale
+      ? '/mapa-contexto'
+      : `/${locale}/mapa-contexto`;
+  const claudeMdHref =
+    locale === routing.defaultLocale
+      ? '/claude-md'
+      : `/${locale}/claude-md`;
+
   return (
-    <div className='flex flex-col gap-8'>
+    <div className='flex flex-col gap-10'>
       <header className='flex flex-col gap-2'>
         <h1 className='text-3xl font-bold'>Training</h1>
         <p className='text-muted-foreground'>
@@ -29,7 +46,24 @@ export default async function TrainingPage({ params }: Props) {
         </p>
       </header>
 
-      <TrainingCard unlocked={unlocked} deckPath={SESSION_DECK_PATH} />
+      <section className='flex flex-col gap-4'>
+        <h2 className='text-sm font-semibold uppercase tracking-wide text-muted-foreground'>
+          Sesiones
+        </h2>
+        <TrainingCard unlocked={unlocked} deckPath={SESSION_DECK_PATH} />
+      </section>
+
+      <section className='flex flex-col gap-4'>
+        <h2 className='text-sm font-semibold uppercase tracking-wide text-muted-foreground'>
+          Recursos
+        </h2>
+        <ResourcesSection
+          unlocked={unlocked}
+          mapaHref={mapaHref}
+          mapaContextoHref={mapaContextoHref}
+          claudeMdHref={claudeMdHref}
+        />
+      </section>
     </div>
   );
 }
