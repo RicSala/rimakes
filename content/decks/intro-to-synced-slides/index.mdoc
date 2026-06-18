@@ -1829,3 +1829,24 @@ Si el repo es **público**, no necesitas nada. Si es **privado**, tienes que est
 - **Lo más fácil:** instala **GitHub CLI** y ejecuta `gh auth login` (o pídeselo a Claude, te guía).
 - **Alternativa clásica:** configurar una **clave SSH** en tu cuenta de GitHub.
 {% /callout %}
+
+---
+
+# Introducción a la interfaz de terminal de Claude
+
+Lo mismo que ya conoces, pero en la terminal. Las piezas:
+
+- **La barra de estado** — abajo: modelo, contexto restante, rama de git…
+- **Mencionar archivos con `@`** — referencias un archivo o carpeta para dárselo de contexto.
+- **Comandos con `/`** — acciones rápidas (skills, ajustes…).
+- **La carpeta `.claude`** — donde vive la config del proyecto:
+  - **configuración** (`settings.json`)
+  - **skills**
+- **El `CLAUDE.md`** — el contexto que se inyecta al arrancar.
+
+**Y los 4 primitivos que ya vimos, ahora en la terminal:**
+
+- el **`CLAUDE.md`**
+- las **skills**
+- los **MCPs**
+- los **subagentes**
