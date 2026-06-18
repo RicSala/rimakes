@@ -11,7 +11,7 @@ export const TAKEAWAYS: string[] = [
 
 // ── The mental model — the one-line punchline everything hangs from ───────────
 export const PUNCHLINE =
-  'El CLAUDE.md no es documentación: es un prompt que se inyecta al principio de cada sesión. De ahí se deduce todo lo demás.';
+  'Es un prompt que se inyecta al principio de la sesión. Es un "trade": pagamos en tokens por adelantado algo que creemos que necesitará, para ahorrar tiempo y errores.';
 
 // ── How it works — the mechanics, each a small card ───────────────────────────
 export type HowItem = { title: string; body: string };
@@ -77,10 +77,9 @@ export type Shortcut = { key: string; what: string };
 
 export const SHORTCUTS: Shortcut[] = [
   { key: '/init', what: 'Genera un primer CLAUDE.md leyendo el proyecto.' },
-  { key: '#', what: 'Añade una línea de memoria al vuelo, sin abrir el archivo.' },
   {
     key: '@ruta',
-    what: 'Importa ese archivo inline: su contenido se carga siempre, en cada turno (no es una referencia perezosa — no ahorra contexto).',
+    what: 'Importa ese archivo inline: su contenido se carga siempre, en cada turno.',
   },
 ];
 

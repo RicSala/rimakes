@@ -49,7 +49,7 @@ export const BANDS: Record<Band, { label: string; sub: string }> = {
 };
 
 export const VECTORS: Vector[] = [
-  { id: 'carga', label: 'Carga', band: 'forma', kind: 'scale', poles: ['Siempre', 'Bajo demanda'], question: '¿Está siempre, o solo cuando hace falta?' },
+  { id: 'carga', label: 'Presencia', band: 'forma', kind: 'scale', poles: ['Siempre', 'Bajo demanda'], question: '¿Está siempre, o solo cuando hace falta?' },
   { id: 'progressive', label: 'Progressive disclosure', band: 'forma', kind: 'scale', poles: ['No aplica', 'De serie'], question: '¿Enseña lo justo y carga el detalle solo si hace falta?' },
   { id: 'aislamiento', label: 'Aislamiento', band: 'forma', kind: 'scale', poles: ['Ventana compartida', 'Ventana propia'], question: '¿Corre en tu conversación o aparte?' },
   { id: 'activacion', label: 'Activación', band: 'forma', kind: 'tag', question: '¿Quién decide que se use?' },
@@ -87,7 +87,7 @@ export const MECHS: Mechanism[] = [
     useWhen: 'Es específico de esta tarea, ahora.',
     failure: 'Se olvida: ni se reutiliza ni sobrevive a la siguiente sesión.',
     v: {
-      carga: { n: 0, t: 'Siempre (ahora)' },
+      carga: { n: 1, t: 'Bajo demanda' },
       progressive: { t: 'No aplica' },
       aislamiento: { n: 0, t: 'Compartida' },
       activacion: { t: 'Tú, a mano' },
@@ -115,9 +115,9 @@ export const MECHS: Mechanism[] = [
       alcance: { t: 'Reutilizable' },
       payload: { n: 0.2, t: 'Palabras (+bash/refs)' },
       fuerza: { n: 1, t: 'Alta', tone: 'good' },
-      coste: { n: 0.6, t: 'Pago por uso', tone: 'good' },
+      coste: { n: 0.85, t: 'Pago por uso', tone: 'good' },
       friccion: { n: 0.35, t: 'Baja', tone: 'good' },
-      capacidad: { t: 'Instruye (+bash)' },
+      capacidad: { t: 'Ejecuta código' },
       compartir: { n: 0.75, t: 'Bastante (es un archivo)' },
     },
   },
@@ -225,9 +225,9 @@ export const DECISION: { when: string; pick: string }[] = [
   { when: 'Verdad en todo lo que hago, solo para mí', pick: 'CLAUDE.md de usuario' },
   { when: 'Verdad en este proyecto, para todo el equipo', pick: 'CLAUDE.md de proyecto' },
   { when: 'Solo esta tarea, ahora mismo', pick: 'Prompt' },
-  { when: 'Una rutina que disparo yo, por su nombre', pick: 'Slash command' },
   { when: 'Algo que Claude debe coger solo (o que trae scripts)', pick: 'Skill' },
-  { when: 'Trabajón aparte que no debe ensuciar la conversación', pick: 'Subagente' },
+  { when: 'Una skill no invocable por el modelo', pick: 'Slash command' },
+  { when: 'Trabajo delegable fuera de contexto', pick: 'Subagente' },
 ];
 
 // The three ideas the map has to land — shown in the header.
