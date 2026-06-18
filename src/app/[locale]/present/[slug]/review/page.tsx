@@ -36,12 +36,17 @@ export default async function ReviewPage({ params }: Props) {
   }
 
   // Only the slides the deck marks public (covered material): the leading run set
-  // by `publicThrough`, plus any per-slide `{% slide public=true /%}`.
+  // by `publicThrough`, plus any per-slide `{% slide public=true /%}`. An explicit
+  // `{% slide public=false /%}` hard-excludes a slide even inside the leading run,
+  // so presenter-hidden slides stay out of the review/handout surfaces.
   const publicThrough =
     typeof deck.publicThrough === 'number' ? deck.publicThrough : 0;
   const publicParsed = splitNodeIntoSlides(deck.content.node)
     .map(extractSlideMeta)
-    .filter(({ meta }, slideIndex) => meta.public === true || slideIndex < publicThrough);
+    .filter(
+      ({ meta }, slideIndex) =>
+        meta.public !== false && (meta.public === true || slideIndex < publicThrough)
+    );
 
   if (publicParsed.length === 0) {
     notFound();
