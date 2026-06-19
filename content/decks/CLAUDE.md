@@ -74,6 +74,11 @@ slide's chrome. It is optional and is not rendered inline.
   (`/present/<slug>/review`), the audience-navigable copy of the covered material. See
   *Public slides & the review deck* below. To add a whole leading run at once, prefer the
   deck-level `publicThrough` over flagging every slide.
+- **`section`** — a module/section label, e.g. `section="Módulo 1: Primer contacto"`.
+  Marks this slide as the **start of a module**: it becomes a header in the review
+  deck's **índice** (table of contents), and the slides that follow are listed under
+  it. Put it on the brand divider slide that opens the module. See *Public slides & the
+  review deck* below.
 
 ## Available components
 
@@ -84,7 +89,7 @@ copyable block. Don't wrap ordinary content in components for decoration.
 
 | Component | Syntax | Attributes |
 |---|---|---|
-| **Slide settings** | `{% slide bg="brand" tags="A, B" /%}` | `bg`: `none` \| `brand` \| `dark`; `tags`: comma-separated; `width`: `normal` \| `wide` \| `full`; `public`: `true` (adds slide to the review deck) |
+| **Slide settings** | `{% slide bg="brand" tags="A, B" /%}` | `bg`: `none` \| `brand` \| `dark`; `tags`: comma-separated; `width`: `normal` \| `wide` \| `full`; `public`: `true` (adds slide to the review deck); `section`: module label (groups the review índice) |
 | **Callout** | `{% callout title="…" emoji="👋" variant="info" %}…body…{% /callout %}` | `title`, `emoji`, `variant`: `default` \| `info` \| `warning` \| `error` \| `success` |
 | **Prompt** | `{% prompt title="…" %}…body…{% /prompt %}` | `title` — collapsible + copy-to-clipboard block |
 | **Highlight** | `{% highlight %}…texto…{% /highlight %}` | inline marker-pen highlight, **default yellow**; `color`: `yellow` \| `green` \| `blue` \| `pink` \| `orange` |
@@ -146,6 +151,18 @@ connection at all**, so it's completely decoupled from a live session — moving
 deck never moves a reviewer. It's built in `present/[slug]/review/page.tsx` (filters to
 public slides) + `ReviewViewer.tsx` (the self-paced surface). The live viewer
 (`SlideViewer.tsx`) stays passive and unchanged.
+
+### Índice (table of contents)
+
+The review deck also has an **☰ Índice** button (next to the nav buttons) that opens a
+slide-over **table of contents**: every public slide listed by its first heading, grouped
+into **modules** by the `{% slide section="…" /%}` markers (see `section` above). Click an
+entry to jump; the current slide is highlighted; Esc or the backdrop closes it. Because
+it's built from the **same public-filtered list**, it can never point at a slide the
+audience shouldn't see — and slides before the first `section` show as a leading, untitled
+group. With no `section` markers anywhere it degrades to a flat list of titles. Slides
+without a heading fall back to their number. Built in `ReviewIndex.tsx`; the per-slide
+`title` (first heading) and `section` are extracted in `splitSlides.ts` (`extractSlideMeta`).
 
 ## Access (password gate)
 
@@ -328,6 +345,22 @@ clock **flashes** red.
 - Wiring lives in `features/presentations/`: `Timer.tsx` (UI + sync),
   `channel.ts` (`TIMER_EVENT` / `timerChannel`), `presentation-context.tsx` (slug
   + secret), and the `/api/present/[slug]` route (stamps `endsAt`, broadcasts).
+
+## Commands shown in slides
+
+When a slide gives attendees a terminal command to **open a file or folder**, use
+**Cursor** (`cursor <path>`) — **not** `open` (macOS) or `notepad` / `start`
+(Windows):
+
+- `cursor .` — open the current project folder
+- `cursor ~/.claude/CLAUDE.md` — open a specific file (Cursor creates it on save
+  if it doesn't exist yet)
+
+Why: the workshop installs Cursor, and `cursor <path>` is the **same command on
+macOS and Windows**, so the "open it yourself" step doesn't need a per-OS split.
+Inside Claude Code, still prefer the relevant slash command (`/memory`, `/mcp`,
+`/agents`, `/plugin`…) or simply asking Claude; reserve raw shell commands (with
+`cursor` for opening) for the manual path.
 
 ## Authoring
 

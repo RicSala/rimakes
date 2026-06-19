@@ -1,7 +1,7 @@
 ---
 title: Session 1
 description: Intro to Claude
-publicThrough: 92
+publicThrough: 103
 ---
 # Antes de nada…
 
@@ -100,7 +100,7 @@ Y de hecho, algunos tenéis necesidades e ideas de como solventarlas parecidas.
 
 ---
 
-{% slide bg="brand" width="normal" /%}
+{% slide bg="brand" width="normal" section="Módulo 1: Primer contacto con Claude" /%}
 
 # Módulo 1: Primer contacto con Claude
 
@@ -522,7 +522,7 @@ Esto es poco eficiente, así que el siguiente paso es…
 
 ---
 
-{% slide bg="brand" width="normal" /%}
+{% slide bg="brand" width="normal" section="Módulo 2: Personaliza tu Claude" /%}
 
 # Módulo 2: Personaliza tu Claude
 
@@ -765,7 +765,7 @@ Pero no es muy útil si no se puede **comunicar con el mundo**…
 
 ---
 
-{% slide bg="brand" width="normal" /%}
+{% slide bg="brand" width="normal" section="Módulo 3: Conectando a Claude" /%}
 
 # Módulo 3: Conectando a Claude
 
@@ -1073,7 +1073,6 @@ Entramos en temas más específicos **y/o** avanzados de Claude
 {% callout title="Claude para oficina!" emoji="📌" variant="info" %}
 Estos son: i) más específicos de Claude y ii) se usan poco a la hora de hacer apps, pero son útiles para el día a día
 {% /callout %}
-.
 
 {% callout title="Hazlo tuyo" emoji="🧩" variant="success" %}
 ⚠️⚠️⚠️ Después de esto habremos visto **casi todos los primitivos** y os recomiendo dedicar un tiempo a **"adaptároslos a vuestro trabajo"**. Ninguno es "mágico" por sí solo; **combinados son potentes**.
@@ -1277,7 +1276,7 @@ Veamos cómo funciona 💻
 
 ---
 
-{% slide bg="brand" width="normal" /%}
+{% slide bg="brand" width="normal" section="Módulo 4: Trabajo remoto y automático" /%}
 
 # Módulo 4: Trabajo remoto y automático
 
@@ -1378,7 +1377,7 @@ Estos programas son **plantillas** para que veáis el caso de uso. Lo valioso es
 
 ---
 
-{% slide bg="brand" width="normal" /%}
+{% slide bg="brand" width="normal" section="Módulo 5: Tus primeras herramientas" /%}
 
 # Módulo 5: Tus primeras herramientas
 
@@ -1446,7 +1445,7 @@ Quiero crear un live artifact que sea un dashboard que me permita tener una visi
 
 ---
 
-{% slide bg="brand" width="normal" /%}
+{% slide bg="brand" width="normal" section="Módulo 6: La memoria de Claude" /%}
 
 # Módulo 6: La memoria de Claude
 
@@ -1540,7 +1539,6 @@ El sistema de memoria **no se comparte entre proyectos** **ni** baja de lo gener
 
 {% callout emoji="🚧" variant="warning" %}
 **Esto puede cambiar pronto:** Anthropic ya prueba una memoria **por archivos** también para Chat.
-.
 
 **Mi opinión de momento**: las tengo desactivadas, y cuando quiero algo le pido que lo guarde 
 {% /callout %}
@@ -1735,9 +1733,287 @@ Usa las **individuales** *antes* de empezar la parte de **hacer aplicaciones**: 
 
 ---
 
-{% slide bg="brand" width="normal" /%}
+{% slide bg="brand" width="normal" section="Módulo 7: Desarrollamos juntos una aplicación" /%}
 
 # Módulo 7: Desarrollamos juntos una aplicación
+
+---
+
+# Instalaciones
+
+{% callout title="Quizá ya lo tienes — comprueba antes de instalar" emoji="✋" variant="info" %}
+Es posible que **ya tengas casi todo instalado**: en la primera sesión instalamos algunas de estas cosas. Cada slide trae abajo, **en verde**, un apartado para **confirmar**. En lugar de seguir los pasos y confirmar después, **comprueba primero si ya lo tienes** antes de hacer nada — puede que lo único que te falte sea **Git y GitHub**.
+{% /callout %}
+
+{% callout title="Si te atascas, pregunta a Claude" emoji="🤝" variant="info" %}
+Cada ordenador es distinto —cada Mac y cada Windows— así que estas son las **guías básicas**: intenta seguirlas. En cuanto te **atasques** o te salga un **error**, **pregúntale a Claude**: abre **Cowork** (que ya tienes), pégale un pantallazo de lo que ves y te va guiando paso a paso.
+{% /callout %}
+
+Salimos de la app de escritorio y montamos nuestro **sitio de trabajo** (editor + terminal). Hace falta instalar unas pocas cosas (una sola vez) y **en este orden**:
+
+1. **[Cursor](https://cursor.com)** — tu **sitio de trabajo**: editor + **terminal** integrada. Va el **primero**: su terminal es la que usaremos para todo lo demás.
+2. **Terminal** — la de Cursor.
+3. **[Claude Code](https://claude.com/claude-code)** — el agente en la terminal. **Nuestra herramienta principal**; una vez instalado, te ayuda con lo que falta.
+4. **[Node.js (+ npm)](https://nodejs.org/en/download)** — el "motor" para crear y arrancar apps web.
+5. **[Git](https://git-scm.com/downloads)** — guarda el histórico de tu código (control de versiones). **Imprescindible.**
+6. **[GitHub](https://github.com)** — tu código en la nube; te conectas con GitHub CLI (`gh`).
+
+Con esto podrás **crear una app de Next.js desde Claude Code**. Antes, un par de **cuentas** que necesitas (Claude de pago + GitHub). Las siguientes slides traen el **paso a paso (Mac y Windows)** y **cómo confirmar** cada una.
+
+---
+
+{% slide width="wide" /%}
+
+# Cuentas que necesitas
+
+Esto **no se instala**: son **cuentas** que tienes que tener antes de empezar (seguramente ya las tengáis). Dos, y **las dos hacen falta**:
+
+{% columns %}
+{% column title="Claude (de pago)" badge="Requerida" %}
+Claude Code **no funciona con el plan gratis**.
+
+- Con **Pro** (~20 €/mes) va, pero te quedas corto de uso enseguida.
+- {% highlight %}Para el curso, seguramente el plan **Max (~90 €/mes)**{% /highlight %}.
+{% /column %}
+{% column title="GitHub" badge="Requerida" %}
+Tu **copia en la nube** del código. *O sea: es como un **Google Drive para tus proyectos** — guarda tu código online (una **copia de seguridad**) y te deja **compartirlo**.*
+
+- Créala gratis en **[github.com](https://github.com)**.
+- Te servirá para **autenticarte** con `gh` (paso 6).
+{% /column %}
+{% /columns %}
+
+{% callout title="Cómo confirmar" emoji="✅" variant="success" %}
+- **Claude:** al ejecutar `claude` inicias sesión **sin** que te avise de que tu plan no incluye Claude Code.
+- **GitHub:** puedes entrar en [github.com](https://github.com) con tu usuario.
+{% /callout %}
+
+---
+
+{% slide width="wide" /%}
+
+# 1 · Cursor — tu sitio de trabajo
+
+**Cursor** es un editor de código con una **terminal integrada**. Lo instalamos **primero** porque ahí dentro haremos todo lo demás: editar, ver el código y **escribir los comandos** — sin saltar entre ventanas.
+
+{% columns %}
+{% column %}
+![](/cms-assets/decks/intro-to-synced-slides/apple.png) **macOS**
+
+1. Entra en **[cursor.com](https://cursor.com)** y descarga.
+2. Abre el `.dmg` y **arrastra Cursor** a la carpeta *Aplicaciones*.
+{% /column %}
+{% column %}
+![](/cms-assets/decks/intro-to-synced-slides/windows.png) **Windows**
+
+1. Entra en **[cursor.com](https://cursor.com)** y descarga el instalador.
+2. Ejecútalo y sigue los pasos hasta el final.
+{% /column %}
+{% /columns %}
+
+{% callout title="Cómo confirmar" emoji="✅" variant="success" %}
+Cursor **abre** y puedes hacer **Archivo → Abrir carpeta** sobre una carpeta cualquiera. En la siguiente slide abrimos su terminal.
+{% /callout %}
+
+**Fuente oficial:** [cursor.com](https://cursor.com)
+
+---
+
+{% slide width="wide" /%}
+
+# 2 · La terminal (la de Cursor)
+
+Una **terminal** es una forma de hablarle al ordenador **escribiendo**, en vez de hacer clic en botones. Como ya tienes **Cursor**, {% highlight %}no tienes que hacer nada{% /highlight %}: ya tienes una terminal dentro de Cursor.
+
+{% callout title="Ábrela dentro de Cursor" emoji="🖥️" variant="info" %}
+En Cursor, menú **Terminal → New Terminal**. Aparece un panel abajo donde puedes **escribir**: ahí pegaremos los comandos de las siguientes slides. La tienes **junto al código y al navegador**, para ver en directo **lo que Claude va haciendo**.
+{% /callout %}
+
+![Cursor: menú Terminal → New Terminal](/cms-assets/decks/intro-to-synced-slides/cursor-terminal.png)
+
+Eso sí, **no es la terminal más pulida**: las hay más cómodas y potentes, y con el tiempo quizá uses otra. Pero para **empezar** nos sobra — y nos ahorra instalar y configurar nada más.
+
+{% callout title="Cómo confirmar" emoji="✅" variant="success" %}
+Abre **Terminal → New Terminal**, teclea `whoami` y pulsa Enter: debe responder con tu nombre de usuario.
+{% /callout %}
+
+---
+
+# 3 · Claude Code
+
+El agente en la terminal: **nuestra herramienta principal**. Se instala con **un solo comando**.
+
+{% prompt title="macOS / Linux — pégalo en la terminal de Cursor" %}
+curl -fsSL https://claude.ai/install.sh | bash
+{% /prompt %}
+
+{% prompt title="Windows — pégalo en la terminal de Cursor" %}
+irm https://claude.ai/install.ps1 | iex
+{% /prompt %}
+
+{% callout title="Cómo confirmar" emoji="✅" variant="success" %}
+1. **Cierra y reabre** la terminal de Cursor.
+2. `claude --version` → debe salir un número de versión. *(Si algo va raro, `claude doctor` te diagnostica.)*
+3. Escribe `claude` y pulsa Enter: la **primera vez** abre el navegador para **iniciar sesión** con tu cuenta de **Claude (Pro / Max / Team)**.
+{% /callout %}
+
+**Fuente oficial:** [docs.claude.com → Claude Code → Setup](https://docs.claude.com/en/docs/claude-code/setup)
+
+---
+
+# Enciende Claude en la terminal de Cursor
+
+Ya lo tienes instalado. Para **arrancarlo**: en la **terminal de Cursor**, escribe `claude` y pulsa **Enter**.
+
+- La **primera vez** abre el navegador para **iniciar sesión** con tu cuenta de **Claude (Pro / Max / Team)**.
+- A partir de ahí, esa ventana es un **chat**: le pides las cosas en **lenguaje normal** —*«instálame Node»*— y él las hace. **No** necesitas saberte ningún comando.
+
+{% callout title="A partir de aquí, puedes delegar en Claude" emoji="🤖" variant="success" %}
+Las **siguientes secciones** (Node, Git, GitHub…) puedes hacerlas **tú** con los comandos que comparto… o simplemente {% highlight %}pedírselas a Claude en esta misma terminal{% /highlight %} y que las haga él. Ante la duda, **díselo a Claude**.
+{% /callout %}
+
+{% callout title="¿Y si quiero escribir comandos yo?" emoji="💡" variant="info" %}
+Mientras Claude está abierto, esa ventana es **suya**. Para escribir un comando **tú**, abre **otra**: en Cursor, **Terminal → New Terminal** (tendrás dos pestañas) — una **para Claude** y otra **para ti**.
+{% /callout %}
+
+---
+
+{% slide width="wide" /%}
+
+# 4 · Node.js (+ npm)
+
+El **motor** para crear y arrancar aplicaciones web. Entra en **[nodejs.org/download](https://nodejs.org/en/download)** e instala la versión **LTS**.
+
+{% callout title="Ojo: la primera opción (nvm) NO es la nuestra" emoji="⚠️" variant="warning" %}
+La página abre con unos comandos de **nvm** — **sáltalos**. Baja a la **segunda sección**, *«Or get a prebuilt Node.js®»*, y pulsa el **instalador** de tu sistema (el recuadro rojo del pantallazo). La página **detecta tu equipo** sola, pero **confirma que pone el tuyo**: **macOS** o **Windows** *(y en Mac, **ARM64** si es Apple Silicon — M1/M2/M3… — o **x64** si es Intel)*.
+{% /callout %}
+
+![Sección del instalador en nodejs.org — la segunda, no la de nvm](/cms-assets/decks/intro-to-synced-slides/nodejs-instalador.png)
+
+{% columns %}
+{% column %}
+![](/cms-assets/decks/intro-to-synced-slides/apple.png) **macOS**
+
+Pulsa **macOS Installer (`.pkg`)**, ábrelo y dale a **Continuar / Instalar** hasta el final.
+{% /column %}
+{% column %}
+![](/cms-assets/decks/intro-to-synced-slides/windows.png) **Windows**
+
+Pulsa **Windows Installer (`.msi`)**, **Next** hasta el final y **cierra y reabre** la terminal de Cursor.
+{% /column %}
+{% /columns %}
+
+{% prompt title="O que lo haga Claude (copia y pégaselo)" %}
+Necesito **Node.js** (versión LTS) para crear apps web. Instálamelo en mi ordenador y, al terminar, comprueba que `node --version` y `npm --version` responden.
+{% /prompt %}
+
+{% callout title="Cómo confirmar" emoji="✅" variant="success" %}
+En la **terminal de Cursor**, estos dos deben responder con un número de versión:
+
+- `node --version` → algo como `v22.x` (o superior)
+- `npm --version` → un número (p. ej. `10.x`)
+{% /callout %}
+
+**Fuente oficial:** [nodejs.org/en/download](https://nodejs.org/en/download)
+
+---
+
+{% slide width="wide" /%}
+
+# 5 · Git
+
+Control de versiones: los **"puntos de guardado"** de tu código. **Imprescindible** — lo usaremos en cada proyecto.
+
+{% columns %}
+{% column %}
+![](/cms-assets/decks/intro-to-synced-slides/apple.png) **macOS**
+
+`xcode-select --install` y acepta el aviso.
+{% /column %}
+{% column %}
+![](/cms-assets/decks/intro-to-synced-slides/windows.png) **Windows**
+
+`winget install Git.Git`
+
+*(Si no funciona, descárgalo de [git-scm.com](https://git-scm.com/downloads).)*
+{% /column %}
+{% /columns %}
+
+{% prompt title="O que lo haga Claude (copia y pégaselo)" %}
+Instálame **Git** en mi ordenador y comprueba que `git --version` funciona.
+{% /prompt %}
+
+{% callout title="Cómo confirmar" emoji="✅" variant="success" %}
+`git --version` → algo como `git version 2.4x.x`. *(Tu nombre y email para los commits los configura **Claude** la primera vez que guardes cambios — no te preocupes ahora.)*
+{% /callout %}
+
+**Fuente oficial:** [git-scm.com/downloads](https://git-scm.com/downloads)
+
+---
+
+{% slide width="wide" /%}
+
+# 6 · GitHub
+
+Para que Claude pueda **subir tu código** a tu copia en la nube, instalas **GitHub CLI** (`gh`) y te **autenticas una vez**.
+
+{% columns %}
+{% column %}
+![](/cms-assets/decks/intro-to-synced-slides/apple.png) **macOS**
+
+Instala `gh`: instalador **.pkg** desde [cli.github.com](https://cli.github.com).
+{% /column %}
+{% column %}
+![](/cms-assets/decks/intro-to-synced-slides/windows.png) **Windows**
+
+Instala `gh`: en la terminal de Cursor, `winget install GitHub.cli`.
+{% /column %}
+{% /columns %}
+
+{% prompt title="O que lo haga Claude (copia y pégaselo)" %}
+Instálame **GitHub CLI** (`gh`) y guíame para conectar mi cuenta de GitHub con `gh auth login` (protocolo **HTTPS**); yo hago el paso del navegador.
+{% /prompt %}
+
+Luego **autentícate** (igual en Mac y Windows). En la terminal de Cursor, pega el **camino directo**:
+
+{% prompt title="Conéctate a GitHub" %}
+gh auth login --git-protocol https --web
+{% /prompt %}
+
+Con eso **no hay decisiones**, solo pulsar **Enter** un par de veces:
+
+1. **Authenticate Git with your GitHub credentials?** → pulsa **Enter** *(ya viene en **Yes**, que es justo lo que queremos)*.
+2. Te da un **código** (tipo `D4AF-C236`) → pulsa **Enter** y se abre el navegador.
+3. **Pega el código** → **Authorize**. Listo.
+
+{% callout title="Si te hace preguntas (camino largo)" emoji="🧭" variant="info" %}
+Si en vez de ir directo te pregunta, responde así:
+
+1. **What account…** → **GitHub.com**
+2. **Preferred protocol…** → **HTTPS** *(no SSH: SSH añade generar claves y va distinto en Mac/Windows)*
+3. **Authenticate Git with your credentials?** → **Yes**
+4. **How would you like to authenticate?** → **Login with a web browser** → código → navegador → **Authorize**
+{% /callout %}
+
+{% callout title="Cómo confirmar" emoji="✅" variant="success" %}
+`gh auth status` → debe decir *"Logged in to github.com as tu-usuario"*. *(Si el navegador no se abre solo, ve a [github.com/login/device](https://github.com/login/device) y pega el código — y no cierres la terminal mientras tanto.)*
+{% /callout %}
+
+**Fuente oficial:** [cli.github.com](https://cli.github.com)
+
+---
+
+# Si algo falla: tropiezos típicos
+
+- **«command not found» justo después de instalar algo** → esa terminal aún no lo "ve". **Abre una nueva** (Terminal → New Terminal) y reinténtalo. *(Si lo instaló Claude, suele encontrarlo solo.)*
+- **Copiaste el comando del sistema equivocado** → hay uno para **Mac** y otro para **Windows**: usa el de **tu** equipo.
+- **«Windows protegió tu PC» o te pide contraseña al instalar** → es normal. En **Windows**, *Más información → Ejecutar de todas formas*; en **Mac**, escribe tu **contraseña** y acepta.
+- **Escribes algo y "no pasa nada"** → estás **dentro de `claude`** (esa ventana es un **chat**, no una terminal). Pídeselo en lenguaje normal — o **sal** con `Ctrl+C` (dos veces) o `/exit` y usa otra terminal para lo tuyo.
+- **Claude te pide iniciar sesión** → entra con la cuenta que tiene tu plan **(Pro / Max)**.
+
+{% callout title="Y si te bloqueas con otra cosa" emoji="💡" variant="info" %}
+**Pantallazo o copia y pega** lo que sea (el error, el comando, lo que ves en pantalla) y pídele a Claude que te saque del atasco. Es un buen entrenamiento: siempre que tengas un error, **pégalo a Claude**.
+{% /callout %}
 
 ---
 
@@ -1750,26 +2026,6 @@ Usa las **individuales** *antes* de empezar la parte de **hacer aplicaciones**: 
 La app de escritorio va sacando cosas sueltas, que **tú** tienes que unir. Es posible, pero limitado.
 
 Aquí tú defines qué te hace falta, y **para hacerlo solo tienes que saber escribir y pensar**.
-
----
-
-# Instalaciones
-
-Salimos de la app de escritorio y nos vamos a la **terminal**. Hace falta instalar unas pocas cosas (una sola vez):
-
-- **[Claude Code](https://claude.com/claude-code)** — el agente en la terminal. Nuestra herramienta principal.
-- **[Node.js (+ npm)](https://nodejs.org/en/download)** — el "motor" para crear y arrancar aplicaciones web. *(Claude Code ya no lo necesita, pero para hacer apps sí.)*
-- **[Git](https://git-scm.com/downloads)** — guarda el histórico de tu código (control de versiones). **Imprescindible**, lo usaremos.
-- **Un editor de código** — **[Cursor](https://cursor.com)**. Opcional, pero lo hace todo más visual.
-- **Terminal** — ya viene con tu Mac (Terminal.app); en Windows, PowerShell.
-
-{% prompt title="Instalar Claude Code (Mac / Linux)" %}
-curl -fsSL https://claude.ai/install.sh | bash
-{% /prompt %}
-
-{% callout title="No lo hagas a solas: que te guíe Claude" emoji="🤝" variant="info" %}
-No te pelees con esto tú solo. Abre **Cowork** (que ya tienes) y pídele que te guíe paso a paso, pegándole pantallazos de lo que veas. Es justo el reflejo que queremos entrenar: cuando algo te atasca, **se lo pasas al agente**.
-{% /callout %}
 
 ---
 
@@ -1813,6 +2069,22 @@ Recordatorio: probablemente lo arrancamos **al principio de la siguiente sesión
 
 ---
 
+# ¿Qué es una librería?
+
+Cuando hacemos una app, casi nada se construye **desde cero**. Una **librería** (del inglés *library*, una "colección" — **no** una tienda de libros) es un **paquete de código que ya escribió otra persona** para resolver un problema concreto y **publicó para que cualquiera lo reutilice**. En vez de fabricar esa pieza, la "enchufas" y funciona.
+
+Piénsalo como **muebles de IKEA**: no talas el árbol ni cortas la madera — coges una pieza ya hecha, **probada por miles de personas**, y la montas. Una app moderna es, en buena parte, **piezas así bien combinadas** + un poco de pegamento tuyo.
+
+- **No reinventas la rueda:** lo común (un chat, un calendario, cobrar con tarjeta…) ya está hecho.
+- **Más fiable:** al usarla tanta gente, está **muy probada** — menos errores que algo recién inventado.
+- **Más rápido:** ensamblas en horas lo que desde cero serían semanas.
+
+{% callout title="¿Y tú qué haces? Nada." emoji="🤝" variant="info" %}
+**Claude elige e instala las librerías por ti.** Tú dices qué quieres; él sabe qué pieza ya existe y la usa. Casi nunca pensarás en esto — pero es justo lo que hace que "hacer una app" sea hoy realista para ti. De hecho, la app que haremos usa una: la **AI SDK de Vercel**, que trae el chat casi montado.
+{% /callout %}
+
+---
+
 # ¿Qué es Git?
 
 **Git** es un sistema que **guarda el historial de tu proyecto**: va haciendo "fotos" de cómo estaban tus archivos en cada momento, para que **nunca pierdas nada** y puedas **volver atrás** si algo se rompe.
@@ -1851,6 +2123,83 @@ Si el repo es **público**, no necesitas nada. Si es **privado**, tienes que est
 
 ---
 
+# Frontend y backend
+
+Una app web tiene **dos mitades** que se hablan entre sí:
+
+- **Frontend — "la sala":** lo que el usuario **ve y toca** (botones, el chat, formularios). Corre en **su navegador**.
+- **Backend — "la cocina":** la **lógica**, los **datos guardados** y los **secretos** (las claves). Corre en un **servidor** (un ordenador en internet), **no** en el navegador del usuario.
+
+Piénsalo como un **restaurante**: el cliente se sienta en la sala y pide; la cocina —donde están las recetas y la caja fuerte— **no la pisa nadie de fuera**. El **camarero** que lleva los pedidos de un lado a otro es lo que se llama una **API**.
+
+{% callout title="Por qué te importa esto" emoji="🧠" variant="info" %}
+Todo lo **sensible** —tus **claves**, los **datos** de tus usuarios— vive en el **backend (la cocina)**, donde nadie de fuera mira. En el **frontend (la sala)** está solo lo que no pasa nada por enseñar. Esta distinción es la que hace que una app sea **segura**.
+{% /callout %}
+
+---
+
+# ¿Qué es una base de datos?
+
+Por defecto, una app **se olvida de todo**: cierras o recargas la página y vuelve a estar en blanco. Lo que el usuario escribió… desaparece.
+
+Una **base de datos** es donde la app **guarda las cosas para que sigan ahí** la próxima vez: usuarios, mensajes, pedidos, lo que sea. Es **la libreta (o el Excel) de tu app**, que ella lee y escribe sola.
+
+- **La necesitas si** tu app tiene que **recordar** algo entre sesiones o entre usuarios (un historial, una lista, cuentas de usuario…).
+- **Quizá no al principio si** es un "entra → respuesta → y ya" (como un primer "chat con tus fuentes" cargadas a mano).
+- Vive en el **backend** (la cocina), nunca en el navegador.
+
+{% callout title="Tú el concepto; Claude el cómo" emoji="🗄️" variant="info" %}
+No tienes que saber de bases de datos. Más adelante verás nombres como **Prisma** o **Neon/Supabase** en el "stack" — son solo **la libreta y dónde se guarda**. Claude las conecta por ti; a ti te basta con decidir **qué tiene que recordar** tu app.
+{% /callout %}
+
+---
+
+# De tu máquina a internet
+
+**Tu app nace en privado.** Cuando Claude la arranca, corre **solo en tu ordenador** (`localhost`): es como un **borrador que solo ves tú**, aunque ya funcione del todo.
+
+**Deployar** es publicarla: subirla a un servicio como **[Vercel](https://vercel.com)** que la pone **en internet, con una URL** que cualquiera puede abrir. (El mecanismo: subes tu código a GitHub → Vercel lo coge y lo sirve solo.) **Ese link es el "wow"**: terminas y se lo mandas a quien quieras.
+
+Y una pregunta que quizá te ha saltado: si el código **se sube a GitHub** (y ahí se ve), ¿dónde van tus **claves**? 👉
+
+---
+
+# Variables de entorno: tus secretos
+
+Tu app necesita **claves** para funcionar (la de la IA, la de cobrar, contraseñas de otros servicios…). El problema: **el código se sube a GitHub y se ve.** Si la clave está escrita ahí dentro, **la ve cualquiera** — y con ella, **gastan tu dinero**.
+
+La solución estándar son las **variables de entorno**: el secreto vive **fuera del código**, y la app lo lee **al arrancar**.
+
+- **En tu ordenador:** en un archivo aparte llamado **`.env`**, que **se queda en tu máquina y NO se sube a GitHub** (Claude se encarga de excluirlo).
+- **En producción:** lo pegas una vez en los **ajustes de Vercel** y ahí vive seguro, en el servidor.
+
+En el código solo aparece **el nombre** del secreto (p. ej. `OPENAI_API_KEY`), **nunca su valor**.
+
+{% callout title="La única regla que tienes que recordar" emoji="🔑" variant="warning" %}
+**Nunca escribas una clave dentro del código.** Una clave es **como la llave de tu casa con la tarjeta dentro**. Si alguna vez la pegas ahí sin querer (o en un chat o repo público), **dala por quemada**: ve al servicio, **bórrala y crea una nueva**. Es gratis y es lo que hace todo el mundo.
+{% /callout %}
+
+---
+
+# Cómo se trabaja: el bucle (y los errores)
+
+Construir una app **no es un acto mágico de una vez**; es un **bucle corto** que repites muchas veces:
+
+1. **Dices** qué quieres (en lenguaje normal).
+2. **Claude** escribe o cambia el código.
+3. **Miras** el resultado en el navegador.
+4. **Comentas** qué está mal o qué falta… y vuelta al 1.
+
+Antes de un cambio gordo, pídele un **commit** (un *checkpoint*, como vimos en Git): si algo se tuerce, **vuelves atrás sin drama**.
+
+{% callout title="Los errores son normales — no son el final" emoji="🛟" variant="info" %}
+**Te vas a encontrar errores. A todos nos pasa, todo el rato.** No hay que entenderlos: aparecen en **rojo** (en la terminal o en la consola del navegador), los **copias y se los pegas a Claude**, y él los arregla.
+
+Ese reflejo —*me atasco → se lo paso al agente*— es **el 90% de saber programar hoy**.
+{% /callout %}
+
+---
+
 # Introducción a la interfaz de terminal de Claude
 
 Lo mismo que ya conoces, pero en la terminal. Las piezas:
@@ -1869,3 +2218,435 @@ Lo mismo que ya conoces, pero en la terminal. Las piezas:
 - las **skills**
 - los **MCPs**
 - los **subagentes**
+
+---
+
+{% slide width="full" /%}
+
+# Cowork ↔ terminal: todo tiene su equivalente
+
+Cowork es **Claude Code "vestido de oficina"**: como no es más que un *wrapper* de Claude Code, casi todo lo que ves en la app de escritorio **existe también en la terminal** —y a menudo con más control. Aquí el mapa.
+
+## Los 4 primitivos (y cómo empaquetarlos)
+
+{% table %}
+- Funcionalidad
+- En Cowork (escritorio)
+- En la terminal (Claude Code)
+---
+- Instrucciones de usuario
+- Settings → "Instructions for Claude"
+- `~/.claude/CLAUDE.md`
+---
+- Instrucciones de proyecto
+- Instrucciones del proyecto
+- `CLAUDE.md` en la carpeta (anidables)
+---
+- Skills
+- "customize" → crear / activar
+- `.claude/skills/<n>/SKILL.md` · `/nombre`
+---
+- Skills de terceros
+- "customize" / marketplaces
+- Marketplaces + `.claude/skills`
+---
+- MCPs ("Connectors")
+- Pestaña "Connectors"
+- `claude mcp add` · `.mcp.json` · `/mcp`
+---
+- Subagentes
+- Predefinidos (no puedes crear)
+- `.claude/agents/<n>.md` (creas tipos) · `/agents`
+---
+- Plugins
+- "Directory" → instalar
+- `/plugin` · `/plugin marketplace add`
+{% /table %}
+
+## Organización, memoria y contexto
+
+{% table %}
+- Funcionalidad
+- En Cowork (escritorio)
+- En la terminal (Claude Code)
+---
+- Proyectos
+- Proyectos de la app (aíslan memoria)
+- Cada **carpeta** es un proyecto
+---
+- Memoria automática
+- `MEMORY.md` / consolidada · "Manage memory"
+- `MEMORY.md`
+---
+- Búsqueda entre chats
+- "Search and reference chats" (Capabilities · planes de pago)
+- — †
+---
+- Mencionar archivos
+- Adjuntar archivo
+- `@ruta/al/archivo`
+{% /table %}
+
+## Conectar, automatizar y trabajar en remoto
+
+{% table %}
+- Funcionalidad
+- En Cowork (escritorio)
+- En la terminal (Claude Code)
+---
+- Navegador / Chrome
+- Extensión de Chrome
+- La misma extensión de Chrome, vía MCP
+---
+- Computer use
+- Toggle "computer use"
+- Nativo — MCP incluido (no instalas nada)
+---
+- Generar imágenes
+- MCP (Replicate, kie.ai…)
+- **El mismo MCP**
+---
+- Web scraping
+- MCP (Firecrawl…)
+- **El mismo MCP**
+---
+- Tareas programadas
+- "Schedule"
+- **Routines** (local o en la nube) · `/schedule` · `claude.ai/code/routines`
+---
+- Trabajo remoto (Dispatch)
+- "Dispatch" (móvil → enruta a proyectos)
+- **Remote Control** · `/remote-control` · claude.ai/code
+---
+- Artifacts
+- Artifacts (mini-apps embebidas; pueden usar tus MCPs)
+- Le pides el **archivo / app real** y lo abres (puede usar tus MCPs)
+{% /table %}
+
+## Modelo, razonamiento y ajustes
+
+{% table %}
+- Funcionalidad
+- En Cowork (escritorio)
+- En la terminal (Claude Code)
+---
+- Elegir modelo
+- Selector de modelo
+- `/model` · `claude --model`
+---
+- Thinking / esfuerzo
+- Selector de "thinking"
+- `/effort`: "think" / "think hard" / "ultrathink"
+---
+- Cargar tools bajo demanda
+- Toggle "Load tools when needed"
+- Tool search (bajo demanda)
+---
+- Settings / Capabilities
+- Pantalla "Settings"
+- `.claude/settings.json` · `/config`
+---
+- Permisos / allowlist
+- "Domain allowlist"
+- `permissions` en `settings.json`
+---
+- Idioma
+- Settings → "Language"
+- En el `CLAUDE.md` (o pídeselo)
+---
+- Voz
+- Conversación por voz (hablar y escuchar)
+- Dictado por voz (`/voice`) — voz a texto, no conversación
+{% /table %}
+
+† **Búsqueda entre chats:** en la terminal no hay función dedicada, pero tus sesiones se guardan como archivos (`~/.claude/projects/`); si le hace falta, Claude los busca y lee por su cuenta.
+
+{% callout title="La idea de fondo" emoji="🧩" variant="success" %}
+Cambia la **carcasa** (botones ↔ texto), no los primitivos. Aprende los básicos de la terminal y tendrás **lo mismo que en Cowork, casi siempre con más alcance**.
+{% /callout %}
+
+---
+
+# Uno a uno: los primitivos en la terminal
+
+Ya visteis el mapa completo. Ahora, **primitivo a primitivo**, cómo llegar a cada uno vosotros mismos — con comandos para **copiar y pegar** (Mac y Windows).
+
+{% callout title="Siempre las mismas 3 vías, de más fácil a más manual" emoji="🧭" variant="info" %}
+1. **Pídeselo a Claude** en lenguaje normal — lo más fácil.
+2. Un **comando `/`** dentro de Claude Code.
+3. **Abrir el archivo a mano** con `cursor <ruta>` (ej. `cursor .`).
+{% /callout %}
+
+
+---
+
+{% slide width="wide" /%}
+
+# 1 · CLAUDE.md — tu contexto
+
+**Cowork:** Settings → "Instructions for Claude".  **Terminal:** un archivo de texto que Claude lee al arrancar.
+
+- **Usuario** (todos tus proyectos): `~/.claude/CLAUDE.md`
+- **Proyecto** (solo esa carpeta): `CLAUDE.md` en la raíz del proyecto
+- **Anidado**: cuando Claude trabaja con un archivo, también carga el `CLAUDE.md` de **esa carpeta** — se suman de arriba abajo y el **más cercano manda**.
+
+{% callout title="Lo más fácil (igual en Mac y Windows)" emoji="✅" variant="success" %}
+Dentro de Claude Code: **`/memory`** abre y edita tus `CLAUDE.md` · **`/init`** genera uno para el proyecto. O simplemente pídeselo 👇
+{% /callout %}
+
+{% prompt title="Pídeselo a Claude" %}
+Crea o abre mi CLAUDE.md de usuario y añade esto: soy [tu rol], no soy programador; respóndeme en español y sin tecnicismos.
+{% /prompt %}
+
+## ¿Prefieres abrirlo tú mismo?
+
+Con **Cursor** instalado es el **mismo comando en Mac y Windows** (si el archivo aún no existe, Cursor lo crea al guardar):
+
+{% prompt title="Abrir tu CLAUDE.md de usuario" %}
+cursor ~/.claude/CLAUDE.md
+{% /prompt %}
+
+{% prompt title="…o abrir toda la carpeta del proyecto" %}
+cursor .
+{% /prompt %}
+
+---
+
+{% slide tags="ejercicio, PENDING" /%}
+
+# Ejercicio: CLAUDE.md anidado
+
+[PENDING]
+
+---
+
+{% slide width="wide" /%}
+
+# 2 · Skills — capacidades a demanda
+
+**Cowork:** "customize" → crear y activar skills.  **Terminal:** una carpeta con un `SKILL.md` que Claude carga **solo cuando hace falta**; la invocas con `/nombre`.
+
+- **Usuario** (todas tus carpetas): `~/.claude/skills/<nombre>/SKILL.md`
+- **Proyecto** (solo esa carpeta): `.claude/skills/<nombre>/SKILL.md`
+
+{% callout title="Lo más fácil (igual en Mac y Windows)" emoji="✅" variant="success" %}
+**`/skills`** lista las que tienes y las activa/desactiva. Para **crear** una, lo más cómodo es **pedírsela a Claude** 👇 (te crea la carpeta y el `SKILL.md`). Si editas archivos a mano: **`/reload-skills`**.
+{% /callout %}
+
+{% prompt title="Pídeselo a Claude" %}
+Créame una skill /resumen-reunion que, a partir de mis notas, escriba un resumen con decisiones y próximos pasos. Pregúntame lo que necesites antes de crearla.
+{% /prompt %}
+
+## ¿Quieres abrir la carpeta de skills?
+
+{% prompt title="Abrir tus skills en Cursor" %}
+cursor ~/.claude/skills
+{% /prompt %}
+
+---
+
+{% slide width="wide" /%}
+
+# 3 · Subagentes — delegar en paralelo
+
+**Cowork:** usas los **predefinidos** (no puedes crear tipos nuevos).  **Terminal:** además de los que vienen, **creas los tuyos** — cada uno con su propio contexto, modelo y herramientas.
+
+- **Usuario:** `~/.claude/agents/`
+- **Proyecto:** `.claude/agents/`
+
+{% callout title="Lo más fácil (igual en Mac y Windows)" emoji="✅" variant="success" %}
+**`/agents`** abre un panel para **ver, crear, activar o desactivar** subagentes — es la vía recomendada. O pídeselo a Claude 👇.
+{% /callout %}
+
+{% prompt title="Pídeselo a Claude" %}
+Créame un subagente "revisor" que revise mis textos de marketing (tono de marca, claridad y erratas). Que use un modelo rápido y devuelva solo la lista de cambios.
+{% /prompt %}
+
+{% callout title="La diferencia con Cowork" emoji="✨" variant="info" %}
+En Cowork solo **usas** los subagentes que vienen; en la terminal **defines tipos nuevos** (rol, modelo, herramientas) y el agente principal les delega trabajo en paralelo.
+{% /callout %}
+
+---
+
+{% slide width="wide" /%}
+
+# 4 · MCPs — conectar con el mundo
+
+**Cowork:** la pestaña "Connectors".  **Terminal:** los añades con un comando (o se lo pides a Claude) y los gestionas con **`/mcp`**.
+
+- **Usuario** (todas tus carpetas): `--scope user`
+- **Proyecto** (compartido por el equipo, en `.mcp.json`): `--scope project`
+
+{% callout title="Lo más fácil (igual en Mac y Windows)" emoji="✅" variant="success" %}
+**`/mcp`** lista, reconecta y **autentica** tus conectores. Para añadir uno, lo más cómodo es **pedírselo a Claude** 👇 (busca la URL y te guía con el login).
+{% /callout %}
+
+{% prompt title="Pídeselo a Claude" %}
+Añádeme el MCP de Notion a nivel de usuario y guíame para autenticarlo. No soy técnico.
+{% /prompt %}
+
+## ¿Lo añades tú mismo?
+
+{% prompt title="A mano — pégalo en la terminal" %}
+claude mcp add --scope user --transport http <nombre> <url>     # remoto (HTTP)
+claude mcp add --scope user playwright -- npx -y @playwright/mcp@latest   # local
+{% /prompt %}
+
+---
+
+{% slide width="wide" /%}
+
+# 5 · Plugins
+
+Qué es un plugin ya lo visteis en Cowork — aquí solo **dónde está su equivalente** en la terminal.
+
+**Cowork:** el "Directory" (instalar un plugin / añadir un marketplace).  **Terminal:** se gestiona con **`/plugin`**.
+
+{% callout title="Lo más fácil (igual en Mac y Windows)" emoji="✅" variant="success" %}
+**`/plugin`** abre el menú (instalar, activar, desactivar). Para descubrir más, **añades un marketplace** (un repo de GitHub con plugins) y de ahí instalas. O pídeselo a Claude 👇.
+{% /callout %}
+
+{% prompt title="Pídeselo a Claude" %}
+Quiero instalar plugins. Añádeme este marketplace y enséñame qué plugins trae para que elija: <usuario/repo-de-github>
+{% /prompt %}
+
+## ¿Lo haces tú mismo?
+
+{% prompt title="Añadir marketplace e instalar — pégalo en Claude Code" %}
+/plugin marketplace add <usuario/repo-de-github>
+/plugin install <nombre-del-plugin>@<marketplace>
+{% /prompt %}
+
+{% callout title="¿Y crear el tuyo?" emoji="🧩" variant="info" %}
+Empaqueta tus propias skills/MCPs/subagentes para compartirlos: pídeselo a Claude, o usa `claude plugin init <nombre>`.
+{% /callout %}
+
+---
+
+{% slide width="wide" /%}
+
+# Modo Plan — pensar antes de tocar
+
+Hasta aquí, **configurar** Claude. Estas tres son **cómo lo conduces mientras desarrollas** — y también van igual en Cowork y terminal. Empezamos por el plan.
+
+**Cowork:** el agente planifica antes de ejecutar.  **Terminal:** **Plan Mode**.
+
+{% callout title="Cómo se usa (igual en Mac y Windows)" emoji="✅" variant="success" %}
+Entra con **Shift+Tab** (cicla los modos) o **`/plan`**. Claude **lee y explora**, te propone un **plan**, pero **no edita ni ejecuta** nada. Cuando lo apruebas, **pasa a ejecutar**.
+{% /callout %}
+
+{% prompt title="Pídele un plan primero" %}
+Antes de tocar nada, ponte en modo plan y propón un plan para [lo que quieras hacer]. No edites archivos hasta que yo lo apruebe.
+{% /prompt %}
+
+{% callout title="Para qué" emoji="🧭" variant="info" %}
+Para tareas grandes: que **acuerde el plan contigo antes de tocar código** — y evitas que se lance a hacer lo que no era.
+{% /callout %}
+
+---
+
+{% slide width="wide" /%}
+
+# Permisos — cuánta autonomía le das
+
+**Cowork:** apruebas acciones (o pones auto-aprobar).  **Terminal:** los **modos de permiso**, en el mismo **Shift+Tab**.
+
+El **dial de autonomía** (Shift+Tab va rotando):
+
+- **Normal** — pregunta antes de editar o ejecutar.
+- **Auto-aceptar ediciones** — acepta las ediciones de archivos sin preguntar.
+- **Plan** — solo lee, no toca nada (la slide anterior).
+
+{% callout title="Reglas permanentes" emoji="✅" variant="success" %}
+Lo que quieras permitir o bloquear **siempre** va en **`settings.json`** (`permissions` → `allow` / `deny`), o lo configuras con **`/config`**. Así no te pregunta cada vez por lo de siempre.
+{% /callout %}
+
+{% callout title="Modo sin frenos (cuidado)" emoji="⚠️" variant="warning" %}
+Existe un modo que **se salta todos los permisos** (`--dangerously-skip-permissions`). Úsalo **solo** en entornos aislados — nunca en tu ordenador con cosas importantes.
+{% /callout %}
+
+---
+
+{% slide width="wide" /%}
+
+# Contexto — que no se sature
+
+Recuerda: el contexto es **limitado**, y en sesiones largas de desarrollo se llena (y Claude "tontea").
+
+**Cowork:** nueva conversación / memoria.  **Terminal:** lo gestionas con comandos.
+
+{% callout title="Los tres comandos (igual en Mac y Windows)" emoji="✅" variant="success" %}
+- **`/context`** — ver cuánto contexto llevas.
+- **`/compact`** — resumir para liberar espacio (puedes guiarlo: `/compact céntrate en X`).
+- **`/clear`** — empezar de cero (la sesión anterior sigue en `/resume`).
+{% /callout %}
+
+{% callout title="Bueno saber" emoji="💡" variant="info" %}
+Claude **auto-compacta** solo cuando se llena, pero **tú** mandas: usa `/compact` o `/clear` **antes** de cambiar de tarea para que arranque fresco.
+{% /callout %}
+
+---
+
+{% slide width="wide" /%}
+
+# El stack por defecto: lo que casi siempre vas a necesitar
+
+Para hacer una app "de verdad" hay piezas que se repiten en casi todos los proyectos. Tener un **stack por defecto** te ahorra decidir cada vez — y, sobre todo, **la IA lo escribe mejor**.
+
+{% table %}
+- Para qué
+- Librería
+- Qué te da
+---
+- Framework
+- **Next.js**
+- La base full-stack: front y back en el mismo proyecto
+---
+- Estilos
+- **Tailwind CSS**
+- Estilos rápidos por clases (shadcn se apoya en él)
+---
+- Componentes
+- **shadcn/ui**
+- Componentes listos que copias a tu proyecto y editas
+---
+- Base de datos · ORM
+- **Prisma**
+- Hablar con la base de datos sin escribir SQL a mano
+---
+- Base de datos · hosting
+- **Neon** (o Supabase)
+- La BD Postgres en la nube — Prisma se conecta ahí
+---
+- Autenticación
+- **better-auth**
+- Registro, login y sesiones
+---
+- Formularios
+- **React Hook Form** + **Zod**
+- Formularios con validación (Zod ya estaba en el stack)
+---
+- IA
+- **Vercel AI SDK** (+ AI Elements)
+- Chat, streaming y *tool-calling* con cualquier modelo
+---
+- Email
+- **Resend** (+ React Email)
+- Enviar emails: confirmaciones, avisos…
+---
+- Pagos
+- **Stripe**
+- Cobrar: pagos y suscripciones
+---
+- Guardar archivos
+- **Cloudflare R2**
+- Almacenar archivos e imágenes (compatible con S3, barato)
+---
+- Publicar
+- **Vercel**
+- Desplegar la app a internet casi en un clic
+{% /table %}
+
+{% callout title="Por qué estas y no otras" emoji="🎯" variant="success" %}
+Son **populares y estándar** — y eso importa con IA: cuanto más conocida es una librería, **más y mejor código ha visto el modelo**, así que se equivoca menos. Elige lo *mainstream* salvo que tengas una razón para no hacerlo.
+{% /callout %}
