@@ -137,6 +137,8 @@ export const CustomMarkdocTags: Record<string, Schema> = {
       width: { type: String },
       // Lets the audience navigate to this slide on their own (covered material).
       public: { type: Boolean },
+      // Marks this slide as a section/module header; groups the review index.
+      section: { type: String },
     },
   },
   columns: {

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 
 import { PresentationProvider } from './presentation-context';
+import { ReviewIndex } from './ReviewIndex';
 import { SlideStage, type SlideMeta, type SlideTheme } from './SlideStage';
 
 type ReviewViewerProps = {
@@ -31,14 +32,25 @@ export function ReviewViewer({
 }: ReviewViewerProps) {
   const count = slides.length;
   const [index, setIndex] = useState(0);
+  const [indexOpen, setIndexOpen] = useState(false);
 
   const goNext = useCallback(
     () => setIndex((i) => Math.min(i + 1, count - 1)),
     [count]
   );
   const goPrev = useCallback(() => setIndex((i) => Math.max(i - 1, 0)), []);
+  const jumpTo = useCallback(
+    (target: number) => {
+      setIndex(Math.min(Math.max(target, 0), count - 1));
+      setIndexOpen(false);
+    },
+    [count]
+  );
 
   useEffect(() => {
+    // The index drawer owns the keyboard while open (it handles Escape); don't
+    // also step the deck underneath it.
+    if (indexOpen) return;
     const onKey = (event: KeyboardEvent) => {
       if (
         event.key === 'ArrowRight' ||
@@ -54,11 +66,20 @@ export function ReviewViewer({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [goNext, goPrev]);
+  }, [goNext, goPrev, indexOpen]);
 
   const overlay =
     count > 1 ? (
       <div className='pointer-events-auto fixed inset-x-0 bottom-0 z-50 flex items-center justify-center gap-3 p-4'>
+        {slidesMeta ? (
+          <button
+            type='button'
+            onClick={() => setIndexOpen(true)}
+            className='rounded-md border border-border bg-background px-4 py-2 text-sm font-medium shadow-sm transition'
+          >
+            ☰ Índice
+          </button>
+        ) : null}
         <button
           type='button'
           onClick={goPrev}
@@ -107,6 +128,15 @@ export function ReviewViewer({
         overlay={overlay}
         hideCounter
       />
+      {slidesMeta ? (
+        <ReviewIndex
+          slidesMeta={slidesMeta}
+          current={index}
+          onJump={jumpTo}
+          open={indexOpen}
+          onClose={() => setIndexOpen(false)}
+        />
+      ) : null}
     </PresentationProvider>
   );
 }

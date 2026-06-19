@@ -2,6 +2,27 @@ import Markdoc, { type Node } from '@markdoc/markdoc';
 
 import type { SlideMeta } from './SlideStage';
 
+/** Concatenate the plain text of a node's inline descendants (text nodes). */
+function collectText(node: Node): string {
+  if (node.type === 'text') {
+    const content = (node.attributes as { content?: unknown } | undefined)
+      ?.content;
+    return typeof content === 'string' ? content : '';
+  }
+  return (node.children ?? []).map(collectText).join('');
+}
+
+/** The text of the first heading among a slide's top-level nodes, if any. */
+function firstHeadingText(nodes: Node[]): string | undefined {
+  for (const node of nodes) {
+    if (node.type === 'heading') {
+      const text = collectText(node).replace(/\s+/g, ' ').trim();
+      if (text) return text;
+    }
+  }
+  return undefined;
+}
+
 /**
  * Split a parsed Markdoc document into one document per slide, breaking on
  * top-level thematic breaks (`---`). Because the document is already parsed, a
@@ -70,6 +91,13 @@ export function extractSlideMeta(slide: Node): {
       if (meta.public === undefined && typeof attrs.public === 'boolean') {
         meta.public = attrs.public;
       }
+      if (
+        meta.section === undefined &&
+        typeof attrs.section === 'string' &&
+        attrs.section.trim()
+      ) {
+        meta.section = attrs.section.trim();
+      }
       continue; // drop the directive from the rendered content
     }
     if (child.type === 'tag' && child.tag === 'notes') {
@@ -81,6 +109,14 @@ export function extractSlideMeta(slide: Node): {
       continue;
     }
     kept.push(child);
+  }
+
+  // Derive a plain-text title from the slide's first heading, for the review
+  // index. Headless slides (a bare callout/prompt) get none and fall back to
+  // their slide number in the index.
+  if (meta.title === undefined) {
+    const title = firstHeadingText(kept);
+    if (title) meta.title = title;
   }
 
   return { node: new Markdoc.Ast.Node('document', {}, kept), meta, notes };

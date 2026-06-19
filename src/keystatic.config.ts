@@ -111,6 +111,9 @@ const markdocComponents = {
       public: fields.checkbox({
         label: 'Public — audience can navigate to this slide on their own',
       }),
+      section: fields.text({
+        label: 'Section header (e.g. "Módulo 1: …") — groups slides in the review index',
+      }),
     },
   }),
   // Side-by-side comparison cards. `columns` wraps two or more `column`s.

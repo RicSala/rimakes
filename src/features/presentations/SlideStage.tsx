@@ -41,6 +41,18 @@ export type SlideMeta = {
    * presenter's live moves still override (everyone mirrors the projected slide).
    */
   public?: boolean;
+  /**
+   * Section/module header label, from `{% slide section="Módulo 1: …" /%}`.
+   * Marks this slide as the start of a module; the review index (`ReviewIndex`)
+   * groups the slides that follow under it. Not rendered inline.
+   */
+  section?: string;
+  /**
+   * The slide's first heading text, extracted by `extractSlideMeta`. Used as the
+   * slide's label in the review index. Not rendered inline (it's already in the
+   * slide as a heading) — this is just a derived, plain-text copy for navigation.
+   */
+  title?: string;
 };
 
 // Code-deck fallback (used only if a theme omits `stage`).
