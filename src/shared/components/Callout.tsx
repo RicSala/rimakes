@@ -44,7 +44,7 @@ export function Callout({
 }
 
 const calloutContainerVariants = cva(
-  'bg-muted rounded-md border border-border not-prose p-4 px-6 space-y-2',
+  'bg-muted rounded-md border border-border not-prose my-4 p-4 px-6 space-y-2',
   {
     variants: {
       variant: {
