@@ -24,6 +24,10 @@ const TAG_STYLES: Record<string, TagStyle> = {
     Icon: GraduationCap,
     className: 'border-amber-300/60 bg-amber-100 text-amber-900',
   },
+  avanzado: {
+    Icon: GraduationCap,
+    className: 'border-amber-300/60 bg-amber-100 text-amber-900',
+  },
   theory: {
     Icon: BookOpen,
     className: 'border-sky-300/60 bg-sky-100 text-sky-900',

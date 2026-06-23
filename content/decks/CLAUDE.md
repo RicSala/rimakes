@@ -35,6 +35,13 @@ In the body, a `---` (thematic break) on its own line **starts a new slide**.
 Everything between two `---` is one slide. A `---` inside a fenced code block is
 safe — it stays part of the code and never splits.
 
+A `---` inside a `{% table %}` is **also safe** — there it's the row separator, not
+a slide break. The splitter works on the **parsed Markdoc AST** and only cuts on
+**top-level `hr` nodes** (`splitSlides.ts`), so a `---` nested inside a tag (table,
+fence, etc.) never reaches the top level and never splits. That's why the
+"Cowork ↔ terminal" slide can hold several `{% table %}`s — each with many `---`
+rows — and still be one slide.
+
 ### Where it shows up
 
 - **Viewer (audience):** `/present/<slug>` — passively follows the presenter (open, no
