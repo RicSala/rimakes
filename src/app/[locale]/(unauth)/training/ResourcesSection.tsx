@@ -1,6 +1,6 @@
 'use client';
 
-import { FileText, Layers, Map } from 'lucide-react';
+import { BookA, FileText, Layers, Map } from 'lucide-react';
 
 import { ResourceCard, type Resource } from './ResourceCard';
 
@@ -15,11 +15,13 @@ export function ResourcesSection({
   mapaHref,
   mapaContextoHref,
   claudeMdHref,
+  glosarioHref,
 }: {
   unlocked: boolean;
   mapaHref: string;
   mapaContextoHref: string;
   claudeMdHref: string;
+  glosarioHref: string;
 }) {
   const resources: Resource[] = [
     {
@@ -42,6 +44,13 @@ export function ResourcesSection({
       title: 'Entender el CLAUDE.md',
       description:
         'Cómo funciona el archivo que Claude lee solo: qué poner, qué no, y cómo escribirlo para que lo siga.',
+    },
+    {
+      href: glosarioHref,
+      icon: BookA,
+      title: 'Glosario',
+      description:
+        'Las palabras técnicas de las sesiones explicadas en cristiano, para no técnicos. Con buscador por término y descargable en PDF.',
     },
   ];
 

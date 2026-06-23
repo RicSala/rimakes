@@ -35,6 +35,10 @@ export default async function TrainingPage({ params }: Props) {
     locale === routing.defaultLocale
       ? '/claude-md'
       : `/${locale}/claude-md`;
+  const glosarioHref =
+    locale === routing.defaultLocale
+      ? '/glosario'
+      : `/${locale}/glosario`;
 
   return (
     <div className='flex flex-col gap-10'>
@@ -62,6 +66,7 @@ export default async function TrainingPage({ params }: Props) {
           mapaHref={mapaHref}
           mapaContextoHref={mapaContextoHref}
           claudeMdHref={claudeMdHref}
+          glosarioHref={glosarioHref}
         />
       </section>
     </div>
