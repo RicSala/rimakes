@@ -2487,6 +2487,8 @@ Acabamos de ver que todo tiene equivalente. Pero… ¿**dónde** vive esa config
 
 Son **capas**: la de usuario es tu base; la del proyecto se monta **encima**. Cuando algo está en los dos, **manda el proyecto** — es más específico, está más cerca de la tarea concreta.
 
+Por regla general, yo prefiero poner la mayoría de cosas en el proyecto, a no ser que sea algo que realmente SIEMPRE uso, y eso ocurre pocas veces. Además ponerlo a nivel de proyecto te deja ver fácilmente que está usando la IA.
+
 - **`settings.json`** → el del proyecto **pisa** al de usuario (y lo que un nivel **prohíbe** con `deny`, ningún otro lo puede permitir).
 - **`skills` / `agents`** con el mismo nombre → gana **el del proyecto**.
 - **`CLAUDE.md`** → caso especial: **no se pisan, se SUMAN** (se concatenan de arriba abajo) y el **más cercano** tiene la última palabra.
@@ -2499,7 +2501,7 @@ Son **capas**: la de usuario es tu base; la del proyecto se monta **encima**. Cu
 
 # Uno a uno: los primitivos en la terminal
 
-Ya visteis el mapa completo. Ahora, **primitivo a primitivo**, cómo llegar a cada uno vosotros mismos — con comandos para **copiar y pegar** (Mac y Windows).
+Habéis completo. Ahora, **primitivo a primitivo**.
 
 {% callout title="Siempre las mismas 3 vías, de más fácil a más manual" emoji="🧭" variant="info" %}
 1. **Pídeselo a Claude** en lenguaje normal — lo más fácil.
@@ -2626,8 +2628,10 @@ npx skills add <usuario/repo>
 - Para tenerla en **todos tus proyectos** (nivel usuario), añade **`-g`** — o simplemente **pídeselo a Claude**.
 - Claude la detecta **al reiniciar** la sesión. Como ejecutas código de otros, **instala solo de fuentes en las que confíes**.
 
-{% callout title="Dos que casi todo el mundo acaba usando" emoji="⭐" variant="success" %}
-- **`frontend-design`** — interfaces mucho mejores (¡la skill **nº 1** de skills.sh!).
+[💻] Instalemos una juntos: frontend-design
+
+{% callout title="Dos (tipos de skill) que casi todo el mundo acaba usando" emoji="⭐" variant="success" %}
+- **`frontend-design`** — interfaces mejores (¡la skill **nº 1** de skills.sh!).
 - **`commit-work`** — *commits* de git limpios y bien escritos.
 {% /callout %}
 
@@ -2662,6 +2666,8 @@ En Cowork solo **usas** los subagentes que vienen; en la terminal **defines tipo
 
 Un tipo de subagente se define con **un archivo de texto** (p. ej. `.claude/agents/revisor.md`): un **front matter** arriba con su configuración, y debajo el **prompt** que define su comportamiento.
 
+[PENDING]: Añadir link a docs para que vean el formato exacto
+
 ```md
 ---
 name: revisor
@@ -2692,6 +2698,8 @@ El **front matter** es ese bloque **entre `---`** al principio del archivo (form
 # 4 · MCPs — conectar con el mundo
 
 **Cowork:** la pestaña "Connectors".  **Terminal:** los añades con un comando (o se lo pides a Claude) y los gestionas con **`/mcp`**.
+
+También se guardan en un archivo, pero en este caso funciona un poco diferente.
 
 - **Usuario** (todas tus carpetas): `--scope user`
 - **Proyecto** (compartido por el equipo, en `.mcp.json`): `--scope project`
@@ -2798,8 +2806,10 @@ Lo que en la app de escritorio es **"Schedule"** (tareas programadas), en la ter
 - Pueden **pertenecer a un proyecto** y así **heredar su contexto**.
 - Las gestionas con **`/schedule`**, y las ves en **`claude.ai/code/routines`**.
 
-{% callout title="Créalas con IA, no a mano" emoji="🪄" variant="info" %}
-Como en Cowork: pídeselo a Claude (*"prográmame un resumen cada mañana a las 8:00"*) en vez de montarlo a mano — es más sencillo y desbloquea opciones que el menú no ofrece.
+{% callout title="Más potentes que en Cowork!" emoji="🪄" variant="info" %}
+En cowork, las "scheduled task" solo pueden ser locales, y ejecutarse cuando cowork esté encendido. En Claude Code, también tienes rutines remotas, que se pueden ejecutar incluso cuando tu ordenador esté apagado.
+
+Esto es más avanzado y si quieres implementarlo lo vemos en las individuales.
 {% /callout %}
 
 ---
@@ -2822,16 +2832,19 @@ Si usas **Dispatch** directamente, sigue pudiendo encargar tareas a Claude Code:
 
 {% slide width="wide" /%}
 
-# Modo Plan — pensar antes de tocar
+# Conduciendo Claude Code: Modo Plan
 
 Las tres últimas piezas no son *configurar* Claude, sino **cómo lo conduces mientras trabaja**: plan, permisos y contexto. Empezamos por el **Modo Plan** — y ojo, este es **propio de la terminal: en Cowork no lo tienes como tal**.
 
 **Qué es:** un modo en el que Claude **solo lee y explora** (abre archivos, busca, investiga) y, en vez de tocar nada, te **propone un plan por escrito**. No edita ni ejecuta hasta que tú lo **apruebas**.
 
-**Por qué existe:** sin él, el agente se **lanza a hacer** a la primera — y en una tarea grande o ambigua es fácil que **tire por el camino equivocado**. Deshacerlo cuesta **tiempo y tokens**. El plan es un **punto de acuerdo antes de tocar código**: lo revisas, corriges el rumbo y *entonces* ejecuta.
+**Por qué existe:** Varios motivos:
+- Para aumentar el tiempo que el agente puede trabajar "solo" (sin intervención humana), y ser más eficiente. En lugar de estar revisando cada cambio, acordáis un plan y le dejas hacer.
+- Por si el contexto del agente se queda a medias (cada vez menos probable)
+- Por documentar los cambios...
 
-{% callout title="Cómo se usa (igual en Mac y Windows)" emoji="✅" variant="success" %}
-Entra con **Shift+Tab** (va ciclando los modos) o escribe **`/plan`**. Claude investiga y te propone el plan; cuando lo apruebas, **pasa a ejecutar**.
+{% callout title="Cómo se usa" emoji="✅" variant="success" %}
+Entra con **Shift+Tab** (va ciclando los modos) o escribe **`/plan`**. Claude investiga y te propone el plan; cuando lo apruebas, **pasa a ejecutar**. Él mismo puede usar de forma proactiva.
 {% /callout %}
 
 {% prompt title="Pídele un plan primero" %}
@@ -2839,7 +2852,9 @@ Antes de tocar nada, ponte en modo plan y propón un plan para [lo que quieras h
 {% /prompt %}
 
 {% callout title="Haz que los planes vivan en TU proyecto (recomendado)" emoji="📌" variant="info" %}
-Claude **guarda cada plan como un archivo**. Por defecto van a `~/.claude/plans/`, una carpeta de usuario **escondida** — y prefiero las cosas **a la vista, dentro del proyecto**, no implícitas.
+Claude **guarda cada plan como un archivo**.
+
+Por defecto van a `~/.claude/plans/`, una carpeta de usuario **escondida** — y prefiero las cosas **a la vista, dentro del proyecto**, no implícitas.
 {% /callout %}
 
 Añádelo a tu `settings.json` (o pídeselo a Claude) y los planes aparecerán en una carpeta `plans/` **dentro del proyecto**:
@@ -2973,23 +2988,19 @@ Aquí tú defines qué te hace falta, y **para hacerlo solo tienes que saber esc
 
 # Podrías hacer una app sin entender NADA de esto.
 
-De verdad: hoy se lo pides y sale algo que funciona.
+De verdad: hoy se lo pides y sale algo que **funciona**.
 
 Pero...**a ciegas**, no sabes 
 - **qué pasa por dentro**, 
 - **qué es posible**, 
 - **qué NO debes enseñar al mundo** (tus claves, los datos de tus usuarios), 
 - **qué implica** cada cambio que pides…
+
 ni **entiendes a Claude** cuando te lo explica.
 
-Y además la falta de confianza en este caso normalmente hace que ni cojas el coche (ni intentes programar una mini tool)
-
-Es como **conducir sin tener ni idea de coches**: puedes, y llegas lejos — pero cuando se enciende la luz roja no sabes si parar, en el taller te la cuelan, y nunca le sacas todo el partido.
-
-No pretendo convertiros en pilotos, solo que os atreváis a coger el coche.
 
 {% callout title="Por eso, esta parte" emoji="🚗" %}
-Saber lo básico **no te hace mecánico: te hace mejor conductor.** No venimos a programar — venimos a **entender lo justo para ir seguros y llegar más lejos.**
+Saber lo básico de coches **no te hace mecánico: te hace mejor conductor.** No venimos a programar — venimos a **entender lo justo para ir seguros y llegar más lejos.**
 {% /callout %}
 
 ---
@@ -3014,13 +3025,18 @@ Saber lo básico **no te hace mecánico: te hace mejor conductor.** No venimos a
 
 Una app web tiene **dos partes** que se comunican entre sí:
 
-- **Frontend:** la **interfaz** — lo que el usuario ve y con lo que interactúa (la pantalla, el chat, los formularios). Se ejecuta en **el navegador del usuario**: HTML, CSS y JavaScript, normalmente con **React**.
-- **Backend:** la **lógica** de la aplicación, el acceso a los **datos** y el manejo de los **secretos** (las claves de API). Se ejecuta en un **servidor** (Node.js), **no** en el navegador.
+- **Frontend:** (cliente) la **interfaz** - lo que el usuario ve y con lo que interactúa (la pantalla, el chat, los formularios). Se ejecuta en **el navegador del usuario**: HTML, CSS y JavaScript, en nuestro caso con **React**.
+- **Backend:** (servidor) la **lógica** de la aplicación, el acceso a los **datos** y el manejo de los **secretos** (las claves de API). Se ejecuta en un **servidor** (Node.js), **no** en el navegador.
 
 Las dos partes se comunican a través de una **API**: el frontend hace **peticiones** y el backend **responde**. Es la frontera entre lo **público** (lo que llega al navegador) y lo **privado** (lo que se queda en el servidor).
 
+{% callout title="Frontend y backend" emoji="🔒" variant="info" %}
+Mientras desarrollamos, el backend y el frontend están en el mismo sitio: nuestro ordenador. Pero cuando publicamos, una parte de nuestro código va al cliente, y la otra al servidor.
+{% /callout %}
+
+
 {% callout title="Por qué importa esta separación" emoji="🔒" variant="info" %}
-Lo **sensible** —las **claves** y los **datos** de tus usuarios— vive **solo en el backend**, donde el usuario no puede verlo; el frontend recibe únicamente lo que es seguro mostrar. Esa frontera es la base de la **seguridad**: una clave en el frontend es una clave **expuesta**.
+Lo **sensible** -las **claves** y los **datos** de tus usuarios— vive **solo en el backend**, donde el usuario no puede verlo; el frontend recibe únicamente lo que es seguro mostrar. Esa frontera es la base de la **seguridad**: una clave en el frontend es una clave **expuesta**.
 {% /callout %}
 
 ---
@@ -3028,6 +3044,10 @@ Lo **sensible** —las **claves** y los **datos** de tus usuarios— vive **solo
 {% slide width="wide" /%}
 
 # Next.js: el framework que usaremos
+
+Si no usasemos un framwork, tendríamos que instalar librerías para: el servidor, el router, el estilo, el "empaquetado",...
+
+En lugar de instalar todas estas librerías, usamos un framework que las trae, junto con otras cosas. En nuestro caso, Next.js.
 
 **Next.js** es un *framework* de React para construir aplicaciones web completas. En un **único proyecto** te da el **frontend** (las páginas) y el **backend** (la lógica de servidor y las APIs), más el **enrutado**, el **servidor de desarrollo** y el **empaquetado** para publicar. Tú escribes las piezas; **él pone la estructura y las une**.
 
@@ -3048,7 +3068,7 @@ Como todo lo demás, **lo monta Claude**. A ti te basta con entender **qué es**
 
 # Inicializar un proyecto en Next.js
 
-Crear el esqueleto de la app es **un comando**. ¿De dónde sale? De la **documentación** de la propia herramienta: casi todo lo que instales tiene un apartado **"Getting Started" / "Installation"** que te da el comando. Eliges la pestaña de **npm** y lo copias.
+Crear el esqueleto de la app es **un comando**. ¿De dónde sale? De la **documentación** de la propia herramienta: casi todo lo que instales tiene un apartado **"Getting Started" / "Installation"** que te dice cómo instalarlo. Eliges la pestaña de **npm** y lo copias.
 
 [📄 Documentación de instalación de Next.js →](https://nextjs.org/docs/app/getting-started/installation)
 
@@ -3097,6 +3117,7 @@ mi-app/
   app/
     layout.tsx        # envoltura común a todas las páginas
     page.tsx          # la página de inicio (/)
+    globals.css       # estilos globales
     sobre-mi/
       page.tsx        # una página nueva → /sobre-mi
 ```
@@ -3105,6 +3126,7 @@ mi-app/
 - **`CLAUDE.md` / `AGENTS.md`** — el **contexto que lee la IA**: instrucciones y notas sobre tu proyecto para que trabaje mejor.
 - **`page.tsx`** — **una página**: lo que se ve en una ruta. El de `app/` es la **portada** (`/`).
 - **`layout.tsx`** — la **envoltura común** a varias páginas (cabecera, pie, estilos compartidos).
+- **`globals.css`** — los **estilos globales** de la app.
 - **Crear una página nueva** — una **carpeta** con su `page.tsx`: `app/sobre-mi/page.tsx` → `localhost:3000/sobre-mi`.
 
 {% callout title="Lo demás, cuando haga falta" emoji="🧩" variant="info" %}
@@ -3117,15 +3139,20 @@ Con esto te sitúas. **El resto lo iremos viendo a medida que aparezca** — no 
 
 Cuando hacemos una app, casi nada se construye **desde cero**. Una **librería** es un **paquete de código que ya escribió otra persona** para resolver un problema concreto y **publicó para que cualquiera lo reutilice**. En vez de fabricar esa pieza, la "enchufas" y funciona.
 
-Ventajas:
+(Como ya hemos dicho, Nextjs viene con muchas librerías "de fábrica"!)
+
+Ventajas de usar librerías:
 
 - **No reinventas la rueda:** lo común (un chat, un calendario, cobrar con tarjeta…) ya está hecho.
 - **Más fiable:** al usarla tanta gente, está **muy probada** — menos errores que algo recién inventado.
 - **Más rápido:** ensamblas en horas lo que desde cero serían semanas.
+- **La IA lo conoce:** y no tienen que inventarlo.
 
 {% callout title="Truco: instala su skill" emoji="📚" variant="success" %}
 Muchas librerías populares tienen una **skill** (en [skills.sh](https://skills.sh)) que le da a Claude su **manual al día**, para que use bien la versión de hoy y se equivoque menos. Pídele: *"instala la skill de [librería]"*. Útil **sobre todo con las que cambian rápido**, como la **AI SDK**.
 {% /callout %}
+
+Vamos a probar a añadir algunas por distintas vías, para que veas cómo se hace.
 
 ---
 
@@ -3133,9 +3160,11 @@ Muchas librerías populares tienen una **skill** (en [skills.sh](https://skills.
 
 # Añadimos librería de componentes
 
-Funcionando en `localhost`. Ahora vamos a añadirle los **componentes básicos** que tiene casi cualquier app: **botones**, **inputs**, **menús**, modales…
+Vamos a añadirle los **componentes básicos** que tiene casi cualquier app: **botones**, **inputs**, **menús**, modales…
 
-Podríamos escribirlos a mano (o pedirle a Claude que los escriba) — pero **¿para qué, si alguien ya lo ha hecho (y mejor)?** Instalamos una **librería de componentes**: **shadcn/ui**, piezas ya hechas, accesibles y cuidadas, que **se copian a tu proyecto** para que las edites a tu gusto.
+Podríamos pedirle a Claude que los escriba - pero **¿para qué, si alguien ya lo ha hecho (y mejor)?** Instalamos una **librería de componentes**: **shadcn/ui**, piezas ya hechas, accesibles y cuidadas, que **se copian a tu proyecto** para que las edites a tu gusto.
+
+Hay muchas librerías de componentes. Yo he usado y os recomiendo Shadcn y DaisyUI.
 
 **Vamos a trabajar con shadcn.** Como ha tenido **cambios últimamente**, primero le instalamos su **skill** para que Claude tenga la **referencia al día** y se equivoque menos.
 
@@ -3165,7 +3194,9 @@ Esto **tardará un rato** (Claude instala, añade los componentes y monta la pá
 
 Eso que acaba de instalar shadcn son **componentes**. Un componente es **una pieza de interfaz reutilizable** —un botón, un input, una tarjeta—, como una **pieza de Lego**: la haces (o la instalas) una vez y la **reutilizas** y **combinas** para montar páginas enteras.
 
-Por dentro es **una función que devuelve lo que se pinta** en pantalla. En su forma más simple:
+Esa pieza tiene, en un único archivo, el contenido (html), el estilo (css) y el comportamiento (javascript).
+
+En su forma más simple, tiene esta pinta:
 
 ```tsx
 // Un componente: una función que devuelve lo que se ve.
@@ -3209,7 +3240,9 @@ Y tiene **presets**: un **punto de partida de estilo** (colores, tipografía, ra
 
 # Casi toda app tiene formularios
 
-Y no vas a reinventarlos. La librería de referencia para formularios en React es **React Hook Form** (a menudo junto a **Zod** para validar). **Mismo planteamiento de siempre:** docs → Installation → comando (pestaña npm).
+Otra librería que casi todo app necesita, es una que haga más fácil la gestión de formularios.
+
+Y no vas a reinventarlos. La librería de referencia para formularios en React es **React Hook Form** (a menudo junto a **Zod** para validar lo que sale de ese formulario). **Mismo planteamiento de siempre:** docs → Installation → comando (pestaña npm).
 
 [📄 Docs de React Hook Form →](https://react-hook-form.com/get-started)
 
@@ -3221,13 +3254,15 @@ npm install react-hook-form
 A diferencia de antes, **esta vez no se lo pedimos a Claude**: lo montamos **a mano** para **aprender y entender qué pasa por detrás**.
 {% /callout %}
 
+[💻] Pero... ¿Dónde está el código de esa librería? Intro a node_modules.
+
 ---
 
 {% slide width="wide" /%}
 
 # La IA en tu app: la AI SDK de Vercel
 
-Para que tu app **hable con un modelo** —chat, respuesta en *streaming*, llamar a herramientas— no escribes todo eso a mano: usas la **AI SDK de Vercel** (el paquete `ai`). Es la librería que **moverá nuestro "chat con tus fuentes"**.
+Para que tu app **hable con un modelo** —chat, respuesta en *streaming*, llamar a herramientas (es decir, si quieres hacer una app "powered by AI") - de nuevo es tan común que alguien (Vercel en este caso) ya ha hecho una librería: usas la **AI SDK de Vercel** (el paquete `ai`).
 
 - Funciona con **cualquier proveedor** (Claude, OpenAI…): instalas el SDK **+ el paquete del proveedor**.
 - Trae además **AI Elements**: componentes de chat ya montados.
@@ -3276,9 +3311,46 @@ Necesita una **clave de API** (y **verificar tu dominio** para enviar desde tu c
 
 {% slide width="wide" /%}
 
+# Guardar archivos: Vercel Blob
+
+¿Tu app deja **subir archivos** (imágenes, PDFs, audios…)? No los guardas dentro del código ni de la base de datos: los mandas a un **almacenamiento** en la nube que te devuelve una **URL**. La opción más sencilla es **Vercel Blob** (`@vercel/blob`).
+
+[📄 @vercel/blob en npm →](https://www.npmjs.com/package/@vercel/blob)
+
+{% prompt title="Instalar Vercel Blob" %}
+npm install @vercel/blob
+{% /prompt %}
+
+Necesita un **token** del proyecto en Vercel (otro secreto — lo guardamos como variable de entorno).
+
+{% callout title="Esta se la pedimos a Claude" emoji="🤖" variant="info" %}
+A diferencia de los formularios (que montamos a mano para entenderlos), **esto se lo pedimos a Claude**: que instale el paquete, configure el token y deje el subir-archivos funcionando.
+{% /callout %}
+
+---
+
+{% slide width="wide" /%}
+
+# Cuenta en Vercel: base de datos y almacenamiento
+
+Para que la app **viva en internet** —y para que el **Blob** y la **base de datos** funcionen— necesitamos una cuenta en **Vercel**. Lo montamos **juntos**: yo os voy guiando.
+
+1. **Crea tu cuenta** en [vercel.com](https://vercel.com) — entra **con GitHub** (así queda ya conectado).
+2. **Añade el proyecto** desde GitHub: Vercel **importa tu repo** y lo **despliega solo** cada vez que subes cambios.
+3. **Crea una base de datos** (Postgres con **Neon**): en *Storage → Create Database*.
+4. **Crea un Blob storage** (Vercel **Blob**): en *Storage → Create → Blob* — de aquí sale el **token** que pedía la librería de antes.
+
+{% callout title="Lo hacemos juntos, sin correr" emoji="🧭" variant="info" %}
+**Os voy guiando paso a paso.** Las claves que generan Neon y Blob son **secretos** → van a las **variables de entorno** (lo vemos enseguida), **nunca** al código.
+{% /callout %}
+
+---
+
+{% slide width="wide" /%}
+
 # npm vs pnpm vs bun… ¿qué es eso?
 
-Te habrás fijado en que, al instalar (Next.js, shadcn…), los docs te dan a elegir entre **npm / pnpm / yarn / bun**. Son **gestores de paquetes**: la herramienta que **descarga y organiza las librerías** (los "paquetes") de tu app, con sus versiones y dependencias.
+Te habrás fijado en que, al instalar (Next.js, shadcn…), los docs te dan a elegir entre **npm / pnpm / yarn / bun**. Son **gestores de paquetes**: la herramienta que **descarga y organiza las librerías que instalas** (los "paquetes") en tu app, con sus versiones y dependencias (dependencias = librerías).
 
 Hacen lo mismo; cambian en velocidad y detalles:
 
@@ -3325,9 +3397,11 @@ Pero que quede claro: {% highlight %}**podríais hacer todo esto sin saber qué 
 
 # ¿No echas algo en falta? El CLAUDE.md
 
-Hemos instalado varias librerías… y queremos meter una **limitación que Claude no puede adivinar** si no se la decimos (la de **no usar base de datos** de momento).
+Hemos instalado varias librerías… y futuras sesiones de Claude tendrán que volver a descubrirlas cada vez.
 
-¿Dónde? En el **`CLAUDE.md`** del proyecto: así Claude **se ubica al arrancar cada sesión** y **no tienes que repetírselo** cada vez.
+Además, queremos meter una **limitación que Claude no puede adivinar** si no se la decimos: **no usar base de datos** de momento.
+
+¿Dónde metemos este contexto? En el **`CLAUDE.md`** del proyecto: así Claude **se ubica al arrancar cada sesión** y **no tienes que repetírselo** cada vez.
 
 En el `CLAUDE.md` de un proyecto solemos querer:
 
@@ -3335,7 +3409,7 @@ En el `CLAUDE.md` de un proyecto solemos querer:
 - **Árbol del proyecto** (breve) — si va creciendo (quizá ahora aún no hace falta).
 - **Stack** — framework, librerías…
 - **Comandos principales** — arrancar, build, tests…
-- **Reglas y límites** — en nuestro caso: *"de momento, sin base de datos — usa `localStorage` detrás de una capa"*.
+- **Reglas y límites** — por ejemplo, no usar de momento base de datos.
 
 {% callout title="¿Lo escribes tú? No hace falta" emoji="🤝" variant="info" %}
 Pídeselo a Claude, o usa **`/init`** (te genera un primer `CLAUDE.md` mirando el proyecto). Y recuerda: **breve** — va en **cada** mensaje.
@@ -3364,9 +3438,9 @@ El `CLAUDE.md` que genera **`/init`** no siempre está bien. **Pruébalo a ver q
 Y la **regla clave**: dile en el `CLAUDE.md` **cómo** vamos a manejar la persistencia, para que no improvise.
 
 {% prompt title="Prompt — añade esto a tu CLAUDE.md" %}
-Añade a `CLAUDE.md` una sección sobre **cómo persistimos datos** (de momento), con estas reglas:
+Añade a `CLAUDE.md` una sección sobre **cómo construimos esta primera versión** (de momento), con estas reglas:
 
-- **Aún sin base de datos.**
+- Esta versión es un **mock**: **aún sin base de datos** y **sin servicios externos**. Si algo necesitara uno, **simúlalo** con un mock que sustituiremos por el servicio real más adelante.
 - **No uses Server Actions.** Para leer y escribir datos usa **solo llamadas a API** (route handlers en `app/api/…`).
 - **Abstrae la capa de datos tras un repositorio asíncrono**: una interfaz con métodos `async` (`getAll`, `getById`, `create`, `update`, `delete`).
 - Ese repositorio se apoya, **por ahora, en `localStorage`**.
@@ -3397,6 +3471,11 @@ Usaremos una memoria diminuta que **todo navegador ya trae: `localStorage`** —
 
 ---
 
+# Elejimos camino...
+¿Preferís que cada uno haga su app, o seguimos haciendo todos juntos una en mi pantalla?
+
+---
+
 # Llevamos un tiempo trabajando… sin guardar 🫣
 
 Bueno, sí: has ido guardando con **Ctrl/Cmd + S** (y Claude guarda al editar). Pero eso solo guarda **cómo está el archivo ahora mismo**.
@@ -3410,6 +3489,8 @@ Necesitamos una forma de **guardar checkpoints** del proyecto entero… 👉
 
 ---
 
+{% slide width="wide" /%}
+
 # ¿Qué es Git?
 
 **Git** es un sistema de versiones que **guarda el historial de tu proyecto**: va haciendo "fotos" de cómo estaban tus archivos en cada momento, para que **nunca pierdas nada** y puedas **volver atrás** si algo se rompe.
@@ -3422,6 +3503,8 @@ Conceptos clave:
 - **Commit** — una foto de tu proyecto guardada con un mensaje ("añadí el login"). Es tu checkpoint.
 - **Rama (branch)** — una línea paralela para **probar cosas sin tocar lo que ya funciona**.
 - **GitHub** — una copia en la nube: **backup** + sitio para **compartir y colaborar**.
+
+![Grafo de Git: la rama main (init → feat: Guardar contactos → feat: Enviar mails → feat: Authentication → merge) y una rama paralela whatsapp (feat: Enviar whatsapp) que sale de «Guardar contactos» y se vuelve a unir en el merge](/cms-assets/decks/intro-to-synced-slides/git-ramas-commits.png)
 
 {% callout title="No necesitas memorizar comandos" emoji="🤝" variant="info" %}
 Tú entiende **el concepto**; los comandos los hace **Claude** por ti. Basta con pedirle: *"haz un commit con lo que llevamos"* o *"vuelve a la versión de antes"*.
@@ -3465,10 +3548,6 @@ Los hace **Claude** por ti, pero conviene que entiendas lo que pasa, al menos en
 
 Tu repo es **privado**, así que de momento **solo lo ves tú**. Para que **otra persona** (yo, un compañero…) pueda **verlo y trabajar** en él, la **invitas como colaboradora** en GitHub.
 
-{% prompt title="Pídeselo a Claude" %}
-Invita a <usuario-de-github> como colaborador a mi repositorio.
-{% /prompt %}
-
 ## ¿Lo haces tú mismo?
 
 En GitHub, dentro de tu repo: **Settings → Collaborators → Add people** → escribe su **usuario** (o email) → **Add**.
@@ -3481,13 +3560,25 @@ La persona recibe una **invitación** (por email o notificación de GitHub) y **
 Si quieres que **te eche una mano con tu proyecto** (en las **individuales**), acuérdate de **invitarme como colaborador** a ese repo — así puedo abrirlo en mi ordenador y echarle un ojo.
 {% /callout %}
 
+## Cómo nos pasamos los cambios
+
+Ya como colaboradores, trabajamos sobre el **mismo repo** y nos sincronizamos con **push** (subir a GitHub) y **pull** (bajar de GitHub):
+
+1. **Tú** — tu Claude hace **commit** (guardar) y **push** (subir tus cambios a GitHub).
+2. **Yo** — hago **pull** (bajar lo tuyo), hago cambios, y hago **push** de vuelta.
+3. **Tú, para ver mis cambios** — haz **pull** (bajar lo último de GitHub).
+
+Y, como siempre, **se lo puedes pedir a Claude**: *"sube mis cambios"* o *"bájate lo último del repo"*.
+
+![Flujo de colaboración por GitHub: (1) tu Claude toca código y al terminar hace commit y push a GitHub; (2) para ayudarte, yo hago pull de tus cambios; (3) trabajo en tu proyecto; (4) hago commit y push de vuelta a GitHub; (5) tú haces pull, te traes mis cambios a tu ordenador y sigues trabajando con Claude](/cms-assets/decks/intro-to-synced-slides/colaboracion-github.png)
+
 ---
 
 {% slide bg="brand" width="normal" /%}
 
 # Soltamos el control: especificando nuestra app
 
-Hasta aquí hemos ido **paso a paso**, instalando cada librería a mano. A partir de ahora **nos apoyamos más en Claude Code**: le **describimos qué queremos** y dejamos que **él instale las librerías que correspondan**.
+Hasta aquí hemos ido **paso a paso**, instalando cada que nosotros decidíamos. A partir de ahora **nos apoyamos más en Claude Code**: le **describimos qué queremos** y dejamos que **él instale las librerías que correspondan**.
 
 - **Riesgo:** que cada uno acabe con una **versión un poco distinta** de la misma app.
 - **Pero merece la pena:** veréis **hasta dónde llega Claude Code** construyendo una app que **funciona**… aunque vosotros **aún no sepáis** cómo lo hace.
@@ -3500,13 +3591,13 @@ De ir marcando cada paso, a **decir qué queréis y dejar trabajar**.
 
 # Por qué, qué, cómo
 
-Al especificar tu app eliges **cuánto detalle** le das a Claude — es decir, **cuánto control** te quedas:
+Al especificar tu app eliges **cuánto detalle** le das a Claude — es decir, **cuánto control** te quedas. Podemos especificar...:
 
-- **El porqué** (el objetivo): *"Quiero una app para aprender temas concretos más rápido."*
-- **El qué** (qué hace): *"Quiero una app que genere cursos según la audiencia; la página de creación tendrá…"*
-- **El cómo** (la implementación): *"Usa la librería X para Y, crea un middleware para…"*
+- **El porqué** (el objetivo): *"Quiero una app para aprender temas concretos más rápido."* Claude decide todo, incluido qué hace la app para conseguir ese objetivo.
+- **El qué** (qué hace): *"Quiero una app que genere cursos según la audiencia; la página de creación tendrá…"*. Tú decides el qué, Claude decide el cómo.
+- **El cómo** (la implementación): *"Usa la librería X para Y, crea un middleware para…"*. Le dices exactamente qué quieres, Claude ejecuta.
 
-**Solo el porqué** seguramente saldría bien — a menudo **mejor que tú** (¡probadlo!) —, pero si ya tienes una idea de lo que quieres, **deja demasiada libertad**.
+**Solo el porqué** seguramente saldría bien - a menudo **mejor que tú** (¡probadlo!) -, pero si ya tienes una idea de lo que quieres, **deja demasiada libertad**.
 
 **Solo el cómo** desaprovecha lo mejor de Claude: su capacidad de **pensar** (no solo ejecutar) y proponerte **mejores soluciones** que las que tenías en mente. Y si **no sabes** de lo técnico, menos sentido tiene.
 
@@ -3556,6 +3647,10 @@ Antes de escribir código, hazme las **preguntas** que necesites para entender b
 
 {% timer minutes=3 label="Pégaselo a Claude y responde a sus preguntas" id="spec-app" /%}
 
+{% callout title="Hazlo tú, aunque luego me sigas en pantalla" emoji="💪" variant="warning" %}
+**Haz el ejercicio**, aunque después sigas el mío a través de mi pantalla. Es **el mismo** que tendrás que hacer cuando desarrolles **tu propia app**, y lo **revisaremos en las individuales**.
+{% /callout %}
+
 {% callout title="¿Quieres investigar más adelante?" emoji="🧭" variant="info" %}
 Frameworks típicos de *spec-driven development*: **Spec Kit**, **Get Shit Done** y **OpenSpec** (esta última, de las más sencillas). Para hoy, **no hacen falta**.
 {% /callout %}
@@ -3568,7 +3663,7 @@ Frameworks típicos de *spec-driven development*: **Spec Kit**, **Get Shit Done*
 
 Ya tenemos el **qué** (la `docs/spec.md`). Ahora el **cómo**: que Claude lo construya **por partes** y que **tú compruebes cada parte** antes de seguir.
 
-**La herramienta clave: el Modo Plan** *(ya lo visteis: `Shift+Tab` o `/plan`)*. En vez de lanzarse a programar, Claude **propone un plan**, tú lo **revisas y apruebas**, y **entonces** ejecuta — así no se va por las ramas en algo grande.
+**La herramienta clave: el Modo Plan** *(ya lo visteis: `Shift+Tab` o `/plan`)*. En vez de lanzarse a programar, Claude **propone un plan**, tú lo **revisas y apruebas**, y **entonces** ejecuta.
 
 **Y luego, verificar** que lo hecho es lo que querías. Varias maneras:
 
@@ -3582,8 +3677,6 @@ Una costumbre que he cogido: en la mayoría de mis `CLAUDE.md` añado la instruc
 
 Si una parte no está bien, lo dices y se rehace (o **rebobinas**); y a por la siguiente.
 
-*(Borrador: ajustaremos las formas de verificar.)*
-
 ---
 
 {% slide /%}
@@ -3593,17 +3686,14 @@ Si una parte no está bien, lo dices y se rehace (o **rebobinas**); y a por la s
 Construir con la IA **no es un disparo único**: es un **bucle** que das una y otra vez. Cuatro fases, y en cada una cambia **quién lleva el peso**: **Explorar** (entender) → **Decide/Plan** (acordar qué hacer) → **Ejecutar** (la IA escribe) → **Verificar** (comprobar que hace lo que querías) → y vuelta a empezar.
 
 {% callout title="«Cuatro» no es oficial" emoji="🧭" variant="info" %}
-Que sean **cuatro fases** es una **convención útil**, no una ley: es la **base** sobre la que cada uno **adapta su propio sistema**. De hecho, los distintos **frameworks de *spec-driven development*** han ido **añadiendo fases** y volviéndolo todo **más complejo**. Empieza por estas cuatro y ajústalas a lo tuyo.
+Que sean **cuatro fases** es una forma de verlo, no una ley: es la **base** sobre la que cada uno **adapta su propio sistema**. De hecho, los distintos **frameworks de *spec-driven development*** han ido **añadiendo fases** y volviéndolo todo **más complejo**. Empieza por estas cuatro y ajústalas a lo tuyo.
 {% /callout %}
 
 El "loop" puede ser más largo o más corto dependiendo de lo que busquemos...:
-- Más largo: más autonomía de la IA
-- Más largo: cuando hay un error, más complejo es localizar qué paso ha fallado (pero esto cada vez es menos problema)
+- **Más largo**: más autonomía de la IA
+- **Más largo**: cuando hay un error, más complejo es localizar qué paso ha fallado (pero esto cada vez es menos problema)
 - Y tampoco podemos pasarnos...recuerda que el contexto es limitado.
 De hecho, muchas veces si la app no es compleja, tan solo necesitaremos un loop: la IA "oneshotea" la aplicación.
-
-[PENDING]
-Pensar si dejar oneshoteada una app mientras explicamos lo siguiente
 
 
 ![Bucle de desarrollo con IA: Explorar → Decide/Plan → Ejecutar → Verificar y vuelta a empezar. Explorar, Decide/Plan y Verificar los hacéis "user + ia"; Ejecutar lo lleva sobre todo la "ia"](/cms-assets/decks/intro-to-synced-slides/bucle-desarrollo.png)
@@ -3614,11 +3704,43 @@ La **IA lleva el peso en Ejecutar**, pero **tú sigues al mando en los extremos*
 
 ---
 
+{% slide width="wide" tags="PENDING" /%}
+
+# Oneshoteando nuestra app
+
+En lo que queda de sesión tenemos **dos caminos**: seguir **paso a paso** o probar el contrario — **one-shotear** (*vibe-codear*) la app en **un único prompt**. Quiero que veáis la **potencia de la IA** también para esto.
+
+**El plan:**
+
+1. **Ronda de ideas** 💬 — antes de soltaros, contad **qué quiere construir cada uno**. Así os digo en el momento **qué veo factible** y qué no.
+2. **5–10 min cada uno especificando** vuestra app a Claude. *Especificar* = decirle **exactamente** qué queréis y pedirle que **os haga preguntas**. El resultado de esa conversación es un **`.md`** donde deja escrito **cómo será la app**.
+3. **Probamos a one-shotearla.** Si **hace aguas**, recuperamos el hilo de la sesión y seguimos paso a paso.
+4. Dejamos a **cada Claude trabajando** y continuamos con la sesión.
+
+{% callout title="El límite no es el código, son las integraciones" emoji="⏱️" variant="warning" %}
+Por **código** no hay problema. La limitación son las **integraciones**: si la app necesita **muchos servicios externos**, hay que crear cuentas y montar integraciones, lo que a Claude le cuesta más "verificar".
+
+- ✅ Un **CRM** → relativamente **fácil** de one-shotear.
+- ⚠️ Una app para **programar publicaciones en redes** → **mucho más compleja** (muchas integraciones).
+{% /callout %}
+
+{% prompt title="Añádelo al final de la descripción de tu app" %}
+Una cosa importante sobre cómo quiero que la construyas: esta primera versión es un **mock**. **Todavía no uses base de datos ni servicios externos.** Si algo necesitara uno de los dos, **simúlalo** (un mock) que podamos sustituir más adelante por el servicio real.
+
+Para los **datos**, no los guardes directamente desde los componentes: pon **toda la persistencia detrás de una capa de acceso a datos** —un **repositorio asíncrono** (`getAll`, `getById`, `create`, `update`, `delete`) con una interfaz estable—. **No uses Server Actions**: para leer y escribir, el acceso a datos pasa **solo por llamadas a API** (route handlers en `app/api/…`). En esta versión, implementa ese repositorio guardando en **localStorage**, pero deja sus métodos **`async` desde el principio**. Define la **forma de los datos** (los tipos) en un solo sitio, y que el resto de la app **solo hable con el repositorio**, nunca con localStorage directamente.
+
+El objetivo: cuando la forma de los datos esté clara, **cambiar solo esa capa** por llamadas a una API con base de datos real, **sin tocar el resto de la app**.
+{% /prompt %}
+
+{% timer minutes=10 label="Especifica tu app a Claude" id="oneshot-spec" /%}
+
+---
+
 # ¿Qué es una base de datos?
 
 Por defecto, una app **se olvida de todo**: cierras o recargas la página y vuelve a estar en blanco. Lo que el usuario escribió… desaparece.
 
-Una **base de datos** es donde la app **guarda las cosas para que sigan ahí** la próxima vez: usuarios, mensajes, pedidos, lo que sea. Es **la libreta (o el Excel) de tu app**, que ella lee y escribe sola.
+Una **base de datos** es donde la app **guarda las cosas para que sigan ahí** la próxima vez: usuarios, mensajes, pedidos, lo que sea.
 
 - **La necesitas si** tu app tiene que **recordar** algo entre sesiones o entre usuarios (un historial, una lista, cuentas de usuario…). Es decir, la gran mayoría de las apps.
 - Vive en el **backend** (la cocina), (casi) nunca en el navegador (aunque nosotros estamos "simulando" que tenemos ya una base de datos con una herramienta del navegador)
@@ -3626,10 +3748,10 @@ Una **base de datos** es donde la app **guarda las cosas para que sigan ahí** l
 Quiero que entiendas qué es una base de datos porque añade una capa de complejidad más a tu app.
 
 La base de datos hay que gestionarla:
-- Definir su forma ¿Cómo se relacionan unas cosas con otras? Por ejemplo: Un `Proyecto` pertenece al `Usuario` o al `Equipo`?
-- Evolucionarla: Mañana hacemos que cada módulo tenga una imagen obligatoriamente, ¿Qué hacemos con los existentes?
-- Distribuirla: Mis usuarios están en US y Alemania, pero mi base de datos solo está en Berlín. Los de US tardan 3s en cargar cada página 🤔
-- "Arreglarlar": Hemos publicado una base de datos con errores, ¿Qué hacemos? No hay botón de "undo"!
+- **Definir su forma** ¿Cómo se relacionan unas cosas con otras? Por ejemplo: Un `Proyecto` pertenece al `Usuario` o al `Equipo`?
+- **Evolucionarla**: Mañana hacemos que cada módulo tenga una imagen obligatoriamente, ¿Qué hacemos con los existentes?
+- **Distribuirla**: Mis usuarios están en US y Alemania, pero mi base de datos solo está en Berlín. Los de US tardan 3s en cargar cada página 🤔
+- **"Arreglarlar"**: Hemos publicado una base de datos con errores, ¿Qué hacemos? No hay botón de "undo"!
 
 Todo esto añade complejidad, que de momento estamos difiriendo.
 
