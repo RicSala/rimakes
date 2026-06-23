@@ -1,0 +1,17 @@
+{
+  "projectId": "704f90a5-8bc1-49a3-b102-8e4f01b6f494",
+  "pkg": "rimakes-ui",
+  "globalName": "RimakesUI",
+  "shape": "package",
+  "tsconfig": "./tsconfig.json",
+  "componentSrcMap": {
+    "Button": "src/shared/components/ui/button.tsx",
+    "Card": "src/shared/components/ui/card.tsx"
+  },
+  "dtsPropsFor": {
+    "Button": "  // Extends all native <button> attributes (onClick, disabled, type, name, value, form, aria-*, …).\n  /** Visual style. @default \"default\" */\n  variant?: \"default\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\";\n  /** Size / height token. @default \"default\" */\n  size?: \"default\" | \"sm\" | \"lg\" | \"icon\" | \"icon-sm\" | \"icon-lg\";\n  /** Render as the child element via Radix Slot (e.g. to wrap an <a>) instead of a <button>. @default false */\n  asChild?: boolean;\n  className?: string;\n  children?: React.ReactNode;\n  disabled?: boolean;\n  type?: \"button\" | \"submit\" | \"reset\";\n  onClick?: React.MouseEventHandler<HTMLButtonElement>;",
+    "Card": "  // A styled surface container (rounded-xl, border, bg-card, shadow-sm, flex flex-col gap-6, py-6).\n  // Compose with CardHeader, CardTitle, CardDescription, CardAction, CardContent and CardFooter\n  // (all exported on window.RimakesUI). Extends all native <div> attributes.\n  className?: string;\n  children?: React.ReactNode;"
+  },
+  "cssEntry": ".design-sync/styles.css",
+  "readmeHeader": ".design-sync/conventions.md"
+}

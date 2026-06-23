@@ -49,3 +49,12 @@ next-env.d.ts
 # Generated files
 **/generated/
 .env*.local
+
+# design-sync (claude.ai/design export) — generated/staged, never committed.
+# The durable inputs under .design-sync/ (config.json, NOTES.md, conventions.md,
+# previews/, ds-entry.tsx, tw-input.css, styles.css) ARE committed.
+/ds-bundle/
+/.ds-sync/
+/.design-sync/.cache/
+/.design-sync/learnings/
+/.design-sync/node_modules
