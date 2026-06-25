@@ -233,26 +233,6 @@ export default async function ClaudeMdPage({ params }: Props) {
           </div>
         </section>
 
-        {/* ── 03 · Plantillas por tipo de proyecto ───────────────────────── */}
-        <section className='mt-14 border-t pt-8' style={{ borderColor: 'var(--rule-strong)' }}>
-          <SectionHead n='03' title='Plantillas por tipo de proyecto' hint='en construcción' />
-          <div
-            className='flex items-start gap-4 border border-dashed p-5'
-            style={{ borderColor: 'var(--rule-strong)', background: 'var(--paper-2)' }}
-          >
-            <span className='mt-0.5 text-2xl leading-none' aria-hidden>
-              🚧
-            </span>
-            <p className='text-[14px] leading-relaxed' style={{ color: 'var(--ink-soft)' }}>
-              <span className='mapa-display font-semibold' style={{ color: 'var(--ink)' }}>
-                En construcción.
-              </span>{' '}
-              Un punto de partida distinto según lo que hagas —app, automatización, datos o tus
-              preferencias personales—. Lo estamos cocinando para que sea concreto y útil, no un
-              molde genérico que haya que vaciar.
-            </p>
-          </div>
-        </section>
       </div>
 
       {/* ── Footer note ──────────────────────────────────────────────────── */}
@@ -263,8 +243,7 @@ export default async function ClaudeMdPage({ params }: Props) {
         <p className='mapa-eyebrow text-sm'>Sobre esta guía</p>
         <p className='mt-1 max-w-[74ch] text-[13.5px] leading-relaxed' style={{ color: 'var(--ink-soft)' }}>
           Estas directrices valen para <em>cualquier</em> CLAUDE.md. Lo que cambia de un
-          proyecto a otro son los ejemplos concretos: qué comando, qué carpeta, qué gotcha —
-          y eso es justo lo que afinarán las plantillas por tipo (en construcción).
+          proyecto a otro son los ejemplos concretos: qué comando, qué carpeta, qué gotcha.
         </p>
       </aside>
     </div>
