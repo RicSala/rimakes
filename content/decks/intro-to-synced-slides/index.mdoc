@@ -2129,7 +2129,7 @@ Para poder al menos iniciar Claude, y quizá entender qué está haciendo
 Por si te confunde: con **`-`** (un guion) suele ir la **primera letra** (p. ej. `claude -h`); con **`--`** (dos guiones) la **palabra completa** (`claude --help`). Suelen ser la misma opción escrita de dos formas.
 {% /callout %}
 
-## Atajos de teclado que te salvan
+## Shortcuts
 
 - **Tab** — autocompleta nombres de archivo/carpeta (escribe medio nombre y pulsa Tab).
 - **↑ / ↓** — recorre los comandos que ya escribiste (no reescribas).
@@ -2222,6 +2222,8 @@ Lo escribes en la terminal de Cursor, pulsas **Enter**, y se abre la **interfaz 
 
 De hecho, lo que intenta es "simular una interfaz de chat", pero desde la terminal.
 
+No estamos simplemente "en la terminal", estamos en **un programa que corre en la terminal**. De la misma manera que Word no es Windows.
+
 Ojo: en el momento que haces `claude`, no estás simplemente en la terminal, **estás dentro de un programa (claude code) que corre en la terminal**.
 
 Es decir, si intentas hacer desde ahí dentro algo como `cd ..`, se los estás enviando a Claude, no a la terminal.
@@ -2306,7 +2308,7 @@ Para mí es **fundamental**. **Mac:** [Xnip](https://xnipapp.com) (la que uso). 
 
 Pequeñas comodidades de la terminal — pruébalas escribiendo `/`:
 
-- **`/fast`** — *modo rápido*: sigue siendo **Opus**, pero **responde más rápido**. Se activa y se desactiva.
+- **`/fast`** — *modo rápido*: sigue siendo **Opus**, pero **responde más rápido**. Se activa y se desactiva. Gasta más.
 - **`/model`** — **cambia de modelo** (Opus / Sonnet / Haiku) según lo difícil que sea la tarea.
 - **`/rename`** — **renombra la conversación** actual, para reconocerla luego.
 - **`/color`** — **cambia el tema** (los colores) de la interfaz.
@@ -2469,6 +2471,12 @@ Acabamos de ver que todo tiene equivalente. Pero… ¿**dónde** vive esa config
 
 {% callout title="Configuración como archivos" emoji="🗂️" variant="info" %}
 Mientras en la app de escritorio tenemos "pantallas" de configuración, en la terminal tenemos archivos de texto que Claude lee al arrancar. Es lo mismo, pero puesto en forma de texto en diferentes archivos (a veces un poco lío qué está dónde)
+
+Puede confundir que hay varias formas de cambiar la configuración:
+- Puedes usar el comando de claude para modificarla (/config o /memory...)
+- Puedes modificar tu a mano el archivo
+- O incluso podrías pedirle a Claude que modifique el archivo
+Pero **el archivo manda**
 {% /callout %}
 
 
@@ -2753,7 +2761,7 @@ Tools: WebSearch, WebFetch, Read (and the Context7 docs MCP if available). Model
 Its output must be a concise reference: the recommended current API, a minimal working code example, common pitfalls, and links to the official docs it used. It must not write or edit project files.
 {% /prompt %}
 
-{% timer minutes=10 label="Tiempo del ejercicio" id="crear-subagentes" /%}
+{% timer minutes=5 label="Tiempo del ejercicio" id="crear-subagentes" /%}
 
 ---
 
@@ -2794,12 +2802,6 @@ También se guardan en un archivo, pero en este caso funciona un poco diferente.
 Añádeme el MCP de Notion a nivel de usuario y guíame para autenticarlo. No soy técnico.
 {% /prompt %}
 
-## ¿Lo añades tú mismo?
-
-{% prompt title="A mano — pégalo en la terminal" %}
-claude mcp add --scope user --transport http <nombre> <url>     # remoto (HTTP)
-claude mcp add --scope user playwright -- npx -y @playwright/mcp@latest   # local
-{% /prompt %}
 
 ---
 
