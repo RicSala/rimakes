@@ -20,9 +20,9 @@ import {
 } from '@/shared/components/ui/dialog';
 
 const SESSION = {
-  title: 'Sesión 1 · Introducción a Claude',
+  title: 'Taller Claude Code',
   description:
-    'De «la IA es un chat» a «la IA es un trabajador». Primer contacto, personalización, conexión al mundo y tus primeras herramientas.',
+    'Domina Claude Code de los primeros pasos a tu propio software personal, y automatiza buena parte de tu día a día.',
 };
 
 /**
