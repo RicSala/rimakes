@@ -35,6 +35,8 @@ export default async function TrainingPage({ params }: Props) {
     locale === routing.defaultLocale
       ? '/claude-md'
       : `/${locale}/claude-md`;
+  const skillsHref =
+    locale === routing.defaultLocale ? '/skills' : `/${locale}/skills`;
   const glosarioHref =
     locale === routing.defaultLocale
       ? '/glosario'
@@ -70,6 +72,7 @@ export default async function TrainingPage({ params }: Props) {
           mapaHref={mapaHref}
           mapaContextoHref={mapaContextoHref}
           claudeMdHref={claudeMdHref}
+          skillsHref={skillsHref}
           glosarioHref={glosarioHref}
           comandosHref={comandosHref}
         />

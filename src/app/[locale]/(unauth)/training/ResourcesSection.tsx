@@ -1,6 +1,6 @@
 'use client';
 
-import { BookA, FileText, Layers, Map, Terminal } from 'lucide-react';
+import { BookA, FileText, Layers, Map, Terminal, Wand2 } from 'lucide-react';
 
 import { ResourceCard, type Resource } from './ResourceCard';
 
@@ -15,6 +15,7 @@ export function ResourcesSection({
   mapaHref,
   mapaContextoHref,
   claudeMdHref,
+  skillsHref,
   glosarioHref,
   comandosHref,
 }: {
@@ -22,6 +23,7 @@ export function ResourcesSection({
   mapaHref: string;
   mapaContextoHref: string;
   claudeMdHref: string;
+  skillsHref: string;
   glosarioHref: string;
   comandosHref: string;
 }) {
@@ -46,6 +48,13 @@ export function ResourcesSection({
       title: 'Entender el CLAUDE.md',
       description:
         'Cómo funciona el archivo que Claude lee solo: qué poner, qué no, y cómo escribirlo para que lo siga.',
+    },
+    {
+      href: skillsHref,
+      icon: Wand2,
+      title: 'Crear buenas skills',
+      description:
+        'Qué es una skill, por qué la descripción decide casi todo, y cómo escribir una que Claude active en el momento justo. Descargable en PDF.',
     },
     {
       href: glosarioHref,
