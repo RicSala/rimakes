@@ -9,8 +9,13 @@ export const SCHEME_CLASS: Record<string, string> = {
   dark: 'dark',
 };
 
+// A `## subtitle` placed right under the `# title` (an `h1 + h2`) is styled as a
+// subtitle: pulled up close to the title (negative margin beats prose's big h2
+// top margin), smaller, lighter and slightly muted — a middle ground between the
+// title and body text. General `h2`s used as mid-slide section headers keep the
+// default `prose-h2` size, so only the title/subtitle pairing changes.
 export const CONTENT_STRUCTURE =
-  'markdoc prose prose-lg w-full prose-h1:text-4xl prose-h1:font-bold prose-h2:text-3xl prose-h2:font-bold';
+  'markdoc prose prose-lg w-full prose-h1:text-4xl prose-h1:font-bold prose-h2:text-3xl prose-h2:font-bold [&_h1+h2]:-mt-5 [&_h1+h2]:text-2xl [&_h1+h2]:font-medium [&_h1+h2]:opacity-70';
 export const CONTENT_COLOR_LIGHT =
   'text-primary prose-a:text-primary prose-headings:text-primary';
 

@@ -87,6 +87,13 @@ slide's chrome. It is optional and is not rendered inline.
   it. Put it on the brand divider slide that opens the module. See *Public slides & the
   review deck* below.
 
+## Archivar slides
+
+**"Archivar una slide" = mover la slide a la sección _🗄️ Slides archivadas_, NO borrarla.**
+Esa sección es un divisor negro (`{% slide bg="dark" /%}`, sin `section=` para que no
+salga en el índice) al final del módulo: la **papelera de trabajo** para slides dudosas
+o "por si acaso" que sacamos del flujo pero queremos conservar por si las recuperamos.
+
 ## Available components
 
 **Default to plain prose.** Write slides as normal Markdown (headings, text,
@@ -150,6 +157,7 @@ filters). Mark slides public two ways; a slide is public if **either** applies:
 - **A leading run — `publicThrough` (frontmatter):** the number of covered slides, e.g.
   `publicThrough: 12` puts slides **1–12** in the review deck. The usual knob — **bump it
   as the course progresses** (one line, no per-slide edits).
+  - _Frontera actual (`intro-to-synced-slides`): `publicThrough: 160` → última pública = slide **160 «Ejercicio: Inicializa tu CLAUDE.md»** (Módulo 8). Actualiza esta línea al mover la frontera._
 - **One-off slides — `{% slide public=true /%}`:** add an individual slide anywhere
   (handy for a public slide outside the leading run).
 

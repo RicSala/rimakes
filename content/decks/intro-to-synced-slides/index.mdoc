@@ -3651,23 +3651,238 @@ APIs del navegador útiles para mockear: `console.log` / `Notification` / un *to
 
 ---
 
-{% slide width="wide" /%}
+{% slide bg="brand" width="normal" section="Módulo 9: Creando una app juntos" /%}
 
-# La complejidad de una base de datos (y cómo la esquivamos)
-
-Guardar datos suena trivial, pero una base de datos "de verdad" es de lo **más complejo** para empezar:
-
-- Es **otro servicio** que hay que **crear, alojar y conectar** (credenciales, *connection string*…).
-- Tienes que definir su **esquema** (qué tablas, qué campos)… y cada cambio de forma obliga a **"migraciones"**.
-- Es **una pieza más** que puede fallar, que cuesta dinero y que hay que mantener.
-
-Demasiado peaje **antes de ver tu app funcionando**. De momento, la **aplazamos**.
-
-**Ojo:** `localStorage` es **por navegador y dispositivo** (no se comparte entre usuarios) y guarda poco — perfecto para **aprender y arrancar**. Cuando toque compartir o escalar, saltas a una BD real (**Prisma + Neon/Supabase**, lo veremos). Así vamos **metiendo lo difícil poco a poco**.
+# Módulo 9: Creando una app juntos
 
 ---
 
-# Llevamos un tiempo trabajando… sin guardar 🫣
+# El plan de hoy
+
+- En lugar de seguir en la terminal, vamos a volver a la app de escritorio. Ofrece todo lo fundamental y da menos miedo.
+- Lo visto el otro día sigue aplicando aquí, y a los que ya estéis en la terminal **seguid allí**.
+- Vamos a hacer juntos una app. Como Claude tendrá que ir generando mucho código, tendremos que esperar bastante rato así…
+- …durante esas esperas, veremos conceptos fundamentales, intentando que cuadren con cómo avanzamos.
+
+---
+
+{% slide width="wide" /%}
+
+# Los fundamentos: solo esto necesitas entender
+
+Tú no vas a escribir código —eso lo hace Claude—. Pero para **pedirle bien** (y entender qué te propone) necesitas un **mapa de las piezas**. En este módulo vamos a ver **solo los conceptos fundamentales**; con ellos puedes dirigir casi cualquier app:
+
+1. **Arquitectura: cliente y servidor** — quién hace qué: el navegador vs. la "cocina".
+2. **Librerías y el stack** — piezas ya hechas; no partes de cero.
+3. **APIs y servicios externos** — tu app se apoya en otros (IA, email, pagos…).
+4. **Bases de datos** — dónde la app **recuerda** las cosas.
+5. **Git y GitHub** — checkpoints y copia en la nube.
+6. **Deploy (Vercel)** — de tu ordenador a una **URL pública**.
+7. **Variables de entorno** — tus **claves y secretos**, fuera del código.
+8. **El workflow de desarrollo** — construir paso a paso, **verificando**.
+9. **¿Qué hago cuando tengo un error?** — cómo **desbloquearte**.
+10. **Autenticación** — **quién** es cada usuario y qué puede ver.
+
+{% callout title="La regla del módulo" emoji="🧭" variant="info" %}
+No hace falta que sepas **hacer** ninguna de estas cosas. Solo **entender qué es cada una** para saber **qué pedir** y **qué está pasando** por dentro.
+{% /callout %}
+
+{% callout title="No es para memorizar" emoji="🔖" variant="success" %}
+Estas slides **no están para que os las aprendáis**: son para que las **podáis consultar** cuando os hagan falta. 😉
+{% /callout %}
+
+---
+
+{% slide width="full" tags="Fundamental" /%}
+
+# Arquitectura: cliente y servidor
+
+## Estructura de una app web (simplificando)
+
+- El **usuario** habla con el **frontend** (tu navegador, Chrome, Firefox, etc.).
+- El frontend habla con el **backend** (el servidor: **Node.js**) a través de **APIs**.
+- El backend habla con la **base de datos**, el **almacenamiento** y los **servicios externos** (la IA, Gmail…).
+- Nosotros usaremos un framework: un conjunto de librerías y herramientas que nos permiten construir la app de una manera más sencilla.
+- Cada una de esas partes usa sus lenguajes:
+  - Front: HTML, CSS, JS (a través de React)
+  - Back: Node.js
+
+![Arquitectura de una app web con Next.js: el usuario y su navegador (frontend, React) hablan por API con el servidor (backend, Node.js), que se conecta por API a la base de datos (Supabase/Neon), al almacenamiento (AWS/R2) y a servicios externos (OpenAI, Gmail); Next.js envuelve frontend y backend](/cms-assets/decks/intro-to-synced-slides/arquitectura-app.png)
+
+---
+
+{% slide tags="Fundamental" /%}
+
+# Librerías y el stack
+
+## ¿Qué es una librería?
+
+Cuando hacemos una app, casi nada se construye **desde cero**. Una **librería** es un **paquete de código que ya escribió otra persona** para resolver un problema concreto y **publicó para que cualquiera lo reutilice**. En vez de fabricar esa pieza, la "enchufas" y funciona.
+
+(Como ya hemos dicho, Nextjs viene con muchas librerías "de fábrica"!)
+
+Ventajas de usar librerías:
+
+- **No reinventas la rueda:** lo común (un chat, un calendario, cobrar con tarjeta…) ya está hecho.
+- **Más fiable:** al usarla tanta gente, está **muy probada** — menos errores que algo recién inventado.
+- **Más rápido:** ensamblas en horas lo que desde cero serían semanas.
+- **La IA lo conoce:** y no tienen que inventarlo.
+
+{% callout title="Truco: instala su skill" emoji="📚" variant="success" %}
+Muchas librerías populares tienen una **skill** (en [skills.sh](https://skills.sh)) que le da a Claude su **manual al día**, para que use bien la versión de hoy y se equivoque menos. Pídele: *"instala la skill de [librería]"*. Útil **sobre todo con las que cambian rápido**, como la **AI SDK**.
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="Fundamental" /%}
+
+# Librerías y el stack (2)
+
+## El stack por defecto: lo que casi siempre vas a necesitar
+
+Para hacer una app "de verdad" hay piezas que se repiten en casi todos los proyectos. Tener un **stack por defecto** te ahorra decidir cada vez — y, sobre todo, **la IA lo escribe mejor**.
+
+{% table %}
+- Para qué
+- Librería
+- Qué te da
+---
+- Framework
+- **Next.js**
+- La base full-stack: front y back en el mismo proyecto
+---
+- Estilos
+- **Tailwind CSS**
+- Estilos rápidos por clases (shadcn se apoya en él)
+---
+- Componentes
+- **shadcn/ui**
+- Componentes listos que copias a tu proyecto y editas
+---
+- Base de datos · ORM
+- **Prisma** (1)
+- Hablar con la base de datos sin escribir SQL a mano
+---
+- Base de datos · hosting
+- **Neon** *(o Supabase)* (1)
+- La BD Postgres en la nube — Prisma se conecta ahí
+---
+- Autenticación
+- **better-auth** (1)
+- Registro, login y sesiones
+---
+- Formularios
+- **React Hook Form** + **Zod**
+- Formularios con validación (Zod ya estaba en el stack)
+---
+- IA
+- **Vercel AI SDK** (+ AI Elements)
+- Chat, streaming y *tool-calling* con cualquier modelo
+---
+- Email
+- **Resend** (+ React Email)
+- Enviar emails: confirmaciones, avisos…
+---
+- Pagos
+- **Stripe**
+- Cobrar: pagos y suscripciones
+---
+- Guardar archivos
+- **Cloudflare R2** (1)
+- Almacenar archivos e imágenes (compatible con S3, barato)
+---
+- Publicar
+- **Vercel**
+- Desplegar la app a internet casi en un clic
+{% /table %}
+
+{% callout title="Por qué estas y no otras" emoji="🎯" variant="success" %}
+Son **populares y estándar** — y eso importa con IA: cuanto más conocida es una librería, **más y mejor código ha visto el modelo**, así que se equivoca menos. Elige lo *mainstream* salvo que tengas una razón para no hacerlo.
+{% /callout %}
+
+{% callout title="(1) ¿Y Supabase?" emoji="💡" variant="info" %}
+Supabase engloba **varias de estas piezas en un único servicio** —**base de datos**, **autenticación** y **guardar archivos**—, y con él incluso **te ahorras el ORM**. Pero añade otra cuenta y de momento he preferido dejarlo fuera. Dicho esto, es una muy buena opción también (stack de la mayoría de YC).
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="Fundamental" /%}
+
+# APIs y servicios externos
+
+## tu app no lo hace todo sola
+
+Una **API** es la forma en que dos programas **se hablan**: tu app le **pide** algo a otro servicio y este le **responde** — como un camarero: tú pides, la cocina responde, sin que tengas que saber cómo cocinan.
+
+**[PENDIENTE IMAGEN]** — *esquema: tu app llamando a APIs externas (IA, email, pagos…) y su propia API interna front↔back.*
+
+Esto cambia cómo piensas una app: **no construyes todo desde cero**, sino que **ensamblas servicios ya hechos**. ¿Necesitas…?
+
+{% table %}
+- Quieres…
+- Servicio (ejemplo)
+---
+- Meter IA en tu app
+- **Anthropic / OpenAI** (vía la AI SDK)
+---
+- Enviar emails
+- **Resend**
+---
+- Cobrar / suscripciones
+- **Stripe**
+---
+- Login con Google
+- un proveedor de **autenticación**
+---
+- Mapas, SMS, notificaciones…
+- hay una API para casi todo
+{% /table %}
+
+Tú decides **qué servicio** quieres; **Claude conecta la API** por ti. Solo dos cosas son de verdad tuyas:
+
+- **Casi siempre necesitan una clave** (API key) → va en **variables de entorno**, nunca en el código (lo vemos luego).
+- **Muchas cuestan dinero** por uso → mira que tengan **plan gratis** o límites.
+
+Y muchas veces ni las tocas "a pelo": esas APIs vienen **envueltas en una librería** que instalas (la **AI SDK**, el SDK de **Stripe**, **better-auth**…). Instalas la librería y hablas con el servicio en tu idioma, sin pelearte con la API a mano — por eso *librerías* y *APIs* van de la mano.
+
+{% callout title="Y tu propia app también tiene su API" emoji="🔌" variant="info" %}
+Cuando el **frontend** (lo que ves) le pide datos al **backend** (la cocina), lo hace por **su propia API** interna — los `route handlers` en `app/api/…` que salieron con el patrón del repositorio. Misma idea: una parte **pide**, otra **responde**.
+{% /callout %}
+
+---
+
+{% slide tags="Fundamental" /%}
+
+# Bases de datos
+
+## ¿Qué es una base de datos?
+
+Por defecto, una app **se olvida de todo**: cierras o recargas la página y vuelve a estar en blanco. Lo que el usuario escribió… desaparece.
+
+Una **base de datos** es donde la app **guarda las cosas para que sigan ahí** la próxima vez: usuarios, mensajes, pedidos, lo que sea.
+
+- **La necesitas si** tu app tiene que **recordar** algo entre sesiones o entre usuarios (un historial, una lista, cuentas de usuario…). Es decir, la gran mayoría de las apps.
+- Vive en el **backend** (la cocina), (casi) nunca en el navegador (aunque nosotros estamos "simulando" que tenemos ya una base de datos con una herramienta del navegador)
+
+Quiero que entiendas qué es una base de datos porque añade una capa de complejidad más a tu app.
+
+La base de datos hay que gestionarla:
+- **Definir su forma** ¿Cómo se relacionan unas cosas con otras? Por ejemplo: Un `Proyecto` pertenece al `Usuario` o al `Equipo`?
+- **Evolucionarla**: Mañana hacemos que cada módulo tenga una imagen obligatoriamente, ¿Qué hacemos con los existentes?
+- **Distribuirla**: Mis usuarios están en US y Alemania, pero mi base de datos solo está en Berlín. Los de US tardan 3s en cargar cada página 🤔
+- **"Arreglarlar"**: Hemos publicado una base de datos con errores, ¿Qué hacemos? No hay botón de "undo"!
+
+Todo esto añade complejidad, que de momento estamos difiriendo.
+
+{% callout title="Tú el concepto; Claude el cómo" emoji="🗄️" variant="info" %}
+No tienes que saber de bases de datos. Más adelante verás nombres como **Prisma** o **Neon/Supabase** en el "stack" — son solo **la libreta y dónde se guarda**. Claude las conecta por ti; a ti te basta con decidir **qué tiene que recordar** tu app.
+{% /callout %}
+
+---
+
+# Git y GitHub
+
+## Llevamos un tiempo trabajando… sin guardar 🫣
 
 Bueno, sí: has ido guardando con **Ctrl/Cmd + S** (y Claude guarda al editar). Pero eso solo guarda **cómo está el archivo ahora mismo**.
 
@@ -3680,9 +3895,11 @@ Necesitamos una forma de **guardar checkpoints** del proyecto entero… 👉
 
 ---
 
-{% slide width="wide" /%}
+{% slide width="wide" tags="Fundamental" /%}
 
-# ¿Qué es Git?
+# Git y GitHub (2)
+
+## ¿Qué es Git?
 
 **Git** es un sistema de versiones que **guarda el historial de tu proyecto**: va haciendo "fotos" de cómo estaban tus archivos en cada momento, para que **nunca pierdas nada** y puedas **volver atrás** si algo se rompe.
 
@@ -3709,7 +3926,9 @@ Git es mucho más compejo que esto. Solo quiero que entiendas qué hacer cuando 
 
 {% slide width="wide" /%}
 
-# Publicando nuestro repositorio
+# Git y GitHub (3)
+
+## Publicando nuestro repositorio
 
 Ya entendemos Git (los checkpoints). Ahora **subimos el proyecto a GitHub**: tu **backup** en la nube y la base para **compartir, colaborar y, más adelante, publicar** la app. Lo más fácil: **pídeselo a Claude**.
 
@@ -3739,7 +3958,9 @@ Los hace **Claude** por ti, pero conviene que entiendas lo que pasa, al menos en
 
 {% slide width="wide" /%}
 
-# Invitando a colaboradores
+# Git y GitHub (4)
+
+## Invitando a colaboradores
 
 Tu repo es **privado**, así que de momento **solo lo ves tú**. Para que **otra persona** (yo, un compañero…) pueda **verlo y trabajar** en él, la **invitas como colaboradora** en GitHub.
 
@@ -3755,14 +3976,53 @@ Si quieres que **te eche una mano con tu proyecto** (en las **individuales**), a
 
 ---
 
-# Elegimos camino...
+{% slide tags="Fundamental" /%}
+
+# Deploy (Vercel)
+
+## De tu máquina a internet
+
+**Tu app nace en privado.** Cuando Claude la arranca, corre **solo en tu ordenador** (`localhost`): es como un **borrador que solo ves tú**, aunque ya funcione del todo.
+
+**Deployar** es publicarla: subirla a un servicio como **[Vercel](https://vercel.com)** que la pone **en internet, con una URL** que cualquiera puede abrir. (El mecanismo: subes tu código a GitHub → Vercel lo coge y lo sirve solo.) **Ese link es el "wow"**: terminas y se lo mandas a quien quieras.
+
+Y una pregunta que quizá te ha saltado: si el código **se sube a GitHub** (y ahí se ve), ¿dónde van tus **claves**? 👉
+
+---
+
+{% slide tags="Fundamental" /%}
+
+# Variables de entorno
+
+## tus secretos
+
+Tu app necesita **claves** para funcionar (la de la IA, la de cobrar, contraseñas de otros servicios…). El problema: **el código se sube a GitHub y se ve.** Si la clave está escrita ahí dentro, **la ve cualquiera** — y con ella, **gastan tu dinero**.
+
+La solución estándar son las **variables de entorno**: el secreto vive **fuera del código**, y la app lo lee **al arrancar**.
+
+- **En tu ordenador:** en un archivo aparte llamado **`.env`**, que **se queda en tu máquina y NO se sube a GitHub** (Claude se encarga de excluirlo).
+- **En producción:** lo pegas una vez en los **ajustes de Vercel** y ahí vive seguro, en el servidor.
+
+En el código solo aparece **el nombre** del secreto (p. ej. `OPENAI_API_KEY`), **nunca su valor**.
+
+{% callout title="La única regla que tienes que recordar" emoji="🔑" variant="warning" %}
+**Nunca escribas una clave dentro del código.** Una clave es **como la llave de tu casa con la tarjeta dentro**. Si alguna vez la pegas ahí sin querer (o en un chat o repo público), **dala por quemada**: ve al servicio, **bórrala y crea una nueva**. Es gratis y es lo que hace todo el mundo.
+{% /callout %}
+
+---
+
+# El workflow de desarrollo
+
+## Elegimos camino...
 ¿Preferís que cada uno haga su app, o seguimos haciendo todos juntos una en mi pantalla?
 
 ---
 
 {% slide bg="brand" width="normal" /%}
 
-# Soltamos el control: especificando nuestra app
+# El workflow de desarrollo (2)
+
+## Soltamos el control: especificando nuestra app
 
 Hasta aquí hemos ido **paso a paso**, instalando cada librería que nosotros decidíamos. A partir de ahora **nos apoyamos más en Claude Code**: le **describimos qué queremos** y dejamos que **él instale las librerías que correspondan**.
 
@@ -3775,7 +4035,9 @@ De ir marcando cada paso, a **decir qué queréis y dejar trabajar**.
 
 {% slide width="wide" /%}
 
-# Por qué, qué, cómo
+# El workflow de desarrollo (3)
+
+## Por qué, qué, cómo
 
 Al especificar tu app eliges **cuánto detalle** le das a Claude — es decir, **cuánto control** te quedas. Podemos especificar...:
 
@@ -3797,7 +4059,9 @@ Muchos programadores con **años de experiencia** no pasan de usar la IA como un
 
 {% slide width="wide" /%}
 
-# Especificando nuestra app
+# El workflow de desarrollo (4)
+
+## Especificando nuestra app
 
 Antes de construir, **dejamos claro qué queremos**. Existen frameworks para "especificar apps", pero **crean muchísimos archivos y gastan muchos tokens** → lo **mantenemos simple**: se lo contamos a Claude, dejamos que **nos pregunte** lo que necesite, y que lo **resuma en `docs/spec.md`**.
 
@@ -3845,7 +4109,9 @@ Frameworks típicos de *spec-driven development*: **Spec Kit**, **Get Shit Done*
 
 {% slide width="wide" /%}
 
-# Ahora implementamos, paso a paso y siempre verificable
+# El workflow de desarrollo (5)
+
+## Ahora implementamos, paso a paso y siempre verificable
 
 Ya tenemos el **qué** (la `docs/spec.md`). Ahora el **cómo**: que Claude lo construya **por partes** y que **tú compruebes cada parte** antes de seguir.
 
@@ -3865,9 +4131,11 @@ Si una parte no está bien, lo dices y se rehace (o **rebobinas**); y a por la s
 
 ---
 
-{% slide /%}
+{% slide tags="Fundamental" /%}
 
-# El bucle de desarrollo: las cuatro fases
+# El workflow de desarrollo (6)
+
+## El bucle de desarrollo: las cuatro fases
 
 Construir con la IA **no es un disparo único**: es un **bucle** que das una y otra vez. Cuatro fases, y en cada una cambia **quién lleva el peso**: **Explorar** (entender) → **Decide/Plan** (acordar qué hacer) → **Ejecutar** (la IA escribe) → **Verificar** (comprobar que hace lo que querías) → y vuelta a empezar.
 
@@ -3890,152 +4158,60 @@ La **IA lleva el peso en Ejecutar**, pero **tú sigues al mando en los extremos*
 
 ---
 
-{% slide width="wide" tags="PENDING" /%}
+{% slide width="wide" tags="práctica, Fundamental" /%}
 
-# Oneshoteando nuestra app
+# ¿Qué hago cuando tengo un error?
 
-En lo que queda de sesión tenemos **dos caminos**: seguir **paso a paso** o probar el contrario — **one-shotear** (*vibe-codear*) la app en **un único prompt**. Quiero que veáis la **potencia de la IA** también para esto.
+Los errores son **normales** — no es que lo hayas hecho mal, es parte de construir. La mayoría los arregla **Claude**; tu trabajo no es arreglarlo tú, es **darle buena información**.
 
-**El plan:**
+**1. ¿Dónde miro?** Un error puede aparecer en tres sitios:
 
-1. **Ronda de ideas** 💬 — antes de soltaros, contad **qué quiere construir cada uno**. Así os digo en el momento **qué veo factible** y qué no.
-2. **5–10 min cada uno especificando** vuestra app a Claude. *Especificar* = decirle **exactamente** qué queréis y pedirle que **os haga preguntas**. El resultado de esa conversación es un **`.md`** donde deja escrito **cómo será la app**.
-3. **Probamos a one-shotearla.** Si **hace aguas**, recuperamos el hilo de la sesión y seguimos paso a paso.
-4. Dejamos a **cada Claude trabajando** y continuamos con la sesión.
+- **La terminal** donde corre la app (texto rojo).
+- **El navegador**: la pantalla (algo no se ve o se ve raro) y la **consola** (F12 → *Console*).
+- **El propio Claude**, que a veces ya avisa de que algo ha fallado.
 
-{% callout title="El límite no es el código, son las integraciones" emoji="⏱️" variant="warning" %}
-Por **código** no hay problema. La limitación son las **integraciones**: si la app necesita **muchos servicios externos**, hay que crear cuentas y montar integraciones, lo que a Claude le cuesta más "verificar".
+**2. ¿Qué le paso a Claude?** Cuanto más concreto, antes lo resuelve:
 
-- ✅ Un **CRM** → relativamente **fácil** de one-shotear.
-- ⚠️ Una app para **programar publicaciones en redes** → **mucho más compleja** (muchas integraciones).
-{% /callout %}
+- **El texto del error entero** (cópialo tal cual, no lo resumas) o una **captura**.
+- **Qué esperabas** que pasara y **qué pasó** en su lugar.
+- **Qué hiciste** justo antes, para que pueda reproducirlo.
 
-{% prompt title="Añádelo al final de la descripción de tu app" %}
-Una cosa importante sobre cómo quiero que la construyas: esta primera versión es un **mock**. **Todavía no uses base de datos ni servicios externos.** Si algo necesitara uno de los dos, **simúlalo** (un mock) que podamos sustituir más adelante por el servicio real.
-
-Para los **datos**, no los guardes directamente desde los componentes: pon **toda la persistencia detrás de una capa de acceso a datos** —un **repositorio asíncrono** (`getAll`, `getById`, `create`, `update`, `delete`) con una interfaz estable—. **No uses Server Actions**: para leer y escribir, el acceso a datos pasa **solo por llamadas a API** (route handlers en `app/api/…`). En esta versión, implementa ese repositorio guardando en **localStorage**, pero deja sus métodos **`async` desde el principio**. Define la **forma de los datos** (los tipos) en un solo sitio, y que el resto de la app **solo hable con el repositorio**, nunca con localStorage directamente.
-
-El objetivo: cuando la forma de los datos esté clara, **cambiar solo esa capa** por llamadas a una API con base de datos real, **sin tocar el resto de la app**.
+{% prompt title="Plantilla para pegarle a Claude" %}
+Me da este error: [pega aquí el error entero].
+Estaba intentando [qué hacías]. Esperaba [X] pero pasó [Y].
+¿Puedes ver qué es y arreglarlo?
 {% /prompt %}
 
-{% timer minutes=10 label="Especifica tu app a Claude" id="oneshot-spec" /%}
-
----
-
-# ¿Qué es una base de datos?
-
-Por defecto, una app **se olvida de todo**: cierras o recargas la página y vuelve a estar en blanco. Lo que el usuario escribió… desaparece.
-
-Una **base de datos** es donde la app **guarda las cosas para que sigan ahí** la próxima vez: usuarios, mensajes, pedidos, lo que sea.
-
-- **La necesitas si** tu app tiene que **recordar** algo entre sesiones o entre usuarios (un historial, una lista, cuentas de usuario…). Es decir, la gran mayoría de las apps.
-- Vive en el **backend** (la cocina), (casi) nunca en el navegador (aunque nosotros estamos "simulando" que tenemos ya una base de datos con una herramienta del navegador)
-
-Quiero que entiendas qué es una base de datos porque añade una capa de complejidad más a tu app.
-
-La base de datos hay que gestionarla:
-- **Definir su forma** ¿Cómo se relacionan unas cosas con otras? Por ejemplo: Un `Proyecto` pertenece al `Usuario` o al `Equipo`?
-- **Evolucionarla**: Mañana hacemos que cada módulo tenga una imagen obligatoriamente, ¿Qué hacemos con los existentes?
-- **Distribuirla**: Mis usuarios están en US y Alemania, pero mi base de datos solo está en Berlín. Los de US tardan 3s en cargar cada página 🤔
-- **"Arreglarlar"**: Hemos publicado una base de datos con errores, ¿Qué hacemos? No hay botón de "undo"!
-
-Todo esto añade complejidad, que de momento estamos difiriendo.
-
-{% callout title="Tú el concepto; Claude el cómo" emoji="🗄️" variant="info" %}
-No tienes que saber de bases de datos. Más adelante verás nombres como **Prisma** o **Neon/Supabase** en el "stack" — son solo **la libreta y dónde se guarda**. Claude las conecta por ti; a ti te basta con decidir **qué tiene que recordar** tu app.
+{% callout title="Si Claude entra en bucle y no lo arregla" emoji="🔄" variant="warning" %}
+A veces se atasca e insiste en lo mismo. Cuando pase:
+- **Vuelve al último checkpoint** con Git (*"deshaz los últimos cambios"*) y prueba otro enfoque.
+- **Empieza una conversación nueva** — un hilo muy largo puede estar "contaminado".
+- **Simplifica**: pídele que lo divida en pasos más pequeños y **verifique cada uno**.
 {% /callout %}
 
 ---
 
-# De tu máquina a internet
+{% slide width="wide" tags="Fundamental" /%}
 
-**Tu app nace en privado.** Cuando Claude la arranca, corre **solo en tu ordenador** (`localhost`): es como un **borrador que solo ves tú**, aunque ya funcione del todo.
+# Autenticación
 
-**Deployar** es publicarla: subirla a un servicio como **[Vercel](https://vercel.com)** que la pone **en internet, con una URL** que cualquiera puede abrir. (El mecanismo: subes tu código a GitHub → Vercel lo coge y lo sirve solo.) **Ese link es el "wow"**: terminas y se lo mandas a quien quieras.
+## ¿quién es cada usuario?
 
-Y una pregunta que quizá te ha saltado: si el código **se sube a GitHub** (y ahí se ve), ¿dónde van tus **claves**? 👉
+Hasta ahora tu app es **anónima**: cualquiera que la abra ve lo mismo. En cuanto quieras que **cada persona tenga lo suyo** —su lista, sus datos, su historial— necesitas **autenticación**: que la app sepa **quién** la está usando.
 
----
+Dos ideas que se confunden:
 
-# Variables de entorno: tus secretos
+- **Autenticación** = *¿quién eres?* → el **login** (email y contraseña, o "entrar con Google").
+- **Autorización** = *¿qué puedes hacer?* → esto sí lo ves tú, pero eso otro no.
 
-Tu app necesita **claves** para funcionar (la de la IA, la de cobrar, contraseñas de otros servicios…). El problema: **el código se sube a GitHub y se ve.** Si la clave está escrita ahí dentro, **la ve cualquiera** — y con ella, **gastan tu dinero**.
+**Por qué suele ser de los últimos pasos:** casi todo lo demás funciona sin login. Lo añades cuando la app necesita **cuentas**, **datos privados** o **permisos**.
 
-La solución estándar son las **variables de entorno**: el secreto vive **fuera del código**, y la app lo lee **al arrancar**.
-
-- **En tu ordenador:** en un archivo aparte llamado **`.env`**, que **se queda en tu máquina y NO se sube a GitHub** (Claude se encarga de excluirlo).
-- **En producción:** lo pegas una vez en los **ajustes de Vercel** y ahí vive seguro, en el servidor.
-
-En el código solo aparece **el nombre** del secreto (p. ej. `OPENAI_API_KEY`), **nunca su valor**.
-
-{% callout title="La única regla que tienes que recordar" emoji="🔑" variant="warning" %}
-**Nunca escribas una clave dentro del código.** Una clave es **como la llave de tu casa con la tarjeta dentro**. Si alguna vez la pegas ahí sin querer (o en un chat o repo público), **dala por quemada**: ve al servicio, **bórrala y crea una nueva**. Es gratis y es lo que hace todo el mundo.
+{% callout title="Tú el concepto; Claude (y un servicio) el cómo" emoji="🔐" variant="info" %}
+No implementes el login a mano — es fácil de hacer **mal**, y por ahí pasan contraseñas y datos personales. Se usa un servicio ya hecho: en nuestro stack, **better-auth** (registro, login y sesiones). Tú decides **qué hay detrás del login**; Claude lo conecta.
 {% /callout %}
 
----
-
-{% slide width="wide" /%}
-
-# El stack por defecto: lo que casi siempre vas a necesitar
-
-Para hacer una app "de verdad" hay piezas que se repiten en casi todos los proyectos. Tener un **stack por defecto** te ahorra decidir cada vez — y, sobre todo, **la IA lo escribe mejor**.
-
-{% table %}
-- Para qué
-- Librería
-- Qué te da
----
-- Framework
-- **Next.js**
-- La base full-stack: front y back en el mismo proyecto
----
-- Estilos
-- **Tailwind CSS**
-- Estilos rápidos por clases (shadcn se apoya en él)
----
-- Componentes
-- **shadcn/ui**
-- Componentes listos que copias a tu proyecto y editas
----
-- Base de datos · ORM
-- **Prisma**
-- Hablar con la base de datos sin escribir SQL a mano
----
-- Base de datos · hosting
-- **Neon** (o Supabase)
-- La BD Postgres en la nube — Prisma se conecta ahí
----
-- Autenticación
-- **better-auth**
-- Registro, login y sesiones
----
-- Formularios
-- **React Hook Form** + **Zod**
-- Formularios con validación (Zod ya estaba en el stack)
----
-- IA
-- **Vercel AI SDK** (+ AI Elements)
-- Chat, streaming y *tool-calling* con cualquier modelo
----
-- Email
-- **Resend** (+ React Email)
-- Enviar emails: confirmaciones, avisos…
----
-- Pagos
-- **Stripe**
-- Cobrar: pagos y suscripciones
----
-- Guardar archivos
-- **Cloudflare R2**
-- Almacenar archivos e imágenes (compatible con S3, barato)
----
-- Publicar
-- **Vercel**
-- Desplegar la app a internet casi en un clic
-{% /table %}
-
-{% callout title="Por qué estas y no otras" emoji="🎯" variant="success" %}
-Son **populares y estándar** — y eso importa con IA: cuanto más conocida es una librería, **más y mejor código ha visto el modelo**, así que se equivoca menos. Elige lo *mainstream* salvo que tengas una razón para no hacerlo.
+{% callout title="Datos de usuarios = responsabilidad" emoji="⚠️" variant="warning" %}
+En cuanto guardas cuentas, guardas **datos de personas**. Nunca los expongas, y trata contraseñas y claves como lo que son: **secretos**.
 {% /callout %}
 
 ---
@@ -4048,40 +4224,543 @@ Buen momento para **dudas** de todo lo que llevamos. 🙋
 
 ---
 
-{% slide tags="próxima sesión, idea" /%}
+{% slide bg="dark" width="normal" /%}
 
-# Idea de ejercicio: una mini app "chat con tus fuentes"
+# 🛠️ Desarrollando paso a paso
 
-Un **chat con un agente** que responde consultando **fuentes de conocimiento** (PDFs u otras). El **creador** mete las fuentes desde el **backend** y el agente las **consulta dinámicamente** según lo que pregunte el usuario.
+Se acabó la teoría de fundamentos. A partir de aquí **construimos la app**: cada paso es un **prompt** que le pegas a Claude y, **mientras trabaja**, un **concepto** que explicamos para que la espera valga doble.
 
-- **UI de chat** con la **AI SDK de Vercel** (y su librería de componentes de IA, **AI Elements**).
-- **Backend del creador**: aquí enchufas las fuentes (PDFs, notas, docs…).
-- **Agente**: decide qué fuente consultar en función de la pregunta.
+---
 
-{% callout title="Candidata a primer ejercicio de la próxima sesión" emoji="📌" variant="warning" %}
-Recordatorio: probablemente lo arrancamos **al principio de la siguiente sesión**. Conecta con el "Custom GPT en Claude" que descartamos — esta es la versión "hazte tu propia app".
+{% slide tags="paso a paso" /%}
+
+# Inicializa el proyecto con Next.js
+
+Abrimos con **Claude Code** la carpeta **donde queremos crear el proyecto** (la carpeta **padre** — la del proyecto en sí la crea Claude). Desde ahí, le pedimos que **arranque una app de Next.js**.
+
+{% prompt title="Prompt — cópialo y pégaselo a Claude" %}
+Inicializa una aplicación de Next.js usando el CLI. El nuevo proyecto se llama aurora-com.
+{% /prompt %}
+
+{% callout title="A explicar" emoji="🗣️" variant="info" %}
+¿Qué es un **framework**? — qué acabamos de instalar.
 {% /callout %}
 
 ---
 
-{% slide bg="brand" width="normal" section="Módulo 9: Publicando tu app (Avanzado)" /%}
+{% slide width="wide" tags="paso a paso" /%}
 
-# Módulo 9: Publicando tu app (Avanzado)
+# shadcn/ui y una página `/theme`
+
+Antes de construir pantallas, montamos nuestra **librería de componentes**: **shadcn/ui**. Le damos a Claude su **skill** (su manual al día) y su **MCP** para que la use bien, **inicializamos** el proyecto con un **tema** ya elegido, e instalamos los **componentes** más comunes. Para verlo todo de un vistazo, le pedimos una página **`/theme`** que los muestre **en su contexto** — nuestro escaparate del tema antes de escribir ninguna pantalla.
+
+{% prompt title="Prompt — cópialo y pégaselo a Claude" %}
+Instala la skill de shadcn: https://ui.shadcn.com/docs/skills
+
+Asegúrate de que el MCP de shadcn está instalado también: https://ui.shadcn.com/docs/mcp
+
+Después, inicializa shadcn usando el CLI. Quiero usar el preset: --preset b6G3bSZqF
+
+Instala 15 componentes comunes y crea una página "/theme" donde enseñes los distintos componentes en una especie de preview del tema; quiero verlos usados en su contexto.
+{% /prompt %}
+
+{% callout title="A explicar" emoji="🗣️" variant="info" %}
+¿Qué son las **librerías**?
+{% /callout %}
 
 ---
 
-{% slide width="wide" tags="advanced, PENDING" /%}
+{% slide width="wide" tags="paso a paso" /%}
 
-# De localhost a producción: la hoja de ruta
+# Clica en el botón Run
 
-Hasta ahora la app vive **solo en tu ordenador** (`localhost`). Publicarla "de verdad" son unos cuantos pasos — los veremos uno a uno *(esqueleto, por desarrollar)*:
+Para arrancar la app **no hace falta escribir comandos en la terminal**: pulsamos el botón **▶ Run** y el servidor de desarrollo se pone en marcha. Ya podemos abrir `/theme` en el navegador y ver los componentes.
 
-1. **Publicar en Vercel** — subir el proyecto (vía GitHub) y obtener una **URL pública**.
-2. **Añadir los secretos** — las claves (`.env`) van a los **ajustes de Vercel**, no al código.
-3. **Conectar la base de datos** — pasar del `localStorage` a una **BD real** (Prisma + Neon/Supabase). *(Ojo: lo guardado en `localStorage` no "viaja" solo.)*
-4. **Almacenamiento de archivos** — los **PDFs que se suben** no persisten en Vercel; van a **Cloudflare R2 / S3**.
-5. **Autenticación** — **proteger el panel del creador** (y, si hay cuentas de usuario, login) con **better-auth**.
-6. **Conectar tu dominio** — apuntar `tudominio.com` a la app en Vercel.
-7. **Conectar Resend** *(opcional)* — para que la app **envíe emails** (confirmaciones, avisos…).
+![Claude Code con el botón ▶ Run arriba a la derecha y el archivo .claude/launch.json que Claude ha creado (name «next-dev», runtimeExecutable «npm», runtimeArgs [«run», «dev»], port 3000); a la derecha, la página /theme mostrando el preview de componentes de shadcn/ui de la app Aurora](/cms-assets/decks/intro-to-synced-slides/boton-run-dev.png)
 
-…y lo que vaya surgiendo.
+{% callout title="A explicar" emoji="🗣️" variant="info" %}
+Es `npm run dev`, pero lo lanza **Claude** por nosotros. Al pulsar **▶ Run**, corre lo que Claude dejó configurado en **`.claude/launch.json`**.
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Guarda un snapshot y súbelo a GitHub
+
+Guardamos un **snapshot** de nuestro trabajo (un *commit*) para poder **volver a este punto** si algo se tuerce. Y lo **subimos a GitHub** — el «WeTransfer» de los proyectos de código: nuestra **copia en la nube**.
+
+{% prompt title="Prompt — cópialo y pégaselo a Claude" %}
+Haz commit y publica en GitHub en un repositorio privado.
+
+Comprueba si tengo instalado git y el CLI de gh; si no es así, instálalo y guíame en la autenticación.
+{% /prompt %}
+
+{% callout title="A explicar" emoji="🗣️" variant="info" %}
+De momento, la idea rápida (lo vemos a fondo más adelante): **Git** es un sistema para **guardar versiones** de tu proyecto; **GitHub** es como un **Drive** — ese guardado de Git, en la **nube**.
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Comprobamos que está en GitHub
+
+Entramos en GitHub (menú de perfil arriba a la derecha → **Repositories**) y ahí está: nuestro repo **aurora-lite**, marcado como **Private**, recién actualizado.
+
+![Página de repositorios de GitHub del usuario RicSala con el menú de perfil abierto en «Repositories»; arriba de la lista, el repositorio aurora-lite marcado como Private y actualizado hace 12 minutos](/cms-assets/decks/intro-to-synced-slides/github-repo-publicado.png)
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Publica en Vercel y provisiona Neon
+
+Creamos una **cuenta en Vercel** (si no la tenemos) y le pedimos que **publique la app**. Vercel **enlaza nuestro repo de GitHub** con un **proyecto nuevo** que crea él, de modo que **cada push a `main` se autopublica**. Ya que estamos, **provisionamos una base de datos Neon** para usarla más adelante (aún **sin montar Prisma**).
+
+{% prompt title="Prompt — cópialo y pégaselo a Claude" %}
+Ok. Quiero publicarlo con Vercel y, ya que estamos allí, provisionaremos una base de datos Neon que luego usaremos (con Prisma; de momento no hagas el scaffolding).
+
+A través del CLI de Vercel, linka el repositorio con un nuevo proyecto en Vercel para que cada push a main se autopublique. Comprueba si tengo instalado el CLI de Vercel; si no es así, instálalo y guíame para autenticarme y que puedas continuar. Una vez conectado, guíame para provisionar la base de datos a través de la interfaz.
+
+De momento no hagas pull de las variables de entorno, quiero ponerlas yo (de momento .env en lugar de .env.local). Crea el archivo .env totalmente vacío.
+{% /prompt %}
+
+{% callout title="A explicar" emoji="🗣️" variant="info" %}
+**Publicar (deploy) y Vercel**: pasar la app de tu ordenador (`localhost`) a una **URL pública**; **Vercel** coge tu código de GitHub y lo **sirve solo** en internet.
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Pega tú las variables de entorno
+
+Las **claves** (como la de la base de datos) las pegamos **nosotros** en el archivo **`.env`**. Y lo hacemos con el **editor de la propia app de Claude** (el panel *Files*) — **no hace falta abrir Cursor**.
+
+![Editor de la app de Claude: el panel Files del proyecto aurora-lite muestra .env y .gitignore en la lista, y el archivo .env abierto con sus variables de entorno redactadas por ser secretas](/cms-assets/decks/intro-to-synced-slides/variables-entorno-editor.png)
+
+{% callout title="A explicar" emoji="🗣️" variant="info" %}
+**Variables de entorno**: dónde viven las **claves y secretos**, fuera del código. Y el **`.gitignore`**: la lista de lo que Git **ignora** al guardar — por eso `.env` **nunca sube a GitHub**.
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Monta Prisma y prueba la base de datos
+
+Le pedimos que haga el **scaffold de Prisma** y lo **pruebe** con una tabla de ejemplo. Nos **dará algún problema más adelante** en la base de datos, pero de momento nos sirve para **ver que ya está en marcha**. 🚀
+
+{% prompt title="Prompt — cópialo y pégaselo a Claude" %}
+Ok. Variables de entorno añadidas. Instala la skill de Prisma database setup: https://www.skills.sh/prisma/skills/prisma-database-setup
+
+Añade el scaffold de Prisma y crea una tabla de ejemplo (TODOs) para comprobar que funciona correctamente; añade 3 todos de ejemplo.
+
+Cuando lo tengas, haz commit y push para que comprobemos que todo es correcto y que el autodeploy de Vercel funciona.
+{% /prompt %}
+
+{% callout title="A explicar" emoji="🗣️" variant="info" %}
+**Scaffold**: el **andamiaje** inicial que genera Claude — los archivos y la configuración base para arrancar. Y **Prisma**: el **ORM** con el que la app **habla con la base de datos** sin escribir SQL a mano.
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Añade un servidor: Prisma Studio
+
+Añadimos al `launch.json` un **segundo servidor** para poder **ir viendo nuestra base de datos** mientras trabajamos.
+
+{% prompt title="Prompt — cópialo y pégaselo a Claude" %}
+Añade al launch.json otro servidor que corra Prisma Studio.
+{% /prompt %}
+
+![El editor de la app de Claude: el launch.json de aurora-lite con un segundo servidor añadido, «prisma-studio» (npm run db:studio, puerto 5555), y el menú de Servers mostrando next-dev y prisma-studio en marcha](/cms-assets/decks/intro-to-synced-slides/prisma-studio-server.png)
+
+{% callout title="A explicar" emoji="🗣️" variant="info" %}
+**Prisma Studio**: una interfaz visual para **ver (y editar) los datos** de tu base de datos en el navegador — como una hoja de cálculo de tus tablas.
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Guarda, sube y cierra la sesión
+
+Antes de irnos, le pedimos a Claude que **deje la sesión cerrada en condiciones**: que **actualice el `CLAUDE.md`** si hace falta, **verifique** el proyecto, **haga commit y push** si algo cambió, y **confirme** que no queda nada a medias.
+
+{% prompt title="Prompt — cópialo y pégaselo a Claude" %}
+Hemos terminado la sesión de trabajo y voy a borrar esta sesión.
+
+Actualiza el CLAUDE.md si es necesario (no añadas secciones, simplemente actualiza lo que no esté al día tras los cambios de esta sesión). Corre los comandos de verificación de los que dispongas (typecheck, lint, build; usa el browser si el cambio de UI en esta sesión fue relevante).
+
+Si algo cambia, commit y push.
+
+Revisa que no dejamos el proyecto en un estado inconsistente o con una funcionalidad a medias y confírmame que podemos cerrar.
+{% /prompt %}
+
+{% callout title="Conviértelo en una skill" emoji="💡" variant="success" %}
+Si vas a cerrar sesión así a menudo, instala una **skill** que lo haga por ti (como **`/session-close`**): lanzas todo el cierre con **un solo comando** en vez de pegar el prompt entero.
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Define la app en un `spec.md`
+
+En una **nueva sesión** (dentro del proyecto que ya creamos) **exploramos y definimos** la app **antes de construir**: le contamos la idea, dejamos que **nos haga preguntas** y que lo deje escrito en un **`spec.md`**. Aquí, un CRM para gestoras de fondos.
+
+{% prompt title="Prompt — cópialo y pégaselo a Claude" %}
+Estoy pensando en crear la siguiente aplicación: un **CRM para gestoras de fondos de inversión** (MVP).
+
+Una gestora de inversión es una entidad que puede tener diferentes fondos (UCITS/FI), y esos fondos tienen partícipes. Utiliza tu conocimiento general sobre gestoras de fondos de inversión para diseñar un buen CRM que sea muy útil en el día a día de una gestora recién nacida.
+
+Objetivo: gestionar mejor nuestra relación con leads y clientes, mejorar el tracking del crecimiento de partícipes y de los fondos, y en última instancia aumentar los activos bajo gestión (AUM). Esta app no debería requerir integrar servicios externos: debería ser, de momento, un CRUD sofisticado.
+
+Dame ideas de qué funcionalidades y pantallas debería tener un CRM de este tipo, específico para gestoras de fondos de inversión de nueva creación, «mono-tenant» y con un único rol de usuario de momento.
+
+Precarga datos seed con una gestora ficticia con 3 fondos y otros datos que consideres necesarios para una visualización realista. Quiero una estética cuidada y polished (iconos, distancias, gráficos…). Hazme cuantas preguntas consideres necesarias para definir mejor el proyecto. No empieces a construir, estamos explorando y definiendo la app.
+
+Usa la skill de specs en modo PROTOTIPO.
+{% /prompt %}
+
+{% callout title="[PENDING: INSTALAR SKILLS?]" emoji="🚧" variant="warning" %}
+Nos damos cuenta de que **sí usamos varias skills** en el paso a paso (shadcn, Prisma, specs, `/session-close`). ¿Añadimos **un paso al principio** para instalarlas todas de golpe?
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Actualiza el `CLAUDE.md`
+
+Con la app ya definida, ponemos a punto el **`CLAUDE.md`** del proyecto (las instrucciones que Claude lee **siempre**). Le pasamos una **plantilla de referencia** y le pedimos que **actualice** el suyo a partir de ella.
+
+**[⬇️ Descarga la plantilla de `CLAUDE.md`](/api/plantilla-claude-md)** — adjúntasela a Claude junto con el prompt.
+
+{% prompt title="Prompt — cópialo y pégaselo a Claude (adjunta la plantilla)" %}
+Actualiza el CLAUDE.md utilizando como referencia este template:
+
+[adjunta aquí la plantilla que has descargado]
+{% /prompt %}
+
+{% callout title="A explicar" emoji="🗣️" variant="info" %}
+**Leemos juntos el `CLAUDE.md`**: repasamos las **secciones** y las **líneas clave** (stack, arquitectura por features, *definition of done*, estilo de código…) para entender qué le estamos diciendo a Claude.
+{% /callout %}
+
+---
+
+{% slide tags="paso a paso" /%}
+
+# Commit, push… ¿seguimos o nueva sesión?
+
+Guardamos (**commit + push**) y decidimos: **¿seguimos en esta sesión** o **abrimos una nueva**? Es un **balance** entre dos cosas:
+
+1. **Cuánto contexto nos queda.** En la app de escritorio vamos a **apurar hasta ~350–400k** antes de preocuparnos.
+2. **No perder el contexto de esta conversación.** Si el `spec.md` está completo, **no deberíamos** perder mucho al empezar de cero… pero **siempre se pierde algo**.
+
+Si te vas a **nueva sesión**, primero **cierra la actual** (el paso de *Guarda, sube y cierra la sesión*).
+
+{% callout title="Mi recomendación por defecto" emoji="🧭" variant="success" %}
+En una **app pequeña como esta**, yo **seguiría aquí** (misma sesión): el `spec.md` mantiene el rumbo y nos ahorramos el arranque en frío.
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Implementa el spec
+
+En otra situación implementaría las **fases una a una** (más control, más verificación en cada paso). Pero eso **llevaría horas**, y estamos haciendo un **«prototipo»** en el que quiero que **veáis algo construido**… así que esta vez le pedimos **todas las fases de golpe**.
+
+{% prompt title="Prompt — cópialo y pégaselo a Claude" %}
+Implementa todas las fases.
+
+Puedes hacer `npx prisma db push --force-reset` para limpiar la base de datos; la tabla actual es una prueba.
+{% /prompt %}
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Atentos… y al terminar, cierra la sesión
+
+Mientras trabaja, **estamos atentos**: no le hemos dicho que **no** vamos a estar delante del ordenador, así que si tiene que **tomar alguna decisión**, quizá **nos pregunte**. Cuando termine, **revisamos la app**; si está **ok**, cerramos: **commit, push y cerrar sesión** (el mismo cierre de antes).
+
+{% prompt title="Prompt — cópialo y pégaselo a Claude" %}
+Hemos terminado la sesión de trabajo y voy a borrar esta sesión.
+
+Actualiza el CLAUDE.md si es necesario (no añadas secciones, simplemente actualiza lo que no esté al día tras los cambios de esta sesión). Corre los comandos de verificación de los que dispongas (typecheck, lint, build; usa el browser si el cambio de UI en esta sesión fue relevante).
+
+Si algo cambia, commit y push.
+
+Revisa que no dejamos el proyecto en un estado inconsistente o con una funcionalidad a medias y confírmame que podemos cerrar.
+{% /prompt %}
+
+{% callout title="También puedes usar la skill" emoji="💡" variant="success" %}
+Si la tienes instalada, este cierre lo lanza directamente la skill **`/session-close`** — sin pegar el prompt entero.
+{% /callout %}
+
+---
+
+{% slide tags="paso a paso" /%}
+
+# Ya está publicada — úsala
+
+Si cerramos la sesión y (como debe) hizo **commit y push**, nuestra app **ya está publicada** en Vercel. 🚀
+
+Y en local la **corremos con el botón ▶ Run** de la app de Claude: puedes usarla **ahí mismo** o en tu **navegador normal**. **Copia la URL** — puede **no** ser `localhost:3000` (el puerto puede variar).
+
+{% callout title="No será perfecta — y está bien" emoji="🌱" variant="info" %}
+Tendrá **fallos** y cosas por **pulir**… pero es una **primera versión funcional**. No esperes que lo haga **100%** en una tirada de **30 minutos**.
+{% /callout %}
+
+{% callout title="Si se está haciendo muy grande, pausa" emoji="⏸️" variant="warning" %}
+Por cierto: si han pasado **~15 minutos** y ves que está montando algo **demasiado grande**, puedes **pausarlo** y seguirme en **mi pantalla**.
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Iteramos la app
+
+Con la app en marcha, **iteramos** con el mismo **bucle** de siempre: **Explorar → Plan → Implementar → Verificar**, una y otra vez.
+
+Con este proceso podemos:
+
+- **Refactorizar** — arreglar / ordenar la app.
+- **Cambiar** cosas.
+- **Añadir funcionalidades.**
+
+Por ejemplo: probemos a **añadir un MCP** a nuestro CRM, para poder **manejarlo desde las apps de IA** (Claude, ChatGPT…).
+
+{% callout title="El «modo plan»" emoji="📋" variant="info" %}
+En **modo plan**, Claude **no puede tocar el código**: solo **investiga y escribe un plan** (puede dejarlo en un **fichero de plan**). Lo revisas, lo apruebas y **entonces** implementa. Se activa con **Shift+Tab** o **`/plan`**.
+{% /callout %}
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Añade un MCP al CRM
+
+**En una nueva sesión.** Primero **exploramos** — que investigue y proponga opciones:
+
+{% prompt title="1) Explora — cópialo y pégaselo a Claude" %}
+Quiero añadir una nueva funcionalidad a nuestro CRM:
+
+Un MCP server remoto que permita al usuario (yo) conectar su agente y poder interactuar con el CRM a través de una IA.
+
+Me gustaría hacerlo de la forma más sencilla posible, a ser posible sin deployar otro servidor aparte. Investiga qué librerías podemos utilizar y dame 3 alternativas; recomienda una de ellas.
+{% /prompt %}
+
+Una vez **decidida** la opción, hacemos que **planifique** (cambia a modo plan o pídelo explícito):
+
+{% prompt title="2) Planifica — cópialo y pégaselo a Claude" %}
+Entra en modo plan y crea un plan para implementarlo.
+{% /prompt %}
+
+Y cuando tenga el plan, **cambiamos a modo «auto»** y le decimos que **tire**.
+
+---
+
+{% slide width="wide" tags="paso a paso" /%}
+
+# Añade el MCP a tu Claude
+
+Cuando termine, como siempre: **cerramos sesión** y esperamos a que **deploye**. Una vez desplegado, **añadimos el MCP a nuestro Claude** — como es **custom**, se hace por la **«vía rara»**: **Settings → Developer → Edit Config** y pegamos en el fichero lo que nos dé Claude (**sin romper la estructura del archivo**).
+
+![Ajustes de la app de Claude (Settings → Developer → Local MCP servers) con el botón «Edit Config» y la lista de servidores MCP (aurora-crm, resend, adloop, Read and Write Apple Notes); anotaciones: «Y pegamos lo que nos dé Claude en el fichero» y «Ojo! No romper la estructura del archivo»](/cms-assets/decks/intro-to-synced-slides/mcp-a-claude-config.png)
+
+---
+
+{% slide bg="dark" width="normal" /%}
+
+# ⏳ Pendientes (por desarrollar)
+
+Slides con **título fijado pero sin contenido** — puestas aquí para no olvidarlas. Muévelas a su sitio del flujo cuando las desarrolles.
+
+---
+
+{% slide width="wide" /%}
+
+# ¿Qué tipo de apps son "fáciles"?
+
+Con IA, **el código casi no es el cuello de botella**. Lo difícil es todo lo que la IA **no puede _verificar_ sola** en su bucle: **cuentas de terceros**, **varios servicios** coordinándose, y cosas que pasan **«solas»** en segundo plano (colas, programaciones, escuchar a otros).
+
+{% callout title="¿Qué es un «CRUD»?" emoji="🗂️" variant="info" %}
+Son las **cuatro cosas** que hace casi cualquier app con sus datos: {% highlight %}**C**{% /highlight %}reate, {% highlight %}**R**{% /highlight %}ead, {% highlight %}**U**{% /highlight %}pdate, {% highlight %}**D**{% /highlight %}elete. Una agenda, un CRM o una lista de tareas son, por dentro, **guardar fichas y mostrarlas**. Es justo lo que la IA hace **de fábrica y casi sin equivocarse**.
+{% /callout %}
+
+{% columns %}
+{% column title="Fácil" subtitle="v1 rápida, one-shot friendly" badge="pocas piezas" highlight=true %}
+- Sobre todo **CRUD** (guardar / leer / editar / borrar).
+- **Pocas** integraciones externas.
+- **Un** servicio, no varios coordinándose.
+- **Todo síncrono**: sin colas ni trabajo en segundo plano.
+
+**Ejemplo:** un **CRM** sin conexión al exterior.
+{% /column %}
+{% column title="Compleja" subtitle="más pasos, más verificación" badge="muchas piezas" %}
+- **Muchas** integraciones (cuentas, claves, límites).
+- **Varios** servicios hablándose.
+- **Colas / programaciones** y jobs en segundo plano.
+- **Escucha** eventos de fuera (webhooks, streams).
+
+**Ejemplo:** un **gestor de redes** que **programa** posts y **escucha** lo que publican otros.
+{% /column %}
+{% /columns %}
+
+{% callout title="Regla rápida para tu idea" emoji="🧭" variant="info" %}
+Cuéntala en voz alta y cuenta: **¿cuántos servicios externos** necesita?, **¿tiene que pasar algo «solo»** (programado o en segundo plano)?, **¿reacciona a eventos de fuera?** Cuantos más **«sí»**, **más compleja** — y más te conviene ir **paso a paso** en vez de *one-shot*.
+{% /callout %}
+
+{% callout title="Por eso empezamos con el CRM" emoji="🎯" variant="success" %}
+No fue casualidad: el CRM es un **CRUD pulido y sin dependencias externas** — justo el perfil «fácil». Ideal para ver una **v1 funcionando** rápido.
+{% /callout %}
+
+## Cinco ejemplos, de más sencillo (1) a más complejo (5)
+
+1. **Lista de tareas o notas** — CRUD puro, un solo usuario, **nada externo**. El mínimo.
+2. **CRM** (el nuestro) — CRUD **sofisticado**: relaciones, tablas y *dashboards*… pero sigue **sin salir al exterior**.
+3. **Blog o tienda con login y pagos** — añade **cuentas de usuario** y **una** integración (cobrar con Stripe).
+4. **Un agente que trabaja «solo» en segundo plano** — un **chat** de IA sería fácil (petición → respuesta); lo complejo es un **bucle agéntico** que **planifica y ejecuta muchos pasos largos** → necesita una **cola de trabajo asíncrono** (encolar, seguir su estado, reintentar). **Ese es el salto.**
+5. **Gestor de redes sociales** — **muchas** integraciones + **programar** publicaciones (cola) + **escuchar** a otros (webhooks). El más complejo.
+
+---
+
+{% slide width="wide" /%}
+
+# Setup básico para esta sesión
+
+Antes de empezar, dejamos el entorno listo. En vez de instalarlo **a mano**, le pasamos **un prompt** a Claude que lo **comprueba e instala** por ti:
+
+- **CLI de Vercel** — para publicar y gestionar el proyecto.
+- **CLI de GitHub (`gh`)** — para crear repos y autenticarte con GitHub.
+- **Directorio de planes** — que los planes del *modo plan* se guarden en `./docs/plans` del proyecto.
+- **Skills del proyecto** (`RicSala/rimakes-skills`) — las skills que usaremos en el paso a paso.
+- **MCP de shadcn** (a nivel de usuario) — para que Claude encuentre y use bien sus componentes.
+
+{% prompt title="Prompt — cópialo y pégaselo a Claude" %}
+Ayúdame a dejar listo el setup básico para esta sesión. Para cada punto, **comprueba** si ya está y, si no, **instálalo o configúralo** (guíame si necesitas que yo autentique o confirme algo):
+
+1. **CLI de Vercel**: comprueba si está instalada; si no, instálala.
+2. **CLI de GitHub (`gh`)**: comprueba si está instalada; si no, instálala. Si no estoy autenticado, guíame para hacerlo.
+3. **Directorio de planes**: en mi `settings.json` de usuario (`~/.claude/settings.json`), añade `"plansDirectory": "./docs/plans"` (crea el archivo si no existe y no rompas el resto de su contenido).
+4. **Skills del proyecto**: instala las skills de `RicSala/rimakes-skills` (todas, para **agents** y para **claude-code**) ejecutando `npx -y skills add RicSala/rimakes-skills --skill '*' --agent universal --agent claude-code -y 2>&1 | tail -30`.
+5. **MCP de shadcn**: instálalo a **nivel de usuario** (global), siguiendo https://ui.shadcn.com/docs/mcp.
+
+Al terminar, dame un **resumen** de qué había ya y qué has instalado o cambiado.
+{% /prompt %}
+
+{% callout title="Aquí te puedes bloquear" emoji="🔑" variant="warning" %}
+Los CLIs pueden pedir **autenticarte** (sobre todo `gh`). Si Claude se para pidiéndote login, sigue sus indicaciones (`gh auth login`, `vercel login`) y luego dile que **continúe**.
+{% /callout %}
+
+---
+
+# Nada te evita leer y pensar!
+
+La IA te quita el **90%** del trabajo de **escribir código**. Pero **tú** sigues teniendo que:
+
+- **Leer / ajustar** el `CLAUDE.md`, las especificaciones u otros ficheros que le dan **contexto**.
+- **Crear cuentas externas** (Vercel, GitHub…).
+- **Entender qué quieres** — y qué **opciones** te está ofreciendo.
+
+Lo que antes eran **meses**, ahora son **horas**. Pero son {% highlight %}**horas que hay que dedicarle**{% /highlight %}.
+
+---
+
+# Vemos juntos el CLAUDE.md
+
+**Abrimos el `CLAUDE.md`** del proyecto y lo **repasamos juntos**: comentamos sus **secciones** y sus **líneas principales** — qué le estamos diciendo a Claude y por qué.
+
+---
+
+{% slide width="wide" /%}
+
+# Qué perdemos respecto a la terminal
+
+La app de escritorio nos da una interfaz **más amigable**, pero **no está pulida**: faltan cosas y no todo funciona igual de bien. Lo que más cambia:
+
+- **Lo más «grave» — MCPs y skills sin _scope_:** todo aplica a todo. Eso **ensucia mucho el contexto** → menos inteligencia y más coste.
+- **Heredas todo lo «de oficina»:** todos los MCPs y skills que tengas puestos, aunque **no tengan nada que ver** con este proyecto.
+- **Menos configuración:** por ejemplo, no puedes hacer que una skill **muestre solo su nombre** (otra vez, para **proteger el contexto**).
+- **Va por detrás:** menos pulida y con **más errores** — llegó más tarde y se ha usado menos.
+
+{% callout title="Dicho esto: cada vez mejor" emoji="📈" variant="success" %}
+Esto mejora rápido. Esta semana, en un intensivo, os diría que **en cuanto arreglen el _scope_ de skills y MCPs**, estará **muy a la par** con la terminal.
+{% /callout %}
+
+---
+
+{% slide width="wide" /%}
+
+# Consejos
+
+- Piensa en tu trabajo como un loop: explorar -> planificar -> implementar -> Verificar
+- Cuanta más verificación pueda hacer el agente, mejor (y menos tendrás que hacer tú!): typecheck, eslint, build, test, browser (pregunta a Claude!)
+- Intenta "cerrar" tus sesiones, no dejes cosas a medias. El siguiente agente perderá el contexto.
+- Hablando de contexto: mantén el contexto. CLAUDE.md en la raíz, CLAUDE.md anidados, archivos referenciados, skills... es tu trabajo de más palanca!
+- Aprende los básicos de los fundamentales, deja pasar los shiny objects. Git, base de datos, qué es una app...
+- Usa Claude para aprender
+- Diferencia sesiones de: crear / refactorizar / aprender
+- Si tu proyecto es poco común, ten una conversación previa con Claude para encontrar el mejor stack (framework). Quizá no es Nextjs.
+- No reinventes (Claude) la rueda. (Dile que) Usa librerías si existen y solucionan tu problema. No eres programador, tu trabajo es unir las piezas, no crear las piezas.
+- De nuevo: cuida el contexto. Poco contexto es (mucho) peor que un mal contexto
+- ...y seguro que hay más que me iré acordando 🫠
+
+---
+
+{% slide width="wide" /%}
+
+# Frameworks de diseño
+
+Las IAs son **especialmente malas diseñando** por defecto. **Claude** lo hace **mejor que Codex**, pero aún es **poco estable**: unas veces es la pera, otras pinta fatal. La buena noticia: con **pequeños detalles en el prompt** mejora **muchísimo**.
+
+Y si te dedicas más a esto (o te importa el diseño), han salido varios **«conjuntos de skills»** que ayudan. Los más conocidos:
+
+- **frontend-design** — skill muy **sencilla**; el ejemplo de que con un pequeño "toque" mejora mucho.
+- **impeccable** — quizá el **más conocido**, muy **completo** (quizá demasiado: al final tienes tantos comandos que no sabes cuál usar).
+- **hallmark** — más **pequeño** y sencillo.
+- **taste-skill** — no lo he probado, pero **muy buena pinta** (¡gracias Jordi!). Para empezar tiene **menos skills**, que me gusta.
+
+---
+
+{% slide width="wide" /%}
+
+# Frameworks SDD (Spec-Driven Development)
+
+Metodología surgida en el último año: **escribes la especificación** del producto (como hemos hecho) y dejas que la **IA lleve todo el desarrollo** en un **loop**. **El concepto me gusta.**
+
+Lo que no me convence son los **frameworks / conjuntos de skills** que han crecido alrededor: imponen una **forma de trabajar concreta** y generan **muchísimos archivos** (artefactos) que **queman tokens**. Tenían más sentido cuando la IA era **menos lista** y con **poco contexto** (128k vs. ~1M hoy), y perdía el hilo entre sesiones; **hoy lo veo menos necesario**.
+
+{% columns %}
+{% column title="Lo que sí me gusta" badge="👍" highlight=true %}
+Fijan una **forma de trabajar muy clara** — fases y procedimientos.
+{% /column %}
+{% column title="Lo que no" badge="👎" %}
+**Demasiados archivos** y "fontanería"; tienes que **aprender su método** y **quedas atado**. Gastan mucho y **pierdes de vista lo importante**.
+{% /column %}
+{% /columns %}
+
+**En esta sesión hemos hecho SDD… pero orgánico**, sin metodología cerrada — como prefiero trabajar.
+
+## Los más conocidos
+
+**Spec Kit** *(de GitHub)* · **Get Shit Done** · **BMAD Method** · **OpenSpec** · **Superpowers**
+
+{% callout title="Si tuviera que elegir uno: OpenSpec" emoji="🎯" variant="success" %}
+Me lo estoy planteando. Es **muy sencillo**, trabaja **casi igual que mi loop de cuatro pasos** y **genera relativamente pocos archivos** durante el proceso.
+{% /callout %}
+
+---
+
+{% slide bg="dark" width="normal" /%}
+
+# 🗄️ Slides archivadas
+
+A partir de aquí guardamos slides que hemos **sacado del flujo** (dudosas o "por si acaso"). **No** forman parte de la sesión; viven aquí por si las recuperamos.

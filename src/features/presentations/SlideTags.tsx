@@ -1,6 +1,8 @@
 import {
   AlertTriangle,
+  BadgeCheck,
   BookOpen,
+  Footprints,
   GraduationCap,
   MousePointerClick,
   Tag,
@@ -52,6 +54,22 @@ const TAG_STYLES: Record<string, TagStyle> = {
     Icon: MousePointerClick,
     className:
       'border-transparent bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-md shadow-fuchsia-500/25 ring-1 ring-inset ring-white/25',
+  },
+  // A prominent emerald pill for the course's fundamental-concept slides (the
+  // ones listed in the module's índice), so they stand out as "core, worth
+  // bookmarking" while flipping through the deck.
+  fundamental: {
+    Icon: BadgeCheck,
+    className:
+      'border-transparent bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/25 ring-1 ring-inset ring-white/25',
+  },
+  // A warm amber pill for the hands-on "build the app step by step" slides, so
+  // they read as "do this now, live" and stand apart from the emerald
+  // "fundamental" concept slides and the violet "interactivo" self-checks.
+  'paso a paso': {
+    Icon: Footprints,
+    className:
+      'border-transparent bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/25 ring-1 ring-inset ring-white/25',
   },
 };
 

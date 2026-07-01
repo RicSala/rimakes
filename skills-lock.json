@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "product-spec": {
+      "source": "RicSala/rimakes-skills",
+      "sourceType": "github",
+      "skillPath": "skills/product-spec/SKILL.md",
+      "computedHash": "6503288ea21bad4d8b82dbe801e93c094a0f893fc5fb754108381f74d989b6a5"
+    },
+    "session-close": {
+      "source": "RicSala/rimakes-skills",
+      "sourceType": "github",
+      "skillPath": "skills/session-close/SKILL.md",
+      "computedHash": "c62500f2377aec1c9ccb7e8775cba12ffc0e0b5f459fc766e886e099b52b3d07"
+    }
+  }
+}
