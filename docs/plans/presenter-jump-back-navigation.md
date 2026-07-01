@@ -77,10 +77,32 @@ resuelve la Pieza 2.
 
 ---
 
-## Pieza 2 — botón "Ver: \<concepto\>" (PENDIENTE, opcional)
+## Pieza 2 — botón "Ver: \<concepto\>" (HECHO ✅)
 
 Un **clic** desde el paso del build salta directo al fundamental. Reutiliza la **misma
 pila** de la Pieza 1 (⇒ "Volver" sigue igual).
+
+**Implementado tal cual:** componente `{% goto title="…" label="…" /%}`
+(self-closing) dentro de las callouts "A explicar". Archivos:
+`src/features/presentations/Goto.tsx` (el botón) +
+`control-nav-context.tsx` (contexto `{ resolveTitle, jumpToTitle }` que **solo**
+provee `SlideController`). El mapa `title → index` se construye en `SlideController`
+desde `slidesMeta`; `jumpToTitle` reusa `jumpTo` (retorno de la Pieza 1). Alta doble
+en `custom-components.tsx` (schema `goto` + render `Goto`) y `keystatic.config.ts`
+(bloque `goto`). En el **viewer** el `Goto` **no renderiza nada** (la sala sigue por
+Pusher); si el `title` no resuelve → **chip gris inerte + `console.warn` en dev**.
+
+**Cobertura final: los 9 fundamentales** (recap "Los fundamentos", slide 3671) son
+alcanzables. 6 en su paso natural del build + 3 (que no salen en ningún paso) en la
+slide **"Implementa el spec"**, donde hay mucha espera:
+
+- En su paso: **Librerías y el stack** (shadcn), **Git y GitHub** (snapshot→GitHub),
+  **Deploy (Vercel)** (Vercel+Neon), **Variables de entorno** (pega vars),
+  **Bases de datos** (Prisma), **El workflow de desarrollo** (Define el `spec.md`).
+- Solo en "Implementa el spec" (los 3 sin otro sitio): **Arquitectura: cliente y
+  servidor**, **APIs y servicios externos**, **¿Qué hago cuando tengo un error?**
+- **"Implementa el spec" es un hub con los 9**: un callout con los **3 únicos** y,
+  tras un espacio, los **otros 6 repetidos** para repasar si sobra tiempo.
 
 ### Mapa real paso-del-build → fundamental (de los 9 "A explicar" actuales)
 
@@ -135,4 +157,10 @@ degrada de forma visible.
 ## Estado
 - **Pieza 1:** implementada, typecheck/lint verdes, commit `7d3f212` en `main`.
   Pendiente **prueba manual** en `/control`.
-- **Pieza 2:** diseñada con mapa concreto arriba, **sin empezar** (a decisión de Ric).
+- **Pieza 2:** implementada; **typecheck/lint/build verdes**. Pendiente **prueba
+  manual** en `/control` (clic en "Ver: …" → salta al fundamental → `b`/⤺ Volver).
+
+### Nota: "framework" NO es uno de los 9 fundamentales
+El callout *¿Qué es un framework?* (paso "Inicializa con Next.js") se dejó **sin
+`{% goto %}`** a propósito: "framework" no está en la lista de 9 fundamentales, así que
+no se linka. Lo que se cablea son los **fundamentales**, no cada callout "A explicar".

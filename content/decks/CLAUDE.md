@@ -69,7 +69,10 @@ slide's chrome. It is optional and is not rendered inline.
 
 - **`bg`** — background scheme. Switches the slide's *entire* color scheme; the
   prose and any components inside (Callout, Prompt, code) re-theme automatically.
-  - `none` (default — white) · `brand` (indigo) · `dark`
+  - `none` (default — white) · `brand` (indigo) · `dark` · `sepia` (pergamino
+    claro — el tinte sutil de las slides **"paso a paso"** del build; fondo claro,
+    texto oscuro) · `emerald` (verde esmeralda — la slide de **cierre**; fondo
+    oscuro, texto claro)
 - **`tags`** — comma-separated corner labels. Known labels get an icon + color;
   unknown labels get a neutral chip.
   - Built-in styles: `advanced` 🎓 · `theory` 📖 · `skills` 🔧 · `practice` ⚡ · `warning` ⚠️
@@ -103,12 +106,13 @@ copyable block. Don't wrap ordinary content in components for decoration.
 
 | Component | Syntax | Attributes |
 |---|---|---|
-| **Slide settings** | `{% slide bg="brand" tags="A, B" /%}` | `bg`: `none` \| `brand` \| `dark`; `tags`: comma-separated; `width`: `normal` \| `wide` \| `full`; `public`: `true` (adds slide to the review deck); `section`: module label (groups the review índice) |
+| **Slide settings** | `{% slide bg="brand" tags="A, B" /%}` | `bg`: `none` \| `brand` \| `dark` \| `sepia` (parchment, build slides) \| `emerald` (closing slide); `tags`: comma-separated; `width`: `normal` \| `wide` \| `full`; `public`: `true` (adds slide to the review deck); `section`: module label (groups the review índice) |
 | **Callout** | `{% callout title="…" emoji="👋" variant="info" %}…body…{% /callout %}` | `title`, `emoji`, `variant`: `default` \| `info` \| `warning` \| `error` \| `success` |
 | **Prompt** | `{% prompt title="…" %}…body…{% /prompt %}` | `title` — collapsible + copy-to-clipboard block |
 | **Highlight** | `{% highlight %}…texto…{% /highlight %}` | inline marker-pen highlight, **default yellow**; `color`: `yellow` \| `green` \| `blue` \| `pink` \| `orange` |
 | **Speaker notes** | `{% notes %}…body…{% /notes %}` | presenter-only — see below; no attributes |
 | **Timer** | `{% timer minutes="5" label="…" /%}` | synced countdown — see below; `minutes`, `seconds`, `label`, `id` (self-closing) |
+| **Goto** | `{% goto title="Bases de datos" label="Ver: …" /%}` | presenter-only jump to a slide by its heading — see below; `title` (destination heading), `label` (button text) (self-closing) |
 | **Columns** | `{% columns %}{% column title="…" %}…{% /column %}…{% /columns %}` | comparison cards — see below; `column` takes `title`, `subtitle`, `badge`, `highlight` |
 | **Quiz** | `{% quiz %}{% question text="…" %}{% option correct=true %}…{% /option %}…{% explanation %}…{% /explanation %}{% /question %}…{% /quiz %}` | self-check, 1+ questions + final score — see below; `quiz` takes `title`, `mode` (`inline` \| `modal`); `question` takes `text`; `option` takes `correct` |
 | **Match** | `{% match %}{% pair left="…" right="…" /%}…{% /match %}` | connect-the-columns self-check — see below; `match` takes `title`, `instructions`; `pair` takes `left`, `right` (self-closing) |
@@ -338,6 +342,36 @@ the slide (like the `{% slide %}` directive) and returns it separately; only the
 control page renders it. Registered in `keystatic.config.ts` (so the reader/admin
 accept it) and `src/shared/blog/custom-components.tsx` (with a null-render safety
 net for any stray/misplaced block).
+
+## Goto (salto del ponente a un fundamental)
+
+Un botón **solo para el ponente** que **salta a otra slide por su título** (su
+primer heading) y, gracias al motor de "Volver" del `/control`, permite **regresar
+exacto** con «⤺ Volver» / tecla **`b`**. Pensado para el bloque **"🛠️ Desarrollando
+paso a paso"**: dentro de una callout **"A explicar"**, un clic te lleva al
+**fundamental** que explica el concepto y vuelves al paso donde estabas.
+
+```mdoc
+{% callout title="A explicar" emoji="🗣️" variant="info" %}
+¿Qué son las **librerías**?
+
+{% goto title="Librerías y el stack" label="Ver: ¿Qué son las librerías?" /%}
+{% /callout %}
+```
+
+- **`title`** — la slide destino, referenciada por su **primer heading exacto**
+  (mayúsculas/espacios como en el `#`). Si lo renombras, el enlace **degrada a un
+  chip gris no clicable** (y avisa por consola en dev), no rompe.
+- **`label`** — texto del botón. Por defecto `Ver: <title>`.
+- **Self-closing** (`/%}`). Va **dentro** de la callout, en su propia línea.
+- **Dónde aparece:** **solo en `/control`** (el ponente). En el **viewer de la sala
+  no se renderiza nada** — la sala **te sigue por Pusher** cuando saltas, no navega
+  sola. Por eso el salto **retransmite** (todos van contigo) y la vuelta también.
+- El salto es **reversible y anidable** (usa la misma pila que «⤺ Volver»).
+- Componentes: `features/presentations/Goto.tsx` +
+  `features/presentations/control-nav-context.tsx` (el contexto que **solo** provee
+  `SlideController`, para distinguir ponente de sala). Registrado en
+  `custom-components.tsx` y `keystatic.config.ts`.
 
 ## Timer (synced countdown)
 

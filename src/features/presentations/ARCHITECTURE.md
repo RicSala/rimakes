@@ -151,6 +151,8 @@ the component.
 | `src/features/presentations/pusher.client.ts` | Lazy browser Pusher (subscribe); `null` if env missing. |
 | `src/features/presentations/pusher.server.ts` | Lazy server Pusher (publish/trigger). |
 | `src/features/presentations/presentation-context.tsx` | React context `{ slug, secret? }` → `usePresentation()`; lets in-slide components know slug + presenter. |
+| `src/features/presentations/control-nav-context.tsx` | React context `{ resolveTitle, jumpToTitle }` → `useControlNav()`; **only `SlideController` provides it** (the viewer doesn't), so an in-slide `{% goto %}` can tell control from viewer. |
+| `src/features/presentations/Goto.tsx` | `{% goto %}` presenter jump button: on /control jumps reversibly to a slide by title (via `useControlNav`); renders nothing on the audience viewer. |
 | `src/features/presentations/Timer.tsx` | Synced countdown component. |
 | `src/features/presentations/Columns.tsx` | `Columns` + `Column` comparison cards. |
 | `src/features/presentations/Quiz.tsx` | `Quiz` self-check: 1+ `question`s, step-through + score screen (inline/modal). Receives a `questions` prop built by the `quiz` transform — see the compound-component note below. |
