@@ -4103,7 +4103,7 @@ Se acabó la teoría de fundamentos. A partir de aquí **construimos la app**: c
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Setup básico para esta sesión
 
@@ -4133,7 +4133,7 @@ Los CLIs pueden pedir **autenticarte** (sobre todo `gh`). Si Claude se para pidi
 
 ---
 
-{% slide tags="paso a paso" /%}
+{% slide bg="sepia" tags="paso a paso" /%}
 
 # Inicializa el proyecto con Next.js
 
@@ -4149,7 +4149,7 @@ Inicializa una aplicación de Next.js usando el CLI. El nuevo proyecto se llama 
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # shadcn/ui y una página `/theme`
 
@@ -4175,11 +4175,13 @@ Instala 15 componentes comunes y crea una página "/theme" donde enseñes los di
 
 {% callout title="A explicar" emoji="🗣️" variant="info" %}
 ¿Qué son las **librerías**?
+
+{% goto title="Librerías y el stack" label="Ver: ¿Qué son las librerías?" /%}
 {% /callout %}
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Clica en el botón Run
 
@@ -4193,7 +4195,7 @@ Es `npm run dev`, pero lo lanza **Claude** por nosotros. Al pulsar **▶ Run**, 
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Guarda un snapshot y súbelo a GitHub
 
@@ -4207,11 +4209,13 @@ Comprueba si tengo instalado git y el CLI de gh; si no es así, instálalo y gu�
 
 {% callout title="A explicar" emoji="🗣️" variant="info" %}
 De momento, la idea rápida (lo vemos a fondo más adelante): **Git** es un sistema para **guardar versiones** de tu proyecto; **GitHub** es como un **Drive** — ese guardado de Git, en la **nube**.
+
+{% goto title="Git y GitHub" label="Ver: Git y GitHub" /%}
 {% /callout %}
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Comprobamos que está en GitHub
 
@@ -4221,7 +4225,7 @@ Entramos en GitHub (menú de perfil arriba a la derecha → **Repositories**) y 
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Publica en Vercel y provisiona Neon
 
@@ -4237,11 +4241,13 @@ De momento no hagas pull de las variables de entorno, quiero ponerlas yo (de mom
 
 {% callout title="A explicar" emoji="🗣️" variant="info" %}
 **Publicar (deploy) y Vercel**: pasar la app de tu ordenador (`localhost`) a una **URL pública**; **Vercel** coge tu código de GitHub y lo **sirve solo** en internet.
+
+{% goto title="Deploy (Vercel)" label="Ver: Deploy y Vercel" /%}
 {% /callout %}
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Pega tú las variables de entorno
 
@@ -4251,11 +4257,13 @@ Las **claves** (como la de la base de datos) las pegamos **nosotros** en el arch
 
 {% callout title="A explicar" emoji="🗣️" variant="info" %}
 **Variables de entorno**: dónde viven las **claves y secretos**, fuera del código. Y el **`.gitignore`**: la lista de lo que Git **ignora** al guardar — por eso `.env` **nunca sube a GitHub**.
+
+{% goto title="Variables de entorno" label="Ver: Variables de entorno" /%}
 {% /callout %}
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Monta Prisma y prueba la base de datos
 
@@ -4271,11 +4279,13 @@ Cuando lo tengas, haz commit y push para que comprobemos que todo es correcto y 
 
 {% callout title="A explicar" emoji="🗣️" variant="info" %}
 **Scaffold**: el **andamiaje** inicial que genera Claude — los archivos y la configuración base para arrancar. Y **Prisma**: el **ORM** con el que la app **habla con la base de datos** sin escribir SQL a mano.
+
+{% goto title="Bases de datos" label="Ver: Bases de datos" /%}
 {% /callout %}
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Añade un servidor: Prisma Studio
 
@@ -4293,7 +4303,7 @@ Añade al launch.json otro servidor que corra Prisma Studio.
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Guarda, sube y cierra la sesión
 
@@ -4315,7 +4325,7 @@ Si vas a cerrar sesión así a menudo, instala una **skill** que lo haga por ti 
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Define la app en un `spec.md`
 
@@ -4339,9 +4349,15 @@ Usa la skill de specs en modo PROTOTIPO.
 Nos damos cuenta de que **sí usamos varias skills** en el paso a paso (shadcn, Prisma, specs, `/session-close`). ¿Añadimos **un paso al principio** para instalarlas todas de golpe?
 {% /callout %}
 
+{% callout title="A explicar" emoji="🗣️" variant="info" %}
+**El workflow de desarrollo**: el bucle **Explorar → Plan → Implementar → Verificar**. Justo ahora estamos en **Explorar/Plan** — definimos antes de construir.
+
+{% goto title="El workflow de desarrollo" label="Ver: El workflow de desarrollo" /%}
+{% /callout %}
+
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Actualiza el `CLAUDE.md`
 
@@ -4361,7 +4377,7 @@ Actualiza el CLAUDE.md utilizando como referencia este template:
 
 ---
 
-{% slide tags="paso a paso" /%}
+{% slide bg="sepia" tags="paso a paso" /%}
 
 # Commit, push… ¿seguimos o nueva sesión?
 
@@ -4378,7 +4394,7 @@ En una **app pequeña como esta**, yo **seguiría aquí** (misma sesión): el `s
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Implementa el spec
 
@@ -4390,9 +4406,37 @@ Implementa todas las fases.
 Puedes hacer `npx prisma db push --force-reset` para limpiar la base de datos; la tabla actual es una prueba.
 {% /prompt %}
 
+{% callout title="A explicar — aquí hay tiempo de sobra" emoji="🗣️" variant="info" %}
+Mientras Claude **implementa todas las fases**, tenemos un buen rato para cerrar los fundamentales que **aún no habían salido** — **arquitectura** (cliente/servidor), **APIs y servicios externos** y **qué hacer cuando tienes un error**:
+
+{% goto title="Arquitectura: cliente y servidor" label="Arquitectura: cliente y servidor" /%}
+{% goto title="APIs y servicios externos" label="APIs y servicios externos" /%}
+{% goto title="¿Qué hago cuando tengo un error?" label="¿Qué hago cuando tengo un error?" /%}
+
+Y, si sobra, cualquiera de los demás para **repasar**:
+
+{% goto title="Librerías y el stack" label="Librerías y el stack" /%}
+{% goto title="Bases de datos" label="Bases de datos" /%}
+{% goto title="Git y GitHub" label="Git y GitHub" /%}
+{% goto title="Deploy (Vercel)" label="Deploy (Vercel)" /%}
+{% goto title="Variables de entorno" label="Variables de entorno" /%}
+{% goto title="El workflow de desarrollo" label="El workflow de desarrollo" /%}
+{% /callout %}
+
+{% callout title="Otros temas — si os apetece / si da tiempo" emoji="💬" variant="default" %}
+No son fundamentales, pero quería comentarlos con vosotros. También a mano por si el rato da:
+
+{% goto title="¿Qué tipo de apps son «fáciles»?" label="¿Qué tipo de apps son «fáciles»?" /%}
+{% goto title="Nada te evita leer y pensar!" label="Nada te evita leer y pensar" /%}
+{% goto title="Qué perdemos respecto a la terminal" label="Qué perdemos respecto a la terminal" /%}
+{% goto title="Consejos" label="Consejos" /%}
+{% goto title="Frameworks de diseño" label="Frameworks de diseño" /%}
+{% goto title="Frameworks SDD (Spec-Driven Development)" label="Frameworks SDD" /%}
+{% /callout %}
+
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Atentos… y al terminar, cierra la sesión
 
@@ -4414,7 +4458,7 @@ Si la tienes instalada, este cierre lo lanza directamente la skill **`/session-c
 
 ---
 
-{% slide tags="paso a paso" /%}
+{% slide bg="sepia" tags="paso a paso" /%}
 
 # Ya está publicada — úsala
 
@@ -4432,7 +4476,7 @@ Por cierto: si han pasado **~15 minutos** y ves que está montando algo **demasi
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Iteramos la app
 
@@ -4452,7 +4496,7 @@ En **modo plan**, Claude **no puede tocar el código**: solo **investiga y escri
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Añade un MCP al CRM
 
@@ -4476,7 +4520,7 @@ Y cuando tenga el plan, **cambiamos a modo «auto»** y le decimos que **tire**.
 
 ---
 
-{% slide width="wide" tags="paso a paso" /%}
+{% slide bg="sepia" width="wide" tags="paso a paso" /%}
 
 # Añade el MCP a tu Claude
 
@@ -4488,15 +4532,15 @@ Cuando termine, como siempre: **cerramos sesión** y esperamos a que **deploye**
 
 {% slide bg="dark" width="normal" /%}
 
-# ⏳ Pendientes (por desarrollar)
+# 💬 Otros temas que quería comentar con vosotros
 
-Slides con **título fijado pero sin contenido** — puestas aquí para no olvidarlas. Muévelas a su sitio del flujo cuando las desarrolles.
+No son **fundamentales** para montar la app, pero me parecen **importantes** y **quería comentarlos con vosotros**. Los vemos **si da tiempo** — por ejemplo, mientras Claude implementa.
 
 ---
 
 {% slide width="wide" /%}
 
-# ¿Qué tipo de apps son "fáciles"?
+# ¿Qué tipo de apps son «fáciles»?
 
 Con IA, **el código casi no es el cuello de botella**. Lo difícil es todo lo que la IA **no puede _verificar_ sola** en su bucle: **cuentas de terceros**, **varios servicios** coordinándose, y cosas que pasan **«solas»** en segundo plano (colas, programaciones, escuchar a otros).
 
@@ -4550,12 +4594,6 @@ La IA te quita el **90%** del trabajo de **escribir código**. Pero **tú** sigu
 - **Entender qué quieres** — y qué **opciones** te está ofreciendo.
 
 Lo que antes eran **meses**, ahora son **horas**. Pero son {% highlight %}**horas que hay que dedicarle**{% /highlight %}.
-
----
-
-# Vemos juntos el CLAUDE.md
-
-**Abrimos el `CLAUDE.md`** del proyecto y lo **repasamos juntos**: comentamos sus **secciones** y sus **líneas principales** — qué le estamos diciendo a Claude y por qué.
 
 ---
 
@@ -4635,6 +4673,25 @@ Fijan una **forma de trabajar muy clara** — fases y procedimientos.
 {% callout title="Si tuviera que elegir uno: OpenSpec" emoji="🎯" variant="success" %}
 Me lo estoy planteando. Es **muy sencillo**, trabaja **casi igual que mi loop de cuatro pasos** y **genera relativamente pocos archivos** durante el proceso.
 {% /callout %}
+
+---
+
+{% slide bg="emerald" width="wide" /%}
+
+# Y hasta aquí 8h de Claude!
+
+- **GRACIAS.**
+- **¿Repetiré?** Ni idea — depende del interés. Si sabéis de alguien a quien le interesaría, **send them my way!**
+- **No desaparezco**… pero escribidme **con criterio**, please.
+- Recuerda: **yo te enseño la puerta; tú la cruzas.** Tiene un pequeño precio en **tiempo** y **valentía**.
+- **Usa los recursos:** [Mapa agéntico](/mapa-agentico) · [Dónde poner el contexto](/mapa-contexto) · [Entender el CLAUDE.md](/claude-md) · [Crear skills](/skills) · [Glosario](/glosario) · [Chuleta de comandos](/comandos).
+- Si aún no has usado las **sesiones individuales**, **¡espabila!** Las has pagado y se te van a pasar (*).
+
+**Charlaré con cada uno de vosotros en privado (10 min)** para que me deis feedback.
+
+De nuevo, **¡muchas gracias!** 🙌
+
+*(*) Abriré otra semana para los despistados.*
 
 ---
 
