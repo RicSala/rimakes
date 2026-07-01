@@ -7,6 +7,7 @@ import {
 } from '@/shared/blog/components';
 import { Columns, Column } from '@/features/presentations/Columns';
 import { FileTree } from '@/features/presentations/FileTree';
+import { Goto } from '@/features/presentations/Goto';
 import { Match, MatchPair } from '@/features/presentations/Match';
 import {
   Quiz,
@@ -58,6 +59,11 @@ export const CustomMarkdocComponents: Record<string, Component> = {
   // `FileTree` is the render target for a ```tree fence (see markdoc-nodes.ts):
   // a styled file tree from indented text.
   FileTree: FileTree as Component,
+  // `{% goto %}` is a presenter-only jump shortcut (inside a build step's "A
+  // explicar" callout): on /control it jumps reversibly to the named fundamentals
+  // slide; on the audience viewer it renders nothing (the room follows the jump
+  // over Pusher). It reads the presenter nav via ControlNavProvider.
+  Goto: Goto as Component,
   // `ZoomableImage` is the render target for the built-in `image` node (see
   // markdoc-nodes.ts): an inline image that opens a full-screen lightbox on click.
   ZoomableImage: ZoomableImage as Component,
@@ -145,6 +151,18 @@ export const CustomMarkdocTags: Record<string, Schema> = {
     render: 'Columns',
     children: ['tag', 'paragraph'],
     attributes: {},
+  },
+  // Presenter jump shortcut, self-closing, authored inside an "A explicar"
+  // callout. `title` names the destination slide by its first heading; `label`
+  // overrides the button text. Renders a jump button on /control, nothing on the
+  // audience viewer (see Goto).
+  goto: {
+    render: 'Goto',
+    selfClosing: true,
+    attributes: {
+      title: { type: String },
+      label: { type: String },
+    },
   },
   column: {
     render: 'Column',

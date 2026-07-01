@@ -7,7 +7,20 @@ import type { SlideMeta } from './SlideStage';
 export const SCHEME_CLASS: Record<string, string> = {
   brand: 'slide-theme-brand',
   dark: 'dark',
+  // A subtle warm "parchment" tint for the build (paso a paso) slides, so the
+  // step-by-step reads as visually distinct from the white theory slides. Unlike
+  // brand/dark it's a LIGHT background (see DARK_SCHEMES).
+  sepia: 'slide-theme-sepia',
+  // A deep emerald for the workshop's closing slide — a celebratory color not
+  // used by any module divider (indigo) or archive (dark). Dark background,
+  // light text (see DARK_SCHEMES).
+  emerald: 'slide-theme-emerald',
 };
+
+// Schemes whose background is DARK, so the prose/content must invert to light
+// text. Light-background schemes (sepia) are absent here and keep the default
+// dark prose — otherwise their text would turn white on a light surface.
+export const DARK_SCHEMES = new Set(['brand', 'dark', 'emerald']);
 
 // A `## subtitle` placed right under the `# title` (an `h1 + h2`) is styled as a
 // subtitle: pulled up close to the title (negative margin beats prose's big h2
@@ -41,9 +54,12 @@ export const CONTENT_WIDTH: Record<string, string> = {
  */
 export function resolveSlideAppearance(meta?: SlideMeta) {
   const schemeClass = meta?.bg ? SCHEME_CLASS[meta.bg] ?? '' : '';
+  // Only dark-background schemes invert the prose; a light scheme (sepia) keeps
+  // dark text even though it has a scope class.
+  const invert = meta?.bg ? DARK_SCHEMES.has(meta.bg) : false;
   const widthKey = meta?.width && CONTENT_WIDTH[meta.width] ? meta.width : 'normal';
   const contentClass = `${CONTENT_STRUCTURE} ${CONTENT_WIDTH[widthKey]} ${
-    schemeClass ? 'prose-invert' : CONTENT_COLOR_LIGHT
+    invert ? 'prose-invert' : CONTENT_COLOR_LIGHT
   }`;
   return {
     schemeClass,

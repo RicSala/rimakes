@@ -5,13 +5,14 @@ import {
   CONTENT_COLOR_LIGHT,
   CONTENT_STRUCTURE,
   CONTENT_WIDTH,
+  DARK_SCHEMES,
   resolveSlideAppearance,
   SCHEME_CLASS,
 } from './slideStyles';
 
 // Re-exported so existing importers (e.g. overview thumbnails) keep working
 // after the per-slide style constants moved to `slideStyles`.
-export { SCHEME_CLASS };
+export { SCHEME_CLASS, DARK_SCHEMES };
 
 export type SlideTheme = {
   /** Classes on the full-screen stage wrapper. */

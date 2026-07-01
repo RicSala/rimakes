@@ -143,6 +143,52 @@
   --ring: oklch(0.92 0.05 264.376);
 }
 
+/*
+ * Light "parchment" scheme for the build (paso a paso) slides — a subtle warm
+ * tint so the step-by-step is visually distinct from the white theory slides.
+ * Unlike brand/dark this is a LIGHT background, so it is NOT in DARK_SCHEMES and
+ * the prose stays dark (no prose-invert). We keep --foreground/--primary from
+ * :root (dark) and only warm the surface tokens so cards/callouts/borders sit
+ * naturally on the tint.
+ */
+.slide-theme-sepia {
+  --background: oklch(0.955 0.02 83);
+  --card: oklch(0.972 0.014 83);
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.972 0.014 83);
+  --popover-foreground: var(--foreground);
+  --muted: oklch(0.92 0.026 83);
+  --muted-foreground: oklch(0.48 0.02 83);
+  --border: oklch(0.87 0.03 83);
+  --input: oklch(0.87 0.03 83);
+}
+
+/*
+ * Deep emerald scheme for the workshop's closing slide — a celebratory color
+ * distinct from every other scheme (module dividers are indigo, the archive is
+ * near-black). Dark background + light text (it IS in DARK_SCHEMES → prose
+ * inverts), same token structure as the brand scope.
+ */
+.slide-theme-emerald {
+  --background: oklch(0.44 0.1 163);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.49 0.095 163);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.49 0.095 163);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.44 0.1 163);
+  --secondary: oklch(0.51 0.085 163);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.51 0.085 163);
+  --muted-foreground: oklch(0.92 0.04 163);
+  --accent: oklch(0.53 0.09 163);
+  --accent-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 22%);
+  --input: oklch(1 0 0 / 22%);
+  --ring: oklch(0.92 0.04 163);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

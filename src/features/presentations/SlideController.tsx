@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
@@ -10,9 +11,11 @@ import {
 } from 'react';
 
 import { deckChannel, SLIDE_EVENT, type SlidePayload } from './channel';
+import { ControlNavProvider, type ControlNav } from './control-nav-context';
 import { PresentationProvider } from './presentation-context';
 import { getPusherClient } from './pusher.client';
 import {
+  DARK_SCHEMES,
   SCHEME_CLASS,
   SlideStage,
   type SlideMeta,
@@ -328,6 +331,39 @@ export function SlideController({
     if (typeof prev === 'number') go(prev);
   }, [go]);
 
+  // Map each slide's first-heading title → its index, so an in-slide `{% goto %}`
+  // can name a destination by title. First occurrence wins if titles repeat.
+  const titleIndex = useMemo(() => {
+    const map = new Map<string, number>();
+    slidesMeta?.forEach((meta, i) => {
+      const title = meta.title?.trim();
+      if (title && !map.has(title)) map.set(title, i);
+    });
+    return map;
+  }, [slidesMeta]);
+
+  // Presenter navigation handed to `{% goto %}` via ControlNavProvider. Jumping by
+  // title reuses `jumpTo`, so it's reversible («⤺ Volver» / b) and broadcasts.
+  const controlNav = useMemo<ControlNav>(() => {
+    const resolveTitle = (title: string) => {
+      const i = titleIndex.get(title.trim());
+      return i === undefined ? null : i;
+    };
+    return {
+      resolveTitle,
+      jumpToTitle: (title: string) => {
+        const i = resolveTitle(title);
+        if (i === null) {
+          if (process.env.NODE_ENV !== 'production') {
+            console.warn(`[goto] No slide titled "${title}".`);
+          }
+          return;
+        }
+        jumpTo(i);
+      },
+    };
+  }, [titleIndex, jumpTo]);
+
   // Drag the speaker-notes panel by its header. Pointer capture keeps the move
   // tracking even when the cursor leaves the handle; the position is clamped to
   // the viewport so the panel can't be dragged off-screen.
@@ -478,10 +514,11 @@ export function SlideController({
           <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4'>
             {slides.map((slide, slideIndex) => {
               // Mirror SlideStage: a slide's `bg` scheme tints the thumbnail so
-              // brand/dark slides stand out in the grid. With a scope active,
-              // invert the prose so the content stays legible on the dark fill.
+              // brand/dark/sepia slides stand out in the grid. Only dark schemes
+              // invert the prose; a light scheme (sepia) keeps dark text.
               const bg = slidesMeta?.[slideIndex]?.bg;
               const schemeClass = bg ? SCHEME_CLASS[bg] ?? '' : '';
+              const invert = bg ? DARK_SCHEMES.has(bg) : false;
               return (
                 <SlideThumbnail
                   key={slideIndex}
@@ -491,7 +528,7 @@ export function SlideController({
                   onSelect={() => jumpTo(slideIndex)}
                   onToggleHidden={() => toggleHidden(slideIndex)}
                   contentClass={
-                    schemeClass
+                    invert
                       ? `${thumbnailContent} prose-invert`
                       : thumbnailContent
                   }
@@ -590,13 +627,15 @@ export function SlideController({
 
   return (
     <PresentationProvider slug={slug} secret={secret}>
-      <SlideStage
-        slides={slides}
-        index={index}
-        overlay={overlay}
-        theme={theme}
-        slidesMeta={slidesMeta}
-      />
+      <ControlNavProvider value={controlNav}>
+        <SlideStage
+          slides={slides}
+          index={index}
+          overlay={overlay}
+          theme={theme}
+          slidesMeta={slidesMeta}
+        />
+      </ControlNavProvider>
     </PresentationProvider>
   );
 }

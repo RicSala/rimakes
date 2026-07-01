@@ -95,6 +95,8 @@ const markdocComponents = {
           { label: 'Default (white)', value: 'none' },
           { label: 'Brand (indigo)', value: 'brand' },
           { label: 'Dark', value: 'dark' },
+          { label: 'Sepia (parchment — build slides)', value: 'sepia' },
+          { label: 'Emerald (closing slide)', value: 'emerald' },
         ],
         defaultValue: 'none',
       }),
@@ -146,6 +148,15 @@ const markdocComponents = {
       seconds: fields.integer({ label: 'Seconds' }),
       label: fields.text({ label: 'Label (optional)' }),
       id: fields.text({ label: 'Id (only if multiple timers in one deck)' }),
+    },
+  }),
+  // Presenter-only jump shortcut (renders a button on /control, nothing on the
+  // viewer). `title` names the destination slide by its first heading.
+  goto: block({
+    label: 'Goto (presenter jump)',
+    schema: {
+      title: fields.text({ label: 'Destination slide title (first heading)' }),
+      label: fields.text({ label: 'Button label (optional)' }),
     },
   }),
   // Self-check for the audience. `quiz` wraps one or more `question`s (each with
