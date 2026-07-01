@@ -218,6 +218,12 @@ export function SlideController({
   } | null>(null);
   const indexRef = useRef(0);
   const currentNotes = notes?.[index] ?? null;
+  // Return stack for reversible jumps: an overview jump remembers where we came
+  // from, so «⤺ Volver» (b) snaps back to the exact slide — handy for hopping to
+  // a fundamentals slide mid-build and returning to the step you were on. Linear
+  // arrow nav never touches it; only jumps push and Volver pops.
+  const returnStack = useRef<number[]>([]);
+  const [canGoBack, setCanGoBack] = useState(false);
 
   const setBoth = useCallback((next: number) => {
     indexRef.current = next;
@@ -300,14 +306,27 @@ export function SlideController({
     [slug, seekVisible, go]
   );
 
-  // Jump straight to any slide (from the overview) and close the grid.
+  // Jump straight to any slide (from the overview) and close the grid. Remember
+  // where we came from so «⤺ Volver» (b) can snap back to it.
   const jumpTo = useCallback(
     (target: number) => {
+      const from = indexRef.current;
+      if (target !== from) {
+        returnStack.current.push(from);
+        setCanGoBack(true);
+      }
       go(target);
       setOverview(false);
     },
     [go]
   );
+
+  // Pop the return stack and go back to where the last jump started.
+  const goBack = useCallback(() => {
+    const prev = returnStack.current.pop();
+    setCanGoBack(returnStack.current.length > 0);
+    if (typeof prev === 'number') go(prev);
+  }, [go]);
 
   // Drag the speaker-notes panel by its header. Pointer capture keeps the move
   // tracking even when the cursor leaves the handle; the position is clamped to
@@ -390,6 +409,11 @@ export function SlideController({
         setShowNotes((value) => !value);
         return;
       }
+      if (event.key === 'b' || event.key === 'B' || event.key === 'Backspace') {
+        event.preventDefault();
+        goBack();
+        return;
+      }
       if (
         event.key === 'ArrowRight' ||
         event.key === 'PageDown' ||
@@ -405,7 +429,7 @@ export function SlideController({
 
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [goNext, goPrev]);
+  }, [goNext, goPrev, goBack]);
 
   // Heartbeat keeps the cache channel warm.
   useEffect(() => {
@@ -524,6 +548,16 @@ export function SlideController({
       ) : null}
 
       <div className='pointer-events-auto fixed inset-x-0 bottom-0 z-50 flex items-center justify-center gap-3 p-4'>
+        {canGoBack ? (
+          <button
+            type='button'
+            onClick={goBack}
+            title='Volver a donde estabas antes del salto (b)'
+            className='rounded-md border border-primary/50 bg-primary/10 px-4 py-2 text-sm font-medium text-primary shadow-sm transition hover:bg-primary/20'
+          >
+            ⤺ Volver
+          </button>
+        ) : null}
         <button
           type='button'
           onClick={goPrev}
