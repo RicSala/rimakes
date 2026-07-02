@@ -164,29 +164,21 @@
 }
 
 /*
- * Deep emerald scheme for the workshop's closing slide — a celebratory color
- * distinct from every other scheme (module dividers are indigo, the archive is
- * near-black). Dark background + light text (it IS in DARK_SCHEMES → prose
- * inverts), same token structure as the brand scope.
+ * Light "mint" green scheme for the workshop's closing slide — a celebratory
+ * tint distinct from every other scheme. Like sepia it's a LIGHT background, so
+ * it is NOT in DARK_SCHEMES: --foreground/--primary stay dark (from :root) and
+ * the prose keeps its usual dark text. We only warm the surface tokens.
  */
-.slide-theme-emerald {
-  --background: oklch(0.44 0.1 163);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.49 0.095 163);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.49 0.095 163);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.44 0.1 163);
-  --secondary: oklch(0.51 0.085 163);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.51 0.085 163);
-  --muted-foreground: oklch(0.92 0.04 163);
-  --accent: oklch(0.53 0.09 163);
-  --accent-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 22%);
-  --input: oklch(1 0 0 / 22%);
-  --ring: oklch(0.92 0.04 163);
+.slide-theme-mint {
+  --background: oklch(0.95 0.045 155);
+  --card: oklch(0.975 0.03 155);
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.975 0.03 155);
+  --popover-foreground: var(--foreground);
+  --muted: oklch(0.91 0.05 155);
+  --muted-foreground: oklch(0.45 0.035 155);
+  --border: oklch(0.85 0.06 155);
+  --input: oklch(0.85 0.06 155);
 }
 
 @layer base {

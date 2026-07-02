@@ -96,7 +96,7 @@ const markdocComponents = {
           { label: 'Brand (indigo)', value: 'brand' },
           { label: 'Dark', value: 'dark' },
           { label: 'Sepia (parchment — build slides)', value: 'sepia' },
-          { label: 'Emerald (closing slide)', value: 'emerald' },
+          { label: 'Mint (light green — closing slide)', value: 'mint' },
         ],
         defaultValue: 'none',
       }),

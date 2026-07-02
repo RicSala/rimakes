@@ -71,8 +71,8 @@ slide's chrome. It is optional and is not rendered inline.
   prose and any components inside (Callout, Prompt, code) re-theme automatically.
   - `none` (default — white) · `brand` (indigo) · `dark` · `sepia` (pergamino
     claro — el tinte sutil de las slides **"paso a paso"** del build; fondo claro,
-    texto oscuro) · `emerald` (verde esmeralda — la slide de **cierre**; fondo
-    oscuro, texto claro)
+    texto oscuro) · `mint` (verde claro — la slide de **cierre**; fondo claro,
+    texto oscuro)
 - **`tags`** — comma-separated corner labels. Known labels get an icon + color;
   unknown labels get a neutral chip.
   - Built-in styles: `advanced` 🎓 · `theory` 📖 · `skills` 🔧 · `practice` ⚡ · `warning` ⚠️
@@ -106,7 +106,7 @@ copyable block. Don't wrap ordinary content in components for decoration.
 
 | Component | Syntax | Attributes |
 |---|---|---|
-| **Slide settings** | `{% slide bg="brand" tags="A, B" /%}` | `bg`: `none` \| `brand` \| `dark` \| `sepia` (parchment, build slides) \| `emerald` (closing slide); `tags`: comma-separated; `width`: `normal` \| `wide` \| `full`; `public`: `true` (adds slide to the review deck); `section`: module label (groups the review índice) |
+| **Slide settings** | `{% slide bg="brand" tags="A, B" /%}` | `bg`: `none` \| `brand` \| `dark` \| `sepia` (parchment, build slides) \| `mint` (light green, closing slide); `tags`: comma-separated; `width`: `normal` \| `wide` \| `full`; `public`: `true` (adds slide to the review deck); `section`: module label (groups the review índice) |
 | **Callout** | `{% callout title="…" emoji="👋" variant="info" %}…body…{% /callout %}` | `title`, `emoji`, `variant`: `default` \| `info` \| `warning` \| `error` \| `success` |
 | **Prompt** | `{% prompt title="…" %}…body…{% /prompt %}` | `title` — collapsible + copy-to-clipboard block |
 | **Highlight** | `{% highlight %}…texto…{% /highlight %}` | inline marker-pen highlight, **default yellow**; `color`: `yellow` \| `green` \| `blue` \| `pink` \| `orange` |

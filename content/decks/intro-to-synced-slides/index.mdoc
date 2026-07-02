@@ -3659,10 +3659,12 @@ APIs del navegador útiles para mockear: `console.log` / `Notification` / un *to
 
 # El plan de hoy
 
-- En lugar de seguir en la terminal, vamos a volver a la app de escritorio. Ofrece todo lo fundamental y da menos miedo.
+- En lugar de seguir en la terminal, **vamos a volver a la app de escritorio**. Ofrece todo lo fundamental y da menos miedo.
 - Lo visto el otro día sigue aplicando aquí, y a los que ya estéis en la terminal **seguid allí**.
-- Vamos a hacer juntos una app. Como Claude tendrá que ir generando mucho código, tendremos que esperar bastante rato así…
-- …durante esas esperas, veremos conceptos fundamentales, intentando que cuadren con cómo avanzamos.
+- Vamos a hacer juntos una app. Como Claude tendrá que ir generando mucho código, tendremos que esperar bastante rato así que…
+- …durante esas esperas, veremos **conceptos fundamentales**, intentando que cuadren con cómo avanzamos.
+
+Dicho esto, es un poco un ejercicio de coordinación/malabares, así que paciencia!
 
 ---
 
@@ -3682,6 +3684,8 @@ Tú no vas a escribir código —eso lo hace Claude—. Pero para **pedirle bien
 8. **El workflow de desarrollo** — construir paso a paso, **verificando**.
 9. **¿Qué hago cuando tengo un error?** — cómo **desbloquearte**.
 
+Con estas 9 cosas, Claude y ganas, puedes hacer en un par de días apps que hasta hace un año costarían meses de trabajo.
+
 {% callout title="No es para memorizar" emoji="🔖" variant="success" %}
 Estas slides **no están para que os las aprendáis**: son para que las **podáis consultar** cuando os hagan falta. 😉
 {% /callout %}
@@ -3694,15 +3698,9 @@ Estas slides **no están para que os las aprendáis**: son para que las **podái
 
 ## Estructura de una app web (simplificando)
 
-- El **usuario** habla con el **frontend** (tu navegador, Chrome, Firefox, etc.).
-- El frontend habla con el **backend** (el servidor: **Node.js**) a través de **APIs**.
-- El backend habla con la **base de datos**, el **almacenamiento** y los **servicios externos** (la IA, Gmail…).
-- Nosotros usaremos un framework: un conjunto de librerías y herramientas que nos permiten construir la app de una manera más sencilla.
-- Cada una de esas partes usa sus lenguajes:
-  - Front: HTML, CSS, JS (a través de React)
-  - Back: Node.js
-
 ![Arquitectura de una app web con Next.js: el usuario y su navegador (frontend, React) hablan por API con el servidor (backend, Node.js), que se conecta por API a la base de datos (Supabase/Neon), al almacenamiento (AWS/R2) y a servicios externos (OpenAI, Gmail); Next.js envuelve frontend y backend](/cms-assets/decks/intro-to-synced-slides/arquitectura-app.png)
+
+![Los lenguajes de una app web en cuatro recuadros: html (contenido) — la estructura de la página; css (estilo) — cómo se ve; js (comportamiento) — la interactividad en el navegador; y js en backend (lógica) — el mismo JavaScript corriendo en el servidor con Node.js, «un envoltorio para poder usar js sin un navegador»](/cms-assets/decks/intro-to-synced-slides/lenguajes-web.png)
 
 ---
 
@@ -3712,9 +3710,11 @@ Estas slides **no están para que os las aprendáis**: son para que las **podái
 
 ## ¿Qué es una librería?
 
-Cuando hacemos una app, casi nada se construye **desde cero**. Una **librería** es un **paquete de código que ya escribió otra persona** para resolver un problema concreto y **publicó para que cualquiera lo reutilice**. En vez de fabricar esa pieza, la "enchufas" y funciona.
+Una **librería** es un **paquete de código que ya escribió otra persona** para resolver un problema concreto y **publicó para que cualquiera lo reutilice**. En vez de fabricar esa pieza, la "enchufas" y funciona.
 
 (Como ya hemos dicho, Nextjs viene con muchas librerías "de fábrica"!)
+
+Por ponerlo en contexto, en general, **más del 77% de un proyecto medio viene de librerías** y no de código que escribes tú. Y en javascript y desarrollo web, es MUCHO más. El trabajo es unir las piezas. 
 
 Ventajas de usar librerías:
 
@@ -3809,7 +3809,7 @@ Supabase engloba **varias de estas piezas en un único servicio** —**base de d
 
 ## tu app no lo hace todo sola
 
-Una **API** es la forma en que dos programas **se hablan**: tu app le **pide** algo a otro servicio y este le **responde** — como un camarero: tú pides, la cocina responde, sin que tengas que saber cómo cocinan.
+Una **API** es la forma en que dos programas **se hablan**: tu app le **pide** algo a otro servicio y este le **responde**, sin tú saber cómo lo hace.
 
 ![Esquema de APIs: el «Usuario de tu app» habla con «Tu app» y esta con el «Servidor de tu app» por una API interna (flechas negras, ej.: GET https://mi-app.com/api/contactos?…); el servidor llama por API a servicios externos —la «Base de datos de tu app», «Stripe» y «Anthropic»— con flechas de ida y vuelta](/cms-assets/decks/intro-to-synced-slides/apis-servicios-externos.png)
 
@@ -3870,7 +3870,7 @@ Tu app maneja **datos** —contactos, mensajes, pedidos…—. ¿Dónde viven?
 - Necesitas un sitio pensado para **datos que cambian mientras la app funciona** y que tocan a **muchos usuarios**: una **base de datos**.
 - Vive en el **backend** (la cocina), casi nunca en el navegador.
 
-Piénsala como un **Excel** (con superpoderes):
+Piénsala como un **Excel** "on steroids":
 
 {% table %}
 - Base de datos
@@ -3914,11 +3914,16 @@ No tienes que saber de bases de datos. Más adelante verás nombres como **Prism
 
 ## ¿Qué es Git?
 
+De momento céntrate en Git, luego vamos con GitHub.
+
 **Git** es un sistema de versiones que **guarda el historial de tu proyecto**: va haciendo "fotos" de cómo estaban tus archivos en cada momento, para que **nunca pierdas nada** y puedas **volver atrás** si algo se rompe.
 
 Piénsalo como los **puntos de guardado de un videojuego**: avanzas tranquilo porque siempre puedes **volver al último checkpoint**.
 
 Pero es que además en este "videojuego" puedes tener "vidas paralelas": mientras tú trabajas en tu ordenador en la funcionalidad "enviar emails", otra persona puede estar trabajando en la funcionalidad "enviar whatsapp" en su ordenador. Cuando termináis, lo "fusionamos" (git merge)
+
+
+![Grafo de Git: la rama main (init → feat: Guardar contactos → feat: Enviar mails → feat: Authentication → merge) y una rama paralela whatsapp (feat: Enviar whatsapp) que sale de «Guardar contactos» y se vuelve a unir en el merge](/cms-assets/decks/intro-to-synced-slides/git-ramas-commits.png)
 
 Conceptos clave:
 
@@ -3926,9 +3931,6 @@ Conceptos clave:
 - **Commit** — una foto de tu proyecto guardada con un mensaje ("añadí el login"). Es tu checkpoint.
 - **Rama (branch)** — una línea paralela para **probar cosas sin tocar lo que ya funciona**.
 - **GitHub** — una copia en la nube: **backup** + sitio para **compartir y colaborar**.
-
-![Grafo de Git: la rama main (init → feat: Guardar contactos → feat: Enviar mails → feat: Authentication → merge) y una rama paralela whatsapp (feat: Enviar whatsapp) que sale de «Guardar contactos» y se vuelve a unir en el merge](/cms-assets/decks/intro-to-synced-slides/git-ramas-commits.png)
-
 {% callout title="No necesitas memorizar comandos" emoji="🤝" variant="info" %}
 Tú entiende **el concepto**; los comandos los hace **Claude** por ti. Basta con pedirle: *"haz un commit con lo que llevamos"* o *"vuelve a la versión de antes"*.
 
@@ -3941,7 +3943,11 @@ Git es mucho más compejo que esto. Solo quiero que entiendas qué hacer cuando 
 
 # Git y GitHub (2)
 
-Hasta aquí, **Git** ha guardado tus checkpoints **en tu ordenador**. **GitHub** es distinto: es una **copia en la nube** de ese repositorio — tu **backup** y el sitio para **compartir, colaborar y, más adelante, publicar** la app.
+Hasta aquí, **Git** ha guardado tus checkpoints **en tu ordenador**. 
+
+**GitHub** es distinto: es una **copia en la nube** de ese repositorio, ese "árbol" que has ido creando - tu **backup** y el sitio para **compartir, colaborar y, más adelante, publicar** la app.
+
+Es simplemente un "Drive" para esos "árboles" de Git (repositorios).
 
 ## Invitando a colaboradores
 
@@ -4007,6 +4013,8 @@ La solución estándar son las **variables de entorno**: el secreto vive **fuera
 - **En producción:** lo pegas una vez en los **ajustes de Vercel** y ahí vive seguro, en el servidor.
 
 En el código solo aparece **el nombre** del secreto (p. ej. `OPENAI_API_KEY`), **nunca su valor**.
+
+![Diagrama de variables de entorno. A la izquierda, «Tu app» (un recuadro verde) tiene «agujeros» de variables que quien trabaje en ella debe rellenar porque son secretos: PASSWORD, TOKEN, CONFIG y SECRET aparecen como huecos en el código. A la derecha, el archivo «Variables de entorno (.env)» los «rellena» con PASSWORD=…, TOKEN=…, CONFIG=…, SECRET=…](/cms-assets/decks/intro-to-synced-slides/variables-entorno-agujeros.png)
 
 {% callout title="La única regla que tienes que recordar" emoji="🔑" variant="warning" %}
 **Nunca escribas una clave dentro del código.** Una clave es **como la llave de tu casa con la tarjeta dentro**. Si alguna vez la pegas ahí sin querer (o en un chat o repo público), **dala por quemada**: ve al servicio, **bórrala y crea una nueva**. Es gratis y es lo que hace todo el mundo.
@@ -4140,7 +4148,7 @@ Los CLIs pueden pedir **autenticarte** (sobre todo `gh`). Si Claude se para pidi
 Abrimos con **Claude Code** la carpeta **donde queremos crear el proyecto** (la carpeta **padre** — la del proyecto en sí la crea Claude). Desde ahí, le pedimos que **arranque una app de Next.js**.
 
 {% prompt title="Prompt — cópialo y pégaselo a Claude" %}
-Inicializa una aplicación de Next.js usando el CLI. El nuevo proyecto se llama aurora-com.
+Inicializa una aplicación de Next.js usando el CLI. El nuevo proyecto se llama auroracrm.
 {% /prompt %}
 
 {% callout title="A explicar" emoji="🗣️" variant="info" %}
@@ -4187,7 +4195,7 @@ Instala 15 componentes comunes y crea una página "/theme" donde enseñes los di
 
 Para arrancar la app **no hace falta escribir comandos en la terminal**: pulsamos el botón **▶ Run** y el servidor de desarrollo se pone en marcha. Ya podemos abrir `/theme` en el navegador y ver los componentes.
 
-![Claude Code con el botón ▶ Run arriba a la derecha y el archivo .claude/launch.json que Claude ha creado (name «next-dev», runtimeExecutable «npm», runtimeArgs [«run», «dev»], port 3000); a la derecha, la página /theme mostrando el preview de componentes de shadcn/ui de la app Aurora](/cms-assets/decks/intro-to-synced-slides/boton-run-dev.png)
+![Claude Code con el botón ▶ Run arriba a la derecha y el archivo .claude/launch.json que Claude ha creado (name «next-dev», runtimeExecutable «npm», runtimeArgs [«run», «dev»], port 3000); a la derecha, la página /theme mostrando el preview de componentes de shadcn/ui de la app auroracrm](/cms-assets/decks/intro-to-synced-slides/boton-run-dev.png)
 
 {% callout title="A explicar" emoji="🗣️" variant="info" %}
 Es `npm run dev`, pero lo lanza **Claude** por nosotros. Al pulsar **▶ Run**, corre lo que Claude dejó configurado en **`.claude/launch.json`**.
@@ -4219,9 +4227,9 @@ De momento, la idea rápida (lo vemos a fondo más adelante): **Git** es un sist
 
 # Comprobamos que está en GitHub
 
-Entramos en GitHub (menú de perfil arriba a la derecha → **Repositories**) y ahí está: nuestro repo **aurora-lite**, marcado como **Private**, recién actualizado.
+Entramos en GitHub (menú de perfil arriba a la derecha → **Repositories**) y ahí está: nuestro repo **auroracrm**, marcado como **Private**, recién actualizado.
 
-![Página de repositorios de GitHub del usuario RicSala con el menú de perfil abierto en «Repositories»; arriba de la lista, el repositorio aurora-lite marcado como Private y actualizado hace 12 minutos](/cms-assets/decks/intro-to-synced-slides/github-repo-publicado.png)
+![Página de repositorios de GitHub del usuario RicSala con el menú de perfil abierto en «Repositories»; arriba de la lista, el repositorio auroracrm marcado como Private y actualizado hace 12 minutos](/cms-assets/decks/intro-to-synced-slides/github-repo-publicado.png)
 
 ---
 
@@ -4253,7 +4261,7 @@ De momento no hagas pull de las variables de entorno, quiero ponerlas yo (de mom
 
 Las **claves** (como la de la base de datos) las pegamos **nosotros** en el archivo **`.env`**. Y lo hacemos con el **editor de la propia app de Claude** (el panel *Files*) — **no hace falta abrir Cursor**.
 
-![Editor de la app de Claude: el panel Files del proyecto aurora-lite muestra .env y .gitignore en la lista, y el archivo .env abierto con sus variables de entorno redactadas por ser secretas](/cms-assets/decks/intro-to-synced-slides/variables-entorno-editor.png)
+![Editor de la app de Claude: el panel Files del proyecto auroracrm muestra .env y .gitignore en la lista, y el archivo .env abierto con sus variables de entorno redactadas por ser secretas](/cms-assets/decks/intro-to-synced-slides/variables-entorno-editor.png)
 
 {% callout title="A explicar" emoji="🗣️" variant="info" %}
 **Variables de entorno**: dónde viven las **claves y secretos**, fuera del código. Y el **`.gitignore`**: la lista de lo que Git **ignora** al guardar — por eso `.env` **nunca sube a GitHub**.
@@ -4295,7 +4303,7 @@ Añadimos al `launch.json` un **segundo servidor** para poder **ir viendo nuestr
 Añade al launch.json otro servidor que corra Prisma Studio.
 {% /prompt %}
 
-![El editor de la app de Claude: el launch.json de aurora-lite con un segundo servidor añadido, «prisma-studio» (npm run db:studio, puerto 5555), y el menú de Servers mostrando next-dev y prisma-studio en marcha](/cms-assets/decks/intro-to-synced-slides/prisma-studio-server.png)
+![El editor de la app de Claude: el launch.json de auroracrm con un segundo servidor añadido, «prisma-studio» (npm run db:studio, puerto 5555), y el menú de Servers mostrando next-dev y prisma-studio en marcha](/cms-assets/decks/intro-to-synced-slides/prisma-studio-server.png)
 
 {% callout title="A explicar" emoji="🗣️" variant="info" %}
 **Prisma Studio**: una interfaz visual para **ver (y editar) los datos** de tu base de datos en el navegador — como una hoja de cálculo de tus tablas.
@@ -4344,10 +4352,6 @@ Precarga datos seed con una gestora ficticia con 3 fondos y otros datos que cons
 
 Usa la skill de specs en modo PROTOTIPO.
 {% /prompt %}
-
-{% callout title="[PENDING: INSTALAR SKILLS?]" emoji="🚧" variant="warning" %}
-Nos damos cuenta de que **sí usamos varias skills** en el paso a paso (shadcn, Prisma, specs, `/session-close`). ¿Añadimos **un paso al principio** para instalarlas todas de golpe?
-{% /callout %}
 
 {% callout title="A explicar" emoji="🗣️" variant="info" %}
 **El workflow de desarrollo**: el bucle **Explorar → Plan → Implementar → Verificar**. Justo ahora estamos en **Explorar/Plan** — definimos antes de construir.
@@ -4423,7 +4427,7 @@ Y, si sobra, cualquiera de los demás para **repasar**:
 {% goto title="El workflow de desarrollo" label="El workflow de desarrollo" /%}
 {% /callout %}
 
-{% callout title="Otros temas — si os apetece / si da tiempo" emoji="💬" variant="default" %}
+{% callout title="Otros temas - si da tiempo" emoji="💬" variant="default" %}
 No son fundamentales, pero quería comentarlos con vosotros. También a mano por si el rato da:
 
 {% goto title="¿Qué tipo de apps son «fáciles»?" label="¿Qué tipo de apps son «fáciles»?" /%}
@@ -4526,7 +4530,7 @@ Y cuando tenga el plan, **cambiamos a modo «auto»** y le decimos que **tire**.
 
 Cuando termine, como siempre: **cerramos sesión** y esperamos a que **deploye**. Una vez desplegado, **añadimos el MCP a nuestro Claude** — como es **custom**, se hace por la **«vía rara»**: **Settings → Developer → Edit Config** y pegamos en el fichero lo que nos dé Claude (**sin romper la estructura del archivo**).
 
-![Ajustes de la app de Claude (Settings → Developer → Local MCP servers) con el botón «Edit Config» y la lista de servidores MCP (aurora-crm, resend, adloop, Read and Write Apple Notes); anotaciones: «Y pegamos lo que nos dé Claude en el fichero» y «Ojo! No romper la estructura del archivo»](/cms-assets/decks/intro-to-synced-slides/mcp-a-claude-config.png)
+![Ajustes de la app de Claude (Settings → Developer → Local MCP servers) con el botón «Edit Config» y la lista de servidores MCP (auroracrm, resend, adloop, Read and Write Apple Notes); anotaciones: «Y pegamos lo que nos dé Claude en el fichero» y «Ojo! No romper la estructura del archivo»](/cms-assets/decks/intro-to-synced-slides/mcp-a-claude-config.png)
 
 ---
 
@@ -4676,7 +4680,7 @@ Me lo estoy planteando. Es **muy sencillo**, trabaja **casi igual que mi loop de
 
 ---
 
-{% slide bg="emerald" width="wide" /%}
+{% slide bg="mint" width="wide" /%}
 
 # Y hasta aquí 8h de Claude!
 

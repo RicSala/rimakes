@@ -11,16 +11,16 @@ export const SCHEME_CLASS: Record<string, string> = {
   // step-by-step reads as visually distinct from the white theory slides. Unlike
   // brand/dark it's a LIGHT background (see DARK_SCHEMES).
   sepia: 'slide-theme-sepia',
-  // A deep emerald for the workshop's closing slide — a celebratory color not
-  // used by any module divider (indigo) or archive (dark). Dark background,
-  // light text (see DARK_SCHEMES).
-  emerald: 'slide-theme-emerald',
+  // A light "mint" green for the workshop's closing slide — a celebratory color
+  // not used elsewhere. Like sepia it's a LIGHT background (dark text), so it's
+  // absent from DARK_SCHEMES.
+  mint: 'slide-theme-mint',
 };
 
 // Schemes whose background is DARK, so the prose/content must invert to light
-// text. Light-background schemes (sepia) are absent here and keep the default
-// dark prose — otherwise their text would turn white on a light surface.
-export const DARK_SCHEMES = new Set(['brand', 'dark', 'emerald']);
+// text. Light-background schemes (sepia, mint) are absent here and keep the
+// default dark prose — otherwise their text would turn white on a light surface.
+export const DARK_SCHEMES = new Set(['brand', 'dark']);
 
 // A `## subtitle` placed right under the `# title` (an `h1 + h2`) is styled as a
 // subtitle: pulled up close to the title (negative margin beats prose's big h2
