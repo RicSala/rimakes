@@ -2,7 +2,6 @@ import { Locale, NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Navbar } from '@/shared/components/Navbar';
 import { Footer } from '@/shared/components/Footer';
-import { WipDisclaimer } from '@/shared/components/WipDisclaimer';
 import { setRequestLocale } from 'next-intl/server';
 import { ChatButton } from '@/shared/chat/components/ChatButton';
 
@@ -27,7 +26,6 @@ export default async function RootLayout({
             {children}
           </div>
           <ChatButton className='fixed bottom-28 right-8 z-50' />
-          <WipDisclaimer className='bottom-8 mb-8 right-8 z-50 ml-auto block fixed' />
         </main>
         <Footer />
       </div>
