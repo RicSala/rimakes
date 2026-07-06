@@ -32,6 +32,8 @@ import {
   Zap,
 } from 'lucide-react';
 
+import { hasGateAccess } from '@/features/training/access';
+import { TrainingGate } from '@/features/training/TrainingGate';
 import {
   Accordion,
   AccordionContent,
@@ -395,6 +397,11 @@ const COPY = {
       question: '¿Ya eres asistente?',
       link: 'Accede al material',
     },
+    gate: {
+      title: 'Página privada',
+      description:
+        'Esta página aún no es pública. Introduce la contraseña que te he compartido.',
+    },
   },
   en: {
     meta: {
@@ -712,6 +719,11 @@ const COPY = {
       question: 'Already an attendee?',
       link: 'Access the materials',
     },
+    gate: {
+      title: 'Private page',
+      description:
+        'This page is not public yet. Enter the password I shared with you.',
+    },
   },
 };
 
@@ -808,6 +820,20 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
     otherLocale === routing.defaultLocale
       ? '/claude-workshop'
       : `/${otherLocale}/claude-workshop`;
+
+  // Pre-lanzamiento: la landing es privada (candado `workshop`, contraseña en
+  // WORKSHOP_PASSWORD). Sin la env var, el gate falla cerrado.
+  if (!(await hasGateAccess('workshop'))) {
+    return (
+      <TrainingGate
+        gate='workshop'
+        locale={locale === 'en' ? 'en' : 'es'}
+        redirectTo={withLocale('/claude-workshop')}
+        title={t.gate.title}
+        description={t.gate.description}
+      />
+    );
+  }
 
   return (
     <div className='flex flex-col gap-20'>
