@@ -361,7 +361,9 @@ const COPY = {
         },
         {
           q: '¿Cómo reservo mi plaza?',
-          a: 'Reserva una llamada de 30 min: vemos tu caso y, si encajamos, te mando el enlace de pago y quedas dentro. Si ya lo tienes claro, puedes reservar directamente desde el bloque de precio.',
+          // Con pago directo por Stripe (restaurar al reactivarlo):
+          // a: 'Reserva una llamada de 30 min: vemos tu caso y, si encajamos, te mando el enlace de pago y quedas dentro. Si ya lo tienes claro, puedes reservar directamente desde el bloque de precio.',
+          a: 'Reserva una llamada de 30 min: vemos tu caso y, si encajamos, te mando el enlace de pago y quedas dentro.',
         },
         {
           q: '¿En qué idioma es el taller?',
@@ -680,7 +682,9 @@ const COPY = {
         },
         {
           q: 'How do I book my seat?',
-          a: 'Book a 30-minute call: we look at your case and, if we are a fit, I send you the payment link and you are in. Already sure? You can book directly from the pricing section.',
+          // Con pago directo por Stripe (restaurar al reactivarlo):
+          // a: 'Book a 30-minute call: we look at your case and, if we are a fit, I send you the payment link and you are in. Already sure? You can book directly from the pricing section.',
+          a: 'Book a 30-minute call: we look at your case and, if we are a fit, I send you the payment link and you are in.',
         },
         {
           q: 'Can my company pay for it?',
@@ -1207,6 +1211,8 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
               <p className='text-xs text-muted-foreground'>
                 {t.priceSection.callSub}
               </p>
+              {/* Pago directo por Stripe — desactivado por ahora (solo llamada);
+                  descomenta para restaurar la vía rápida.
               <p className='text-sm text-muted-foreground'>
                 {t.priceSection.directPayPre}
                 <a
@@ -1219,6 +1225,7 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
                 </a>
                 {t.priceSection.directPayPost}
               </p>
+              */}
             </div>
           </div>
           <div className='flex gap-3 border-t border-emerald-300/60 bg-emerald-50/60 p-5 dark:border-emerald-900 dark:bg-emerald-950/30'>
