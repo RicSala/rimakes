@@ -14,7 +14,7 @@ import {
   FileText,
   type LucideIcon,
   Mail,
-  MonitorPlay,
+  // MonitorPlay, // curso en vídeo desactivado hasta confirmar viabilidad
   Phone,
   PlugZap,
   Presentation,
@@ -83,8 +83,10 @@ const COPY = {
   es: {
     meta: {
       title: 'Taller de Claude para profesionales no técnicos',
+      // Con curso en vídeo (restaurar al reactivarlo):
+      // description: 'Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. Curso en vídeo, 8h en grupo (máx. 10) y 4h individuales. Empezamos el 3 de septiembre.',
       description:
-        'Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. Curso en vídeo, 8h en grupo (máx. 10) y 4h individuales. Empezamos el 3 de septiembre.',
+        'Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. 8h en grupo (máx. 10) y 4h individuales. Empezamos el 3 de septiembre.',
       ogLocale: 'es_ES',
     },
     mailSubject: 'Duda%20sobre%20el%20taller%20de%20Claude',
@@ -111,7 +113,8 @@ const COPY = {
       { value: '10', label: 'plazas por cohorte', icon: Users, highlight: true },
       { value: '8h', label: 'en grupo, en directo', icon: Presentation },
       { value: '4h', label: 'a solas contigo', icon: User },
-      { value: '+5h', label: 'curso en vídeo', icon: MonitorPlay },
+      // Curso en vídeo — desactivado hasta confirmar viabilidad:
+      // { value: '+5h', label: 'curso en vídeo', icon: MonitorPlay },
     ],
     empathy: {
       eyebrow: '¿Te suena?',
@@ -217,11 +220,12 @@ const COPY = {
           title: 'Llamada previa individual (30 min)',
           body: 'Hablamos tú y yo antes de empezar: qué haces, qué te frena, qué quieres conseguir. Con eso adapto el contenido al grupo.',
         },
-        {
-          icon: MonitorPlay,
-          title: 'Curso troncal en vídeo (+5 horas)',
-          body: 'Los fundamentos, en vídeo y tuyos para siempre: a tu ritmo, y los repasas cuando quieras.',
-        },
+        // Curso en vídeo — desactivado hasta confirmar viabilidad:
+        // {
+        //   icon: MonitorPlay,
+        //   title: 'Curso troncal en vídeo (+5 horas)',
+        //   body: 'Los fundamentos, en vídeo y tuyos para siempre: a tu ritmo, y los repasas cuando quieras.',
+        // },
         {
           icon: Users,
           title: 'Cuatro sesiones en grupo (8 horas)',
@@ -297,7 +301,8 @@ const COPY = {
       cardEyebrow: 'Cohorte de septiembre',
       included: [
         'Llamada previa individual de 30 min para encuadrar tu caso',
-        'Curso troncal en vídeo (+5 horas) para repasar cuando quieras',
+        // Curso en vídeo — desactivado hasta confirmar viabilidad:
+        // 'Curso troncal en vídeo (+5 horas) para repasar cuando quieras',
         '4 sesiones en grupo — 8 horas en directo (3, 10, 17 y 24 de septiembre)',
         '2 sesiones individuales — 4 horas solo tú, yo y tu proyecto',
         'Deck de repaso + 6 recursos, con acceso también después del curso',
@@ -318,7 +323,9 @@ const COPY = {
       eyebrow: 'Seamos claros',
       title: 'Este taller no es para ti si…',
       items: [
-        'Buscas solo un curso grabado para ver «algún día». Aquí los vídeos son la base: lo importante pasa en directo, con fechas y con deberes.',
+        // Con curso en vídeo (restaurar al reactivarlo):
+        // 'Buscas solo un curso grabado para ver «algún día». Aquí los vídeos son la base: lo importante pasa en directo, con fechas y con deberes.',
+        'Buscas un curso grabado para ver «algún día». Esto es en directo, con fechas y con deberes.',
         'No puedes dedicarle unas 4–6 horas semanales durante un mes.',
         'Ya trabajas a diario con Claude Code y la terminal: se te quedará corto (escríbeme y te oriento hacia otra cosa).',
         'Esperas que la IA lo haga todo sola. Vas a aprender a dirigirla — y eso no sustituye tu criterio.',
@@ -334,7 +341,9 @@ const COPY = {
         },
         {
           q: '¿Cuánto tiempo me va a llevar?',
-          a: 'Entre vídeos, sesiones en directo y práctica, calcula unas 4–6 horas a la semana durante un mes. Si una semana no llegas, las individuales sirven para recuperar el ritmo.',
+          // Con curso en vídeo (restaurar al reactivarlo):
+          // a: 'Entre vídeos, sesiones en directo y práctica, calcula unas 4–6 horas a la semana durante un mes. Si una semana no llegas, las individuales sirven para recuperar el ritmo.',
+          a: 'Entre sesiones en directo y práctica, calcula unas 4–6 horas a la semana durante un mes. Si una semana no llegas, las individuales sirven para recuperar el ritmo.',
         },
         {
           q: '¿Qué necesito para empezar?',
@@ -342,7 +351,9 @@ const COPY = {
         },
         {
           q: '¿Y si no puedo asistir a una sesión?',
-          a: 'Los fundamentos quedan en el curso en vídeo y el material de repaso está disponible desde el primer día; en tu sesión individual nos ponemos al día con lo que te hayas perdido.',
+          // Con curso en vídeo (restaurar al reactivarlo):
+          // a: 'Los fundamentos quedan en el curso en vídeo y el material de repaso está disponible desde el primer día; en tu sesión individual nos ponemos al día con lo que te hayas perdido.',
+          a: 'El material de repaso está disponible desde el primer día y en tu sesión individual nos ponemos al día con lo que te hayas perdido.',
         },
         {
           q: '¿Cómo funciona la garantía de devolución?',
@@ -366,7 +377,9 @@ const COPY = {
         },
         {
           q: '¿En qué se diferencia de un curso online al uso?',
-          a: 'Un curso grabado te deja solo frente a los vídeos. Aquí es al revés: los fundamentos van en vídeo precisamente para que las 12 horas en directo se dediquen a aplicar sobre tu proyecto real. Sales con la herramienta trabajando para ti.',
+          // Con curso en vídeo (restaurar al reactivarlo):
+          // a: 'Un curso grabado te deja solo frente a los vídeos. Aquí es al revés: los fundamentos van en vídeo precisamente para que las 12 horas en directo se dediquen a aplicar sobre tu proyecto real. Sales con la herramienta trabajando para ti.',
+          a: 'En que no es un curso: es un taller en directo donde el material de trabajo es tu proyecto real. Los cursos te enseñan la herramienta; de aquí sales con la herramienta trabajando para ti.',
         },
       ],
     },
@@ -384,8 +397,10 @@ const COPY = {
   en: {
     meta: {
       title: 'Claude Workshop for Non-Technical Professionals',
+      // Con curso en vídeo (restaurar al reactivarlo):
+      // description: 'Four weeks to go from using AI as a chat to delegating real work to it. Video course, 8h of live group sessions (max 10) and 4h one-on-one. Starts August 6. Taught in English.',
       description:
-        'Four weeks to go from using AI as a chat to delegating real work to it. Video course, 8h of live group sessions (max 10) and 4h one-on-one. Starts August 6. Taught in English.',
+        'Four weeks to go from using AI as a chat to delegating real work to it. 8h of live group sessions (max 10) and 4h one-on-one. Starts August 6. Taught in English.',
       ogLocale: 'en_US',
     },
     mailSubject: 'Question%20about%20the%20Claude%20workshop',
@@ -412,7 +427,8 @@ const COPY = {
       { value: '10', label: 'seats per cohort', icon: Users, highlight: true },
       { value: '8h', label: 'live, in group', icon: Presentation },
       { value: '4h', label: 'one-on-one with me', icon: User },
-      { value: '+5h', label: 'video course', icon: MonitorPlay },
+      // Curso en vídeo — desactivado hasta confirmar viabilidad:
+      // { value: '+5h', label: 'video course', icon: MonitorPlay },
     ],
     empathy: {
       eyebrow: 'Sound familiar?',
@@ -518,11 +534,12 @@ const COPY = {
           title: 'Individual pre-call (30 min)',
           body: 'You and I talk before we start: what you do, what holds you back, what you want to achieve. I use it to adapt the content to the group.',
         },
-        {
-          icon: MonitorPlay,
-          title: 'Core video course (+5 hours)',
-          body: 'The fundamentals, on video and yours forever: at your own pace, to review whenever you want.',
-        },
+        // Curso en vídeo — desactivado hasta confirmar viabilidad:
+        // {
+        //   icon: MonitorPlay,
+        //   title: 'Core video course (+5 hours)',
+        //   body: 'The fundamentals, on video and yours forever: at your own pace, to review whenever you want.',
+        // },
         {
           icon: Users,
           title: 'Four group sessions (8 hours)',
@@ -598,7 +615,8 @@ const COPY = {
       cardEyebrow: 'August cohort',
       included: [
         'Individual 30-min pre-call to frame your case',
-        'Core video course (+5 hours) to review whenever you want',
+        // Curso en vídeo — desactivado hasta confirmar viabilidad:
+        // 'Core video course (+5 hours) to review whenever you want',
         '4 group sessions — 8 live hours (August 6, 13, 20 & 27)',
         '2 individual sessions — 4 hours: just you, me and your project',
         'Review deck + 6 resources, with access after the course too',
@@ -620,7 +638,9 @@ const COPY = {
       eyebrow: 'Let’s be clear',
       title: 'This workshop is not for you if…',
       items: [
-        'You just want a recorded course to watch “someday”. Here the videos are the foundation: the important part happens live, with dates and homework.',
+        // Con curso en vídeo (restaurar al reactivarlo):
+        // 'You just want a recorded course to watch “someday”. Here the videos are the foundation: the important part happens live, with dates and homework.',
+        'You are looking for a recorded course to watch “someday”. This is live, with dates and homework.',
         'You cannot put in about 4–6 hours a week for a month.',
         'You already work with Claude Code and the terminal every day: it will fall short (write me and I will point you somewhere better).',
         'You expect AI to do everything on its own. You are going to learn to direct it — and that does not replace your judgment.',
@@ -640,7 +660,9 @@ const COPY = {
         },
         {
           q: 'How much time will it take me?',
-          a: 'Between the videos, the live sessions and practice, plan on 4–6 hours a week for a month. If you fall behind one week, the one-on-ones help you catch up.',
+          // Con curso en vídeo (restaurar al reactivarlo):
+          // a: 'Between the videos, the live sessions and practice, plan on 4–6 hours a week for a month. If you fall behind one week, the one-on-ones help you catch up.',
+          a: 'Between the live sessions and practice, plan on 4–6 hours a week for a month. If you fall behind one week, the one-on-ones help you catch up.',
         },
         {
           q: 'What do I need to start?',
@@ -648,7 +670,9 @@ const COPY = {
         },
         {
           q: 'What if I cannot attend a session?',
-          a: 'The fundamentals live in the video course and the materials are available from day one; in your individual session we catch up on whatever you missed.',
+          // Con curso en vídeo (restaurar al reactivarlo):
+          // a: 'The fundamentals live in the video course and the materials are available from day one; in your individual session we catch up on whatever you missed.',
+          a: 'The materials are available from day one, and in your individual session we catch up on whatever you missed.',
         },
         {
           q: 'How does the refund guarantee work?',
@@ -668,7 +692,9 @@ const COPY = {
         },
         {
           q: 'How is this different from a regular online course?',
-          a: 'A recorded course leaves you alone with the videos. Here it is the opposite: the fundamentals go on video precisely so the 12 live hours are spent applying everything to your real project. You leave with the tool working for you.',
+          // Con curso en vídeo (restaurar al reactivarlo):
+          // a: 'A recorded course leaves you alone with the videos. Here it is the opposite: the fundamentals go on video precisely so the 12 live hours are spent applying everything to your real project. You leave with the tool working for you.',
+          a: 'It is not a course: it is a live workshop where the working material is your real project. Courses teach you the tool; here you leave with the tool working for you.',
         },
       ],
     },
@@ -825,7 +851,12 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
       </header>
 
       {/* Format at a glance */}
-      <section className='grid grid-cols-2 gap-4 sm:grid-cols-4'>
+      <section
+        className={cn(
+          'grid grid-cols-2 gap-4',
+          t.stats.length === 4 ? 'sm:grid-cols-4' : 'sm:grid-cols-3'
+        )}
+      >
         {t.stats.map(({ value, label, icon: Icon, highlight }) => (
           <div
             key={label}
@@ -924,7 +955,8 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonios — ocultos hasta tener las citas reales aprobadas.
+          Los textos siguen en COPY (t.testimonials); descomenta para restaurar.
       <section className='flex flex-col gap-6'>
         <SectionHeader
           eyebrow={t.testimonials.eyebrow}
@@ -952,6 +984,7 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
           ))}
         </div>
       </section>
+      */}
 
       {/* Mid-page CTA — right after the social proof peak */}
       <section className='flex flex-col items-center gap-3 rounded-2xl bg-indigo-600/5 p-6 text-center sm:p-8'>
