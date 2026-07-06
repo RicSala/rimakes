@@ -17,6 +17,7 @@ import {
   MonitorPlay,
   Phone,
   PlugZap,
+  Presentation,
   Quote,
   Rocket,
   ShieldCheck,
@@ -77,9 +78,29 @@ export const metadata: Metadata = {
   title: 'Taller de Claude para profesionales no técnicos',
   description:
     'Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. Curso en vídeo, 8h en grupo (máx. 10) y 4h individuales. Empezamos el 3 de septiembre.',
+  openGraph: {
+    title: 'Taller de Claude para profesionales no técnicos',
+    description:
+      'Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. Curso en vídeo, 8h en grupo (máx. 10) y 4h individuales. Empezamos el 3 de septiembre.',
+    type: 'website',
+    locale: 'es_ES',
+  },
   // Borrador en revisión: que no lo indexen los buscadores.
   robots: { index: false, follow: false },
 };
+
+/** Formato de un vistazo — el «10 plazas» va primero y destacado a propósito. */
+const STATS: {
+  value: string;
+  label: string;
+  icon: LucideIcon;
+  highlight?: boolean;
+}[] = [
+  { value: '10', label: 'plazas por cohorte', icon: Users, highlight: true },
+  { value: '8h', label: 'en grupo, en directo', icon: Presentation },
+  { value: '4h', label: 'a solas contigo', icon: User },
+  { value: '+5h', label: 'curso en vídeo', icon: MonitorPlay },
+];
 
 /** Frases (parafraseadas) con las que llegaron los participantes de la 1.ª edición. */
 const PAINS: string[] = [
@@ -297,7 +318,7 @@ function BookCallButton({ className }: { className?: string }) {
       rel='noopener noreferrer'
       className={cn(
         buttonVariants({ size: 'lg' }),
-        'gap-2 bg-indigo-600 text-white hover:bg-indigo-500',
+        'w-full gap-2 bg-indigo-600 text-white hover:bg-indigo-500 sm:w-auto',
         className
       )}
     >
@@ -354,19 +375,8 @@ export default async function TallerBPage({ params }: Props) {
           Deja de pedirle textos a la IA. Aprende a delegarle trabajo.
         </h1>
         <p className='text-lg text-muted-foreground'>
-          Un taller en directo para profesionales no técnicos:{' '}
-          <strong className='font-semibold text-foreground'>
-            curso troncal en vídeo
-          </strong>
-          ,{' '}
-          <strong className='font-semibold text-foreground'>
-            8 horas en grupo
-          </strong>{' '}
-          (máximo {COHORT.seatsTotal}) y{' '}
-          <strong className='font-semibold text-foreground'>
-            4 horas individuales
-          </strong>{' '}
-          contigo. Para pasar de usar la IA como un chat a{' '}
+          Un taller en directo para profesionales no técnicos: pasa de usar la
+          IA como un chat a{' '}
           <strong className='font-semibold text-foreground'>
             delegarle trabajo de verdad
           </strong>{' '}
@@ -376,7 +386,10 @@ export default async function TallerBPage({ params }: Props) {
           <BookCallButton />
           <Link
             href='#programa'
-            className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}
+            className={cn(
+              buttonVariants({ variant: 'outline', size: 'lg' }),
+              'w-full sm:w-auto'
+            )}
           >
             Ver el programa
           </Link>
@@ -392,6 +405,27 @@ export default async function TallerBPage({ params }: Props) {
           </span>
         </p>
       </header>
+
+      {/* Format at a glance */}
+      <section className='grid grid-cols-2 gap-4 sm:grid-cols-4'>
+        {STATS.map(({ value, label, icon: Icon, highlight }) => (
+          <div
+            key={label}
+            className={cn(
+              'flex flex-col gap-1 rounded-xl border p-4',
+              highlight
+                ? 'border-indigo-500/50 bg-indigo-600/5'
+                : 'border-border bg-card'
+            )}
+          >
+            <Icon className='size-5 text-indigo-600 dark:text-indigo-400' />
+            <span className='mt-1 text-2xl font-bold leading-none'>
+              {value}
+            </span>
+            <span className='text-sm text-muted-foreground'>{label}</span>
+          </div>
+        ))}
+      </section>
 
       {/* Empathy — the reader's own words */}
       <section className='flex flex-col gap-6'>
@@ -489,7 +523,7 @@ export default async function TallerBPage({ params }: Props) {
               key={name}
               className='flex flex-col justify-between gap-4 rounded-xl border border-border bg-card p-5'
             >
-              <blockquote className='text-sm text-muted-foreground'>
+              <blockquote className='text-sm leading-relaxed'>
                 «{quote}»
               </blockquote>
               <figcaption className='flex items-center gap-3'>
@@ -504,6 +538,18 @@ export default async function TallerBPage({ params }: Props) {
             </figure>
           ))}
         </div>
+      </section>
+
+      {/* Mid-page CTA — right after the social proof peak */}
+      <section className='flex flex-col items-center gap-3 rounded-2xl bg-indigo-600/5 p-6 text-center sm:p-8'>
+        <p className='font-medium'>
+          ¿Te ves en estas historias? Hablemos 30 minutos y lo comprobamos.
+        </p>
+        <BookCallButton />
+        <p className='text-xs text-muted-foreground'>
+          Sin compromiso · quedan {COHORT.seatsLeft} de {COHORT.seatsTotal}{' '}
+          plazas
+        </p>
       </section>
 
       {/* Format */}
@@ -545,7 +591,7 @@ export default async function TallerBPage({ params }: Props) {
           </strong>{' '}
           — incluida, si tu caso lo pide, tu primera herramienta a medida.
         </p>
-        <div className='grid gap-3 sm:grid-cols-3'>
+        <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
           {MODULES.map(({ title, icon: Icon }) => (
             <div
               key={title}
@@ -614,7 +660,7 @@ export default async function TallerBPage({ params }: Props) {
       <section className='flex flex-col gap-6'>
         <SectionHeader
           eyebrow='Ediciones'
-          title='Cohortes pequeñas, y el precio va subiendo'
+          title={`Cohortes de ${COHORT.seatsTotal} plazas — y el precio va subiendo`}
         />
         <div className='grid gap-4 sm:grid-cols-3'>
           <div className='flex flex-col justify-between gap-6 rounded-xl border border-border bg-card p-5'>
@@ -636,6 +682,7 @@ export default async function TallerBPage({ params }: Props) {
             </div>
             <span className='flex flex-wrap items-baseline gap-x-2'>
               <s className='text-base font-medium text-muted-foreground'>
+                <span className='sr-only'>Precio de la próxima edición: </span>
                 {COHORT.futurePrice}
               </s>
               <span className='text-2xl font-bold tracking-tight'>
