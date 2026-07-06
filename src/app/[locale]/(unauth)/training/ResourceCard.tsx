@@ -27,20 +27,40 @@ export type Resource = {
   description: string;
 };
 
+const COPY = {
+  es: {
+    lockBadge: 'Solo asistentes',
+    open: 'Abrir recurso',
+    unlock: 'Desbloquear con contraseña',
+    dialogDescription:
+      'Recurso solo para asistentes. Introduce la contraseña para acceder.',
+  },
+  en: {
+    lockBadge: 'Attendees only',
+    open: 'Open resource',
+    unlock: 'Unlock with password',
+    dialogDescription:
+      'Attendee-only resource. Enter the password to access it.',
+  },
+} as const;
+
 /**
- * A gated resource card for the Training page. It always shows a "Solo
- * asistentes" lock badge so the protected nature is obvious. When the visitor
- * already has access it links straight to the resource; otherwise it opens the
- * shared password dialog and, on success, redirects to the resource.
+ * A gated resource card for the Training page. It always shows an
+ * attendees-only lock badge so the protected nature is obvious. When the
+ * visitor already has access it links straight to the resource; otherwise it
+ * opens the shared password dialog and, on success, redirects to the resource.
  */
 export function ResourceCard({
   resource,
   unlocked,
+  locale = 'es',
 }: {
   resource: Resource;
   unlocked: boolean;
+  locale?: 'es' | 'en';
 }) {
   const { href, icon: Icon, title, description } = resource;
+  const c = COPY[locale];
 
   const card = (
     <Card className='group h-full cursor-pointer text-left transition hover:border-primary/50 hover:shadow-md'>
@@ -51,7 +71,7 @@ export function ResourceCard({
           </div>
           <span className='inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground'>
             <Lock className='size-3' />
-            Solo asistentes
+            {c.lockBadge}
           </span>
         </div>
         <CardTitle className='mt-1'>{title}</CardTitle>
@@ -59,12 +79,12 @@ export function ResourceCard({
         <div className='mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary'>
           {unlocked ? (
             <>
-              Abrir recurso
+              {c.open}
               <ArrowRight className='size-4 transition group-hover:translate-x-0.5' />
             </>
           ) : (
             <>
-              Desbloquear con contraseña
+              {c.unlock}
               <Lock className='size-3.5' />
             </>
           )}
@@ -91,11 +111,9 @@ export function ResourceCard({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>
-            Recurso solo para asistentes. Introduce la contraseña para acceder.
-          </DialogDescription>
+          <DialogDescription>{c.dialogDescription}</DialogDescription>
         </DialogHeader>
-        <PasswordForm redirectTo={href} autoFocus />
+        <PasswordForm redirectTo={href} locale={locale} autoFocus />
       </DialogContent>
     </Dialog>
   );
