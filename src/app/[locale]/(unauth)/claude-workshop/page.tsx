@@ -39,19 +39,14 @@ import {
   AccordionTrigger,
 } from '@/shared/components/ui/accordion';
 import { buttonVariants } from '@/shared/components/ui/button';
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/shared/components/ui/card';
 import { routing } from '@/shared/internationalization/i18n/config';
 import { cn } from '@/shared/lib/utils';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// BORRADOR ALTERNATIVO de la landing /taller — versión "venta directa":
-// precio visible, contador de plazas, garantía, testimonios y CTA de llamada.
-// Compárala con /taller y borra la carpeta de la versión descartada.
+// Landing del taller — /claude-workshop. Bilingüe (COPY es/en), versión "venta
+// directa": precio visible, contador de plazas, garantía, testimonios y llamada.
+// PENDIENTE ANTES DE INDEXAR (hoy robots noindex): (1) Payment Link real de
+// Stripe, (2) confirmar horario, (3) aprobar/sustituir los testimonios.
 // ─────────────────────────────────────────────────────────────────────────────
 
 type Props = {
@@ -64,8 +59,11 @@ type Props = {
 // LOS DOS idiomas.
 // ─────────────────────────────────────────────────────────────────────────────
 const COHORT = {
-  /** Plazas libres — bájalo a mano según se vendan. */
-  seatsLeft: 8,
+  /** Plazas libres por cohorte — bájalas a mano según se vendan. */
+  seatsLeft: {
+    august: 9, // cohorte de agosto (en inglés) — la que vende la página EN
+    september: 8, // cohorte de septiembre (en español) — la que vende la página ES
+  },
   seatsTotal: 10,
   /** TODO: sustituir por el Payment Link real de Stripe antes de publicar. */
   stripeUrl: 'https://buy.stripe.com/REEMPLAZAR',
@@ -96,7 +94,7 @@ const COPY = {
       '1.089 € IVA incluido · factura para tu empresa (formación deducible)',
     futurePrice: '1.100 €',
     betaPriceLine: 'Precio de beta — subirá en las próximas ediciones',
-    seatsLabel: `Quedan ${COHORT.seatsLeft} de ${COHORT.seatsTotal} plazas`,
+    seatsLabel: `Quedan ${COHORT.seatsLeft.september} de ${COHORT.seatsTotal} plazas`,
     hero: {
       dateBadge: 'Cohorte de septiembre · empieza el jueves 3 de septiembre',
       h1: 'Deja de pedirle textos a la IA. Aprende a delegarle trabajo.',
@@ -206,7 +204,7 @@ const COPY = {
     },
     midCta: {
       line: '¿Te ves en estas historias? Hablemos 30 minutos y lo comprobamos.',
-      sub: `Sin compromiso · quedan ${COHORT.seatsLeft} de ${COHORT.seatsTotal} plazas`,
+      sub: `Sin compromiso · quedan ${COHORT.seatsLeft.september} de ${COHORT.seatsTotal} plazas`,
     },
     method: {
       eyebrow: 'Metodología',
@@ -273,11 +271,23 @@ const COPY = {
     editions: {
       eyebrow: 'Ediciones',
       title: `Cohortes de ${COHORT.seatsTotal} plazas — y el precio va subiendo`,
-      july: 'Julio 2026',
-      julySoldOut: 'Agotado',
-      september: 'Septiembre 2026',
-      october: 'Octubre 2026',
       srFuturePrice: 'Precio de la próxima edición: ',
+      july: { month: 'Julio 2026', flag: '🇪🇸', soldOut: 'Agotado' },
+      august: {
+        month: 'Agosto 2026',
+        flag: '🇬🇧',
+        seats: `Quedan ${COHORT.seatsLeft.august} de ${COHORT.seatsTotal}`,
+        highlight: false,
+      },
+      september: {
+        month: 'Septiembre 2026',
+        flag: '🇪🇸',
+        seats: `Quedan ${COHORT.seatsLeft.september} de ${COHORT.seatsTotal}`,
+        highlight: true,
+      },
+      october: { month: 'Octubre 2026' },
+      crossPre: '¿Prefieres hacerlo en inglés? ',
+      crossLink: 'La cohorte de agosto se imparte en inglés',
     },
     priceSection: {
       eyebrow: 'La inversión',
@@ -343,6 +353,10 @@ const COPY = {
           a: 'Reserva una llamada de 30 min: vemos tu caso y, si encajamos, te mando el enlace de pago y quedas dentro. Si ya lo tienes claro, puedes reservar directamente desde el bloque de precio.',
         },
         {
+          q: '¿En qué idioma es el taller?',
+          a: 'La cohorte de septiembre se imparte en español. ¿Prefieres inglés? La edición de agosto es en inglés — mismo programa y mismo precio.',
+        },
+        {
           q: '¿Puedo pagarlo como empresa?',
           a: 'Sí. Recibirás factura con el IVA desglosado, y la formación es un gasto deducible para tu empresa.',
         },
@@ -360,7 +374,7 @@ const COPY = {
       title: 'Empezamos el jueves 3 de septiembre',
       body: 'Si has pensado en ese informe que haces a mano cada mes o en ese «yo no soy técnico», es justo lo que resolvemos en cuatro semanas. Esta es la última edición a precio de beta: la de octubre ya costará 1.100 € + IVA.',
       mailButton: 'Escríbeme',
-      sub: `Quedan ${COHORT.seatsLeft} de ${COHORT.seatsTotal} plazas · precio de beta (subirá en próximas ediciones) · si la primera sesión no es para ti, devolución del 100 %.`,
+      sub: `Quedan ${COHORT.seatsLeft.september} de ${COHORT.seatsTotal} plazas · precio de beta (subirá en próximas ediciones) · si la primera sesión no es para ti, devolución del 100 %.`,
     },
     attendees: {
       question: '¿Ya eres asistente?',
@@ -371,7 +385,7 @@ const COPY = {
     meta: {
       title: 'Claude Workshop for Non-Technical Professionals',
       description:
-        'Four weeks to go from using AI as a chat to delegating real work to it. Video course, 8h of live group sessions (max 10) and 4h one-on-one. Starts September 3. Taught in Spanish.',
+        'Four weeks to go from using AI as a chat to delegating real work to it. Video course, 8h of live group sessions (max 10) and 4h one-on-one. Starts August 6. Taught in English.',
       ogLocale: 'en_US',
     },
     mailSubject: 'Question%20about%20the%20Claude%20workshop',
@@ -381,9 +395,9 @@ const COPY = {
       '€1,089 VAT included · invoice for your company (tax-deductible training)',
     futurePrice: '€1,100',
     betaPriceLine: 'Beta price — it will go up in future editions',
-    seatsLabel: `${COHORT.seatsLeft} of ${COHORT.seatsTotal} seats left`,
+    seatsLabel: `${COHORT.seatsLeft.august} of ${COHORT.seatsTotal} seats left`,
     hero: {
-      dateBadge: 'September cohort · starts Thursday, September 3',
+      dateBadge: 'August cohort, in English · starts Thursday, August 6',
       h1: 'Stop asking AI for text. Learn to delegate real work.',
       subPre:
         'A live workshop for non-technical professionals: go from using AI as a chatbot to ',
@@ -491,7 +505,7 @@ const COPY = {
     },
     midCta: {
       line: 'See yourself in these stories? Let’s talk for 30 minutes and find out.',
-      sub: `No strings attached · ${COHORT.seatsLeft} of ${COHORT.seatsTotal} seats left`,
+      sub: `No strings attached · ${COHORT.seatsLeft.august} of ${COHORT.seatsTotal} seats left`,
     },
     method: {
       eyebrow: 'Method',
@@ -558,27 +572,40 @@ const COPY = {
     editions: {
       eyebrow: 'Editions',
       title: `Cohorts of ${COHORT.seatsTotal} seats — and the price keeps going up`,
-      july: 'July 2026',
-      julySoldOut: 'Sold out',
-      september: 'September 2026',
-      october: 'October 2026',
       srFuturePrice: 'Next edition’s price: ',
+      july: { month: 'July 2026', flag: '🇪🇸', soldOut: 'Sold out' },
+      august: {
+        month: 'August 2026',
+        flag: '🇬🇧',
+        seats: `${COHORT.seatsLeft.august} of ${COHORT.seatsTotal} left`,
+        highlight: true,
+      },
+      september: {
+        month: 'September 2026',
+        flag: '🇪🇸',
+        seats: `${COHORT.seatsLeft.september} of ${COHORT.seatsTotal} left`,
+        highlight: false,
+      },
+      october: { month: 'October 2026' },
+      crossPre: 'Prefer Spanish? ',
+      crossLink: 'The September cohort is taught in Spanish',
     },
     priceSection: {
       eyebrow: 'The investment',
       title: 'One seat, everything included',
       intro:
         'The four one-on-one hours alone are the equivalent of private consulting on your case.',
-      cardEyebrow: 'September cohort',
+      cardEyebrow: 'August cohort',
       included: [
         'Individual 30-min pre-call to frame your case',
         'Core video course (+5 hours) to review whenever you want',
-        '4 group sessions — 8 live hours (September 3, 10, 17 & 24)',
+        '4 group sessions — 8 live hours (August 6, 13, 20 & 27)',
         '2 individual sessions — 4 hours: just you, me and your project',
         'Review deck + 6 resources, with access after the course too',
         'Material from future editions included, at no extra cost',
         `A group of ${COHORT.seatsTotal} people, maximum`,
       ],
+      // TODO: confirmar el horario definitivo de la cohorte en inglés.
       schedule: 'Thursdays, 12:00–14:00 (Madrid time, CET)',
       callSub:
         'No strings attached: we look at your case and I tell you, honestly, whether the workshop will help you.',
@@ -605,7 +632,7 @@ const COPY = {
       items: [
         {
           q: 'What language is the workshop in?',
-          a: 'Spanish — the live sessions, the materials and the video course. If you work comfortably in Spanish, you are all set.',
+          a: 'The August cohort is taught in English — live sessions and one-on-ones included. There is also a Spanish cohort in September: same program, same price. Pick the language you think in.',
         },
         {
           q: 'I am not technical at all. Is this really for me?',
@@ -646,10 +673,10 @@ const COPY = {
       ],
     },
     closing: {
-      title: 'We start Thursday, September 3',
-      body: 'If this made you think of that report you still build by hand every month, or of that “I am not technical”… that is exactly what we fix in four weeks. This is the last edition at beta price: October will cost €1,100 + VAT.',
+      title: 'We start Thursday, August 6',
+      body: 'If this made you think of that report you still build by hand every month, or of that “I am not technical”… that is exactly what we fix in four weeks. This is one of the last seats at beta price: October will cost €1,100 + VAT.',
       mailButton: 'Write me',
-      sub: `${COHORT.seatsLeft} of ${COHORT.seatsTotal} seats left · beta price (going up next edition) · full refund if the first session is not for you.`,
+      sub: `${COHORT.seatsLeft.august} of ${COHORT.seatsTotal} seats left · beta price (going up next edition) · full refund if the first session is not for you.`,
     },
     attendees: {
       question: 'Already an attendee?',
@@ -730,7 +757,7 @@ function BookCallButton({
   );
 }
 
-export default async function TallerBPage({ params }: Props) {
+export default async function ClaudeWorkshopPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = copyFor(locale);
@@ -744,6 +771,13 @@ export default async function TallerBPage({ params }: Props) {
   const blogHref = withLocale('/blog');
   const appsHref = withLocale('/my-apps');
   const mailHref = `mailto:${COHORT.contactEmail}?subject=${t.mailSubject}`;
+
+  // Enlace a esta misma landing en el otro idioma (para la cohorte alterna).
+  const otherLocale = locale === 'en' ? 'es' : 'en';
+  const otherLocaleHref =
+    otherLocale === routing.defaultLocale
+      ? '/claude-workshop'
+      : `/${otherLocale}/claude-workshop`;
 
   return (
     <div className='flex flex-col gap-20'>
@@ -1013,40 +1047,65 @@ export default async function TallerBPage({ params }: Props) {
       {/* Editions grid — track record + honest price anchor */}
       <section className='flex flex-col gap-6'>
         <SectionHeader eyebrow={t.editions.eyebrow} title={t.editions.title} />
-        <div className='grid gap-4 sm:grid-cols-3'>
+        <div className='grid gap-4 sm:grid-cols-2'>
           <div className='flex flex-col justify-between gap-6 rounded-xl border border-border bg-card p-5'>
-            <span className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
-              {t.editions.july}
-            </span>
-            <span className='text-2xl font-bold tracking-tight text-muted-foreground'>
-              {t.editions.julySoldOut}
-            </span>
-          </div>
-          <div className='flex flex-col justify-between gap-6 rounded-xl border-2 border-indigo-500/60 bg-indigo-600/5 p-5 dark:border-indigo-500/40'>
-            <div className='flex flex-col gap-1'>
-              <span className='text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400'>
-                {t.editions.september}
+            <div className='flex items-start justify-between gap-2'>
+              <span className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
+                {t.editions.july.month}
               </span>
-              <span className='text-xs font-medium text-amber-700 dark:text-amber-400'>
-                {t.seatsLabel}
+              <span className='text-base leading-none'>
+                {t.editions.july.flag}
               </span>
             </div>
-            <span className='flex flex-wrap items-baseline gap-x-2'>
-              <s className='text-base font-medium text-muted-foreground'>
-                <span className='sr-only'>{t.editions.srFuturePrice}</span>
-                {t.futurePrice}
-              </s>
-              <span className='text-2xl font-bold tracking-tight'>
-                {t.price}
-              </span>
-              <span className='text-sm text-muted-foreground'>
-                {t.priceVat}
-              </span>
+            <span className='text-2xl font-bold tracking-tight text-muted-foreground'>
+              {t.editions.july.soldOut}
             </span>
           </div>
+          {[t.editions.august, t.editions.september].map((edition) => (
+            <div
+              key={edition.month}
+              className={cn(
+                'flex flex-col justify-between gap-6 rounded-xl p-5',
+                edition.highlight
+                  ? 'border-2 border-indigo-500/60 bg-indigo-600/5 dark:border-indigo-500/40'
+                  : 'border border-border bg-card'
+              )}
+            >
+              <div className='flex items-start justify-between gap-2'>
+                <div className='flex flex-col gap-1'>
+                  <span
+                    className={cn(
+                      'text-xs font-semibold uppercase tracking-wide',
+                      edition.highlight
+                        ? 'text-indigo-600 dark:text-indigo-400'
+                        : 'text-muted-foreground'
+                    )}
+                  >
+                    {edition.month}
+                  </span>
+                  <span className='text-xs font-medium text-amber-700 dark:text-amber-400'>
+                    {edition.seats}
+                  </span>
+                </div>
+                <span className='text-base leading-none'>{edition.flag}</span>
+              </div>
+              <span className='flex flex-wrap items-baseline gap-x-2'>
+                <s className='text-base font-medium text-muted-foreground'>
+                  <span className='sr-only'>{t.editions.srFuturePrice}</span>
+                  {t.futurePrice}
+                </s>
+                <span className='text-2xl font-bold tracking-tight'>
+                  {t.price}
+                </span>
+                <span className='text-sm text-muted-foreground'>
+                  {t.priceVat}
+                </span>
+              </span>
+            </div>
+          ))}
           <div className='flex flex-col justify-between gap-6 rounded-xl border border-dashed border-border p-5'>
             <span className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
-              {t.editions.october}
+              {t.editions.october.month}
             </span>
             <span className='flex flex-wrap items-baseline gap-x-2 text-muted-foreground'>
               <span className='text-2xl font-bold tracking-tight'>
@@ -1056,6 +1115,15 @@ export default async function TallerBPage({ params }: Props) {
             </span>
           </div>
         </div>
+        <p className='text-sm text-muted-foreground'>
+          {t.editions.crossPre}
+          <Link
+            href={otherLocaleHref}
+            className='font-medium text-indigo-600 hover:underline dark:text-indigo-400'
+          >
+            {t.editions.crossLink}
+          </Link>
+        </p>
       </section>
 
       {/* Price */}
