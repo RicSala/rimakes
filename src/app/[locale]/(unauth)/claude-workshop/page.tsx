@@ -4,7 +4,7 @@ import { setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  ArrowRight,
+  // ArrowRight, // solo lo usaban los enlaces de la bio, desactivados por ahora
   BookOpen,
   Boxes,
   Brain,
@@ -810,16 +810,17 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
     locale === routing.defaultLocale ? path : `/${locale}${path}`;
 
   const materialHref = withLocale('/training');
-  const blogHref = withLocale('/blog');
-  const appsHref = withLocale('/my-apps');
+  // Enlaces de la bio — desactivados por ahora (restaurar con los <Link> de la bio):
+  // const blogHref = withLocale('/blog');
+  // const appsHref = withLocale('/my-apps');
   const mailHref = `mailto:${COHORT.contactEmail}?subject=${t.mailSubject}`;
 
   // Enlace a esta misma landing en el otro idioma (para la cohorte alterna).
+  // Prefijo SIEMPRE explícito (también para el locale por defecto): con la ruta
+  // sin prefijo, el middleware prioriza la cookie de idioma y te devuelve al
+  // locale actual; /es/… fuerza el cambio (redirige y actualiza la cookie).
   const otherLocale = locale === 'en' ? 'es' : 'en';
-  const otherLocaleHref =
-    otherLocale === routing.defaultLocale
-      ? '/claude-workshop'
-      : `/${otherLocale}/claude-workshop`;
+  const otherLocaleHref = `/${otherLocale}/claude-workshop`;
 
   // Pre-lanzamiento: la landing es privada (candado `workshop`, contraseña en
   // WORKSHOP_PASSWORD). Sin la env var, el gate falla cerrado.
@@ -1089,6 +1090,8 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
             <p>{t.bio.p1}</p>
             <p>{t.bio.p2}</p>
             <p className='font-medium text-foreground'>{t.bio.p3}</p>
+            {/* Enlaces a blog y apps — desactivados por ahora; descomenta para
+                restaurar (y reactiva blogHref/appsHref y el import ArrowRight).
             <div className='flex flex-wrap gap-4 text-sm'>
               <Link
                 href={blogHref}
@@ -1103,6 +1106,7 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
                 {t.bio.appsLink} <ArrowRight className='size-3.5' />
               </Link>
             </div>
+            */}
           </div>
         </div>
       </section>
