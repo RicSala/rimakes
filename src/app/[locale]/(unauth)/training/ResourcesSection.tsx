@@ -1,6 +1,6 @@
 'use client';
 
-import { BookA, FileText, Layers, Map, Terminal, Wand2 } from 'lucide-react';
+import { BookA, FileText, Layers, Map, Rocket, Terminal, Wand2 } from 'lucide-react';
 
 import { ResourceCard, type Resource } from './ResourceCard';
 
@@ -36,6 +36,11 @@ const COPY = {
       description:
         'Una referencia rápida de la terminal, Claude Code y Git para reconocer los comandos y empezar a usarlos. Descargable en PDF.',
     },
+    crearApp: {
+      title: 'Crear una app con Claude',
+      description:
+        'Los nueve fundamentos, el stack por defecto y el paso a paso completo —con sus prompts— para ir del proyecto vacío a una app publicada. Descargable en PDF.',
+    },
   },
   en: {
     mapa: {
@@ -68,6 +73,11 @@ const COPY = {
       description:
         'A quick reference for the terminal, Claude Code and Git, to recognize the commands and start using them. Downloadable as PDF.',
     },
+    crearApp: {
+      title: 'Building an app with Claude',
+      description:
+        'The nine fundamentals, the default stack and the full step-by-step —prompts included— to go from an empty project to a deployed app. Downloadable as PDF.',
+    },
   },
 } as const;
 
@@ -87,6 +97,7 @@ export function ResourcesSection({
   skillsHref,
   glosarioHref,
   comandosHref,
+  crearAppHref,
 }: {
   unlocked: boolean;
   locale?: 'es' | 'en';
@@ -96,6 +107,7 @@ export function ResourcesSection({
   skillsHref: string;
   glosarioHref: string;
   comandosHref: string;
+  crearAppHref: string;
 }) {
   const c = COPY[locale];
 
@@ -106,6 +118,7 @@ export function ResourcesSection({
     { href: skillsHref, icon: Wand2, ...c.skills },
     { href: glosarioHref, icon: BookA, ...c.glosario },
     { href: comandosHref, icon: Terminal, ...c.comandos },
+    { href: crearAppHref, icon: Rocket, ...c.crearApp },
   ];
 
   return (

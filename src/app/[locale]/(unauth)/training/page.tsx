@@ -70,6 +70,7 @@ export default async function TrainingPage({ params }: Props) {
   const skillsHref = withLocale('/skills');
   const glosarioHref = withLocale('/glosario');
   const comandosHref = withLocale('/comandos');
+  const crearAppHref = withLocale('/crear-app');
 
   return (
     <div className='flex flex-col gap-10'>
@@ -122,6 +123,7 @@ export default async function TrainingPage({ params }: Props) {
           skillsHref={skillsHref}
           glosarioHref={glosarioHref}
           comandosHref={comandosHref}
+          crearAppHref={crearAppHref}
         />
       </section>
     </div>
