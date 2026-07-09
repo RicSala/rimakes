@@ -161,7 +161,7 @@ filters). Mark slides public two ways; a slide is public if **either** applies:
 - **A leading run — `publicThrough` (frontmatter):** the number of covered slides, e.g.
   `publicThrough: 12` puts slides **1–12** in the review deck. The usual knob — **bump it
   as the course progresses** (one line, no per-slide edits).
-  - _Frontera actual (`intro-to-synced-slides`): `publicThrough: 160` → última pública = slide **160 «Ejercicio: Inicializa tu CLAUDE.md»** (Módulo 8). Actualiza esta línea al mover la frontera._
+  - _Frontera actual (`intro-to-synced-slides`): `publicThrough: 206` → última pública = slide **206 «Y hasta aquí 8h de Claude!»** (cierre de Módulo 9; para antes de la sección 🗄️ archivadas). Actualiza esta línea al mover la frontera._
 - **One-off slides — `{% slide public=true /%}`:** add an individual slide anywhere
   (handy for a public slide outside the leading run).
 
