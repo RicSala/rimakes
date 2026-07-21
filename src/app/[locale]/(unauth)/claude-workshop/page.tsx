@@ -34,6 +34,7 @@ import {
 
 import { hasGateAccess } from '@/features/training/access';
 import { TrainingGate } from '@/features/training/TrainingGate';
+import { Highlight } from '@/shared/components/Highlight';
 import {
   Accordion,
   AccordionContent,
@@ -48,7 +49,7 @@ import { cn } from '@/shared/lib/utils';
 // Landing del taller — /claude-workshop. Bilingüe (COPY es/en), versión "venta
 // directa": precio visible, contador de plazas, garantía, testimonios y llamada.
 // PENDIENTE ANTES DE INDEXAR (hoy robots noindex): (1) Payment Link real de
-// Stripe, (2) confirmar horario, (3) aprobar/sustituir los testimonios.
+// Stripe, (2) confirmar horario.
 // ─────────────────────────────────────────────────────────────────────────────
 
 type Props = {
@@ -76,11 +77,39 @@ const COHORT = {
 };
 
 /**
- * ⚠️ TESTIMONIOS: BORRADORES PENDIENTES DE APROBACIÓN — citas redactadas a
- * partir de los resultados reales de la Cohort 0, pero NO son palabras
- * textuales de nadie. Sustituir por los testimonios reales (aprobados por
- * cada persona) antes de publicar la página — en ambos idiomas.
+ * TESTIMONIOS — personas de la Cohort 0. Todos son recomendaciones públicas de
+ * LinkedIn: la foto, el nombre y el enlace al perfil son lo que hace que la cita
+ * sea *verificable* (que es de donde viene la credibilidad, no de un pantallazo).
+ * Datos compartidos entre idiomas; la cita y el cargo viven en COPY (es/en).
  */
+const RECOMMENDATIONS_URL =
+  'https://www.linkedin.com/in/ricardosala/details/recommendations/';
+
+const TESTIMONIAL_PEOPLE = {
+  guillem: {
+    name: 'Guillem "Bill" Garcia Galofre',
+    image: '/images/testimonials/guillem.jpg',
+    linkedin: 'https://www.linkedin.com/in/guillemgarciagalofre/',
+  },
+  salva: {
+    name: 'Salvador Rovira',
+    image: '/images/testimonials/salva.jpg',
+    linkedin: 'https://www.linkedin.com/in/salvador-rovira-991a4832/',
+  },
+  borja: {
+    name: 'Borja Camblor',
+    image: '/images/testimonials/borja.jpg',
+    linkedin: 'https://www.linkedin.com/in/borja-camblor-a582a629/',
+  },
+  jordi: {
+    name: 'Jordi Teijeiro',
+    image: '/images/testimonials/jordi.jpg',
+    linkedin: 'https://www.linkedin.com/in/jordi-teijeiro/',
+  },
+} as const;
+
+type TestimonialKey = keyof typeof TESTIMONIAL_PEOPLE;
+
 const COPY = {
   es: {
     meta: {
@@ -180,30 +209,36 @@ const COPY = {
     testimonials: {
       eyebrow: 'En sus palabras',
       title: 'Lo que dicen los que ya pasaron por aquí',
+      linkLabel: 'Ver las recomendaciones originales en LinkedIn',
+      translatedNote: 'Traducido del inglés',
       items: [
         {
+          key: 'jordi' as TestimonialKey,
           quote:
-            'Llegué sin tiempo y con cero ganas de nada técnico. Salí con el reporting de mi consejo montado sobre mi propio correo y calendario. Lo que más me sorprendió: no tuve que aprender a programar para nada de eso.',
-          name: 'Humbert',
-          role: 'Fundador, PdPaola',
+            'Destacaría especialmente su total entrega, sus amplios conocimientos y, sobre todo, su capacidad para transmitirlos **de una manera clara, práctica y accesible** para que desde el inicio los pueda aplicar en mi día a día profesional. Sin duda, recomiendo su trabajo a cualquier persona o empresa que quiera adentrarse en el mundo de la inteligencia artificial.',
+          role: 'Diseño y comunicación gráfica · Ultramarinos Comunicación',
+          translated: false,
         },
         {
+          key: 'salva' as TestimonialKey,
           quote:
-            'Yo hacía mi cuadro de KPIs a mano en Excel todos los meses. Ahora se hace solo. Solo por eso el taller ya está pagado.',
-          name: 'Salva',
-          role: 'CEO de varias compañías',
+            'Con tan solo 4 sesiones con Ricardo, y gracias a la pasión y el cariño que pone en ellas, he entendido las infinitas posibilidades que ofrece la IA. Tareas como la revisión de emails, la creación de informes o las presentaciones, que antes me quitaban mucho tiempo, ahora las ejecuto de forma mucho más rápida. Sin duda, **un curso con un alto retorno.**',
+          role: 'Consejero delegado, Poble Espanyol de Barcelona',
+          translated: false,
         },
         {
+          key: 'borja' as TestimonialKey,
           quote:
-            'Mi miedo era no saber ni qué pedirle a la IA. Acabé con una app funcionando que resuelve un problema real de un cliente. Todavía me cuesta creérmelo.',
-          name: 'Jordi',
-          role: 'Diseñador de marca',
+            'Ricardo te enseña a sacar el máximo partido a Claude: desde el día a día hasta construir apps y webs completas con lenguaje natural y conocimientos muy básicos de programación. **100 % práctico y adaptado a tu perfil gracias a las clases individuales.** ¡Salí con proyectos reales en marcha que llevaba tiempo posponiendo!',
+          role: 'TheFork (Tripadvisor) · INSEAD MBA, ex-McKinsey',
+          translated: false,
         },
         {
+          key: 'guillem' as TestimonialKey,
           quote:
-            'Pensaba que sin saber leer código esto no era para mí. Las sesiones individuales marcan la diferencia: sales con tu caso resuelto, no con teoría.',
-          name: 'Guillem',
-          role: 'Consultor de estrategia',
+            'No vengo de un perfil técnico y no sé programar. Antes del taller de Ricardo no sabía muy bien qué podía hacer Claude por mi trabajo, ni siquiera qué pedirle. Cuatro semanas después me he construido un CRM funcionando desde cero: con todo lo que necesito, nada de lo que no, y que funciona como trabajo yo. Seré honesto en una cosa: el ritmo es rápido y hay mucho contenido. Pero **Ricardo estuvo ahí cada vez que me atasqué.**',
+          role: 'Consultor independiente · Nueva York',
+          translated: true,
         },
       ],
     },
@@ -501,30 +536,36 @@ const COPY = {
     testimonials: {
       eyebrow: 'In their words',
       title: 'What past participants say',
+      linkLabel: 'See the original recommendations on LinkedIn',
+      translatedNote: 'Translated from Spanish',
       items: [
         {
+          key: 'jordi' as TestimonialKey,
           quote:
-            'I arrived with no time and zero appetite for anything technical. I left with my board reporting running on my own email and calendar. What surprised me most: I did not have to learn to code for any of it.',
-          name: 'Humbert',
-          role: 'Founder, PdPaola',
+            "What stands out most is his complete dedication, his breadth of knowledge and, above all, his ability to pass it on **in a way that is clear, practical and accessible** so that I could apply it to my working day from day one. I'd recommend his work to anyone, or any company, wanting to step into the world of artificial intelligence.",
+          role: 'Graphic & brand communication · Ultramarinos Comunicación',
+          translated: true,
         },
         {
+          key: 'salva' as TestimonialKey,
           quote:
-            'I used to build my KPI dashboard by hand in Excel every month. Now it builds itself. That alone paid for the workshop.',
-          name: 'Salva',
-          role: 'CEO of several companies',
+            'In just 4 sessions with Ricardo, and thanks to the passion and care he puts into them, I understood the endless possibilities AI opens up. Tasks like going through emails, putting together reports or building presentations, which used to eat up my time, now take a fraction of it. Without a doubt, **a course with a high return.**',
+          role: 'CEO, Poble Espanyol de Barcelona',
+          translated: true,
         },
         {
+          key: 'borja' as TestimonialKey,
           quote:
-            'My fear was not even knowing what to ask AI for. I ended up with a working app that solves a real client problem. I still can hardly believe it.',
-          name: 'Jordi',
-          role: 'Brand designer',
+            "Ricardo teaches you how to get the most out of Claude: from everyday work to building complete apps and websites with natural language and very basic programming knowledge. **100% practical and tailored to your profile thanks to the one-on-one sessions.** I left with real projects underway that I'd been putting off for ages!",
+          role: 'TheFork (Tripadvisor) · INSEAD MBA, ex-McKinsey',
+          translated: true,
         },
         {
+          key: 'guillem' as TestimonialKey,
           quote:
-            'I thought that without being able to read code this was not for me. The one-on-one sessions make the difference: you leave with your case solved, not with theory.',
-          name: 'Guillem',
-          role: 'Strategy consultant',
+            "I don't come from a technical background, and I can't code. Before Ricardo's workshop, I didn't really know what Claude could do for my work — or even what to ask it for. Four weeks later, I've built a working CRM from scratch — one that has everything I need, nothing I don't, and works the way I do. I'll be straight about one thing: the pace is fast and the content is a lot. But **he was right there whenever I got stuck.**",
+          role: 'Independent consultant · New York',
+          translated: false,
         },
       ],
     },
@@ -767,6 +808,79 @@ function IconChip({ icon: Icon }: { icon: LucideIcon }) {
   );
 }
 
+/** Glifo de LinkedIn — lucide ya no trae iconos de marca, así que va inline. */
+function LinkedInIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox='0 0 24 24' fill='currentColor' aria-hidden className={className}>
+      <path d='M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z' />
+    </svg>
+  );
+}
+
+/**
+ * Renderiza una cita marcando con rotulador los tramos envueltos en `**…**`.
+ * Un solo tramo por cita: si subrayas tres cosas, no has subrayado ninguna.
+ */
+function MarkedQuote({ quote }: { quote: string }) {
+  return (
+    <>
+      {quote.split('**').map((chunk, i) =>
+        i % 2 === 1 ? (
+          <Highlight key={i}>{chunk}</Highlight>
+        ) : (
+          <span key={i}>{chunk}</span>
+        )
+      )}
+    </>
+  );
+}
+
+function TestimonialCard({
+  quote,
+  role,
+  person,
+  translatedNote,
+}: {
+  quote: string;
+  role: string;
+  person: (typeof TESTIMONIAL_PEOPLE)[TestimonialKey];
+  translatedNote?: string;
+}) {
+  return (
+    <figure className='flex flex-col justify-between gap-5 rounded-xl border border-border bg-card p-5'>
+      <blockquote className='text-sm leading-relaxed'>
+        <MarkedQuote quote={quote} />
+      </blockquote>
+      <figcaption className='flex items-center gap-3'>
+        <Image
+          src={person.image}
+          alt={person.name}
+          width={88}
+          height={88}
+          className='size-11 shrink-0 rounded-full object-cover'
+        />
+        <div className='flex min-w-0 flex-col'>
+          <a
+            href={person.linkedin}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='flex items-center gap-1.5 text-sm font-semibold hover:underline'
+          >
+            {person.name}
+            <LinkedInIcon className='size-3.5 shrink-0 text-[#0a66c2]' />
+          </a>
+          <span className='text-xs text-muted-foreground'>{role}</span>
+          {translatedNote ? (
+            <span className='text-xs italic text-muted-foreground/70'>
+              {translatedNote}
+            </span>
+          ) : null}
+        </div>
+      </figcaption>
+    </figure>
+  );
+}
+
 function SeatsBadge({ label }: { label: string }) {
   return (
     <span className='inline-flex w-fit items-center gap-1.5 rounded-full border border-amber-300/70 bg-amber-100/60 px-3 py-1 text-xs font-medium text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300'>
@@ -986,36 +1100,37 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Testimonios — ocultos hasta tener las citas reales aprobadas.
-          Los textos siguen en COPY (t.testimonials); descomenta para restaurar.
+      {/* Testimonios — recomendaciones públicas de LinkedIn de la Cohort 0.
+          Citas literales (recortadas, nunca reescritas) y enlazadas al perfil de
+          quien las firma: eso es lo que las hace verificables. */}
       <section className='flex flex-col gap-6'>
         <SectionHeader
           eyebrow={t.testimonials.eyebrow}
           title={t.testimonials.title}
         />
-        <div className='grid gap-4 sm:grid-cols-2'>
-          {t.testimonials.items.map(({ quote, name, role }) => (
-            <figure
-              key={name}
-              className='flex flex-col justify-between gap-4 rounded-xl border border-border bg-card p-5'
-            >
-              <blockquote className='text-sm leading-relaxed'>
-                «{quote}»
-              </blockquote>
-              <figcaption className='flex items-center gap-3'>
-                <div className='flex size-9 items-center justify-center rounded-full bg-indigo-600/10 text-sm font-semibold text-indigo-600 dark:text-indigo-400'>
-                  {name.charAt(0)}
-                </div>
-                <div className='flex flex-col'>
-                  <span className='text-sm font-semibold'>{name}</span>
-                  <span className='text-xs text-muted-foreground'>{role}</span>
-                </div>
-              </figcaption>
-            </figure>
+        <div className='grid items-start gap-4 sm:grid-cols-2'>
+          {t.testimonials.items.map(({ key, quote, role, translated }) => (
+            <TestimonialCard
+              key={key}
+              quote={quote}
+              role={role}
+              person={TESTIMONIAL_PEOPLE[key]}
+              translatedNote={
+                translated ? t.testimonials.translatedNote : undefined
+              }
+            />
           ))}
         </div>
+        <a
+          href={RECOMMENDATIONS_URL}
+          target='_blank'
+          rel='noopener noreferrer'
+          className='inline-flex w-fit items-center gap-2 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline'
+        >
+          <LinkedInIcon className='size-4 text-[#0a66c2]' />
+          {t.testimonials.linkLabel}
+        </a>
       </section>
-      */}
 
       {/* Mid-page CTA — right after the social proof peak */}
       <section className='flex flex-col items-center gap-3 rounded-2xl bg-indigo-600/5 p-6 text-center sm:p-8'>
