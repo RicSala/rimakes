@@ -17,7 +17,7 @@ const LABELS = {
 /**
  * Shared password form: a single password field that unlocks a gate
  * (`training` by default) and navigates to `redirectTo` on success. Used by
- * the deck's inline gate, the Training page dialogs and the workshop landing.
+ * the deck's inline gate and the Training page dialogs.
  */
 export function PasswordForm({
   redirectTo,

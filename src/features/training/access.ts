@@ -10,8 +10,6 @@ import { cookies } from 'next/headers';
 export const GATES = {
   /** Material de asistentes: decks de repaso y recursos (página Training). */
   training: { cookie: 'training_access', envVar: 'TRAINING_PASSWORD' },
-  /** Landing del workshop (/claude-workshop) mientras no sea pública. */
-  workshop: { cookie: 'workshop_access', envVar: 'WORKSHOP_PASSWORD' },
 } as const;
 
 export type GateId = keyof typeof GATES;

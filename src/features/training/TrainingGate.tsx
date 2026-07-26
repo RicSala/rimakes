@@ -14,8 +14,7 @@ import {
  * Full-screen password card shown in place of gated content. On success the
  * form redirects back to `redirectTo`, which now passes the cookie gate and
  * renders. Defaults to the training gate with its Spanish copy; pass `gate`,
- * `locale`, `title` and `description` for other gates (e.g. the workshop
- * landing).
+ * `locale`, `title` and `description` for other gates.
  */
 export function TrainingGate({
   redirectTo,

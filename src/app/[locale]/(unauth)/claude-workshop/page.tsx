@@ -32,8 +32,6 @@ import {
   Zap,
 } from 'lucide-react';
 
-import { hasGateAccess } from '@/features/training/access';
-import { TrainingGate } from '@/features/training/TrainingGate';
 import { Highlight } from '@/shared/components/Highlight';
 import {
   Accordion,
@@ -48,6 +46,7 @@ import { cn } from '@/shared/lib/utils';
 // ─────────────────────────────────────────────────────────────────────────────
 // Landing del taller — /claude-workshop. Bilingüe (COPY es/en), versión "venta
 // directa": precio visible, contador de plazas, garantía, testimonios y llamada.
+// Página abierta (sin contraseña) para que cualquiera pueda inscribirse.
 // PENDIENTE ANTES DE INDEXAR (hoy robots noindex): (1) Payment Link real de
 // Stripe, (2) confirmar horario.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -60,14 +59,16 @@ type Props = {
 // DATOS DE LA COHORTE — números y enlaces compartidos entre idiomas.
 // Fechas, horario y precios viven en COPY (es/en): si los cambias, actualiza
 // LOS DOS idiomas.
+// Solo hay una cohorte con fecha: la de septiembre, en español. Las dos páginas
+// (ES y EN) venden esa misma cohorte; la edición en inglés se abrirá según el
+// interés y todavía no tiene fecha.
 // ─────────────────────────────────────────────────────────────────────────────
 const COHORT = {
   /** Plazas libres por cohorte — bájalas a mano según se vendan. */
   seatsLeft: {
-    august: 9, // cohorte de agosto (en inglés) — la que vende la página EN
-    september: 8, // cohorte de septiembre (en español) — la que vende la página ES
+    september: 13, // cohorte de septiembre (en español) — la única con fecha
   },
-  seatsTotal: 10,
+  seatsTotal: 15,
   /** TODO: sustituir por el Payment Link real de Stripe antes de publicar. */
   stripeUrl: 'https://buy.stripe.com/REEMPLAZAR',
   /** TODO: crear en Cal.com un evento dedicado «Taller Claude — llamada de encaje (30 min)». */
@@ -115,9 +116,9 @@ const COPY = {
     meta: {
       title: 'Taller de Claude para profesionales no técnicos',
       // Con curso en vídeo (restaurar al reactivarlo):
-      // description: 'Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. Curso en vídeo, 8h en grupo (máx. 10) y 4h individuales. Empezamos el 3 de septiembre.',
+      // description: 'Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. Curso en vídeo, 8h en grupo (máx. 15) y 4h individuales. Empezamos el 3 de septiembre.',
       description:
-        'Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. 8h en grupo (máx. 10) y 4h individuales. Empezamos el 3 de septiembre.',
+        'Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. 8h en grupo (máx. 15) y 4h individuales. Empezamos el 3 de septiembre.',
       ogLocale: 'es_ES',
     },
     mailSubject: 'Duda%20sobre%20el%20taller%20de%20Claude',
@@ -141,7 +142,12 @@ const COPY = {
     },
     callButton: 'Reserva una llamada (30 min)',
     stats: [
-      { value: '10', label: 'plazas por cohorte', icon: Users, highlight: true },
+      {
+        value: String(COHORT.seatsTotal),
+        label: 'plazas por cohorte',
+        icon: Users,
+        highlight: true,
+      },
       { value: '8h', label: 'en grupo, en directo', icon: Presentation },
       { value: '4h', label: 'a solas contigo', icon: User },
       // Curso en vídeo — desactivado hasta confirmar viabilidad:
@@ -314,21 +320,21 @@ const COPY = {
       title: `Cohortes de ${COHORT.seatsTotal} plazas — y el precio va subiendo`,
       srFuturePrice: 'Precio de la próxima edición: ',
       july: { month: 'Julio 2026', flag: '🇪🇸', soldOut: 'Agotado' },
-      august: {
-        month: 'Agosto 2026',
-        flag: '🇬🇧',
-        seats: `Quedan ${COHORT.seatsLeft.august} de ${COHORT.seatsTotal}`,
-        highlight: false,
-      },
       september: {
         month: 'Septiembre 2026',
         flag: '🇪🇸',
         seats: `Quedan ${COHORT.seatsLeft.september} de ${COHORT.seatsTotal}`,
-        highlight: true,
       },
       october: { month: 'Octubre 2026' },
-      crossPre: '¿Prefieres hacerlo en inglés? ',
-      crossLink: 'La cohorte de agosto se imparte en inglés',
+      english: {
+        month: 'Edición en inglés',
+        flag: '🇬🇧',
+        tbd: 'Fecha por confirmar',
+        note: 'Se abrirá según el interés',
+      },
+      crossPre:
+        '¿Prefieres hacerlo en inglés? La edición en inglés aún no tiene fecha: la abro en cuanto haya grupo. ',
+      crossLink: 'Escríbeme y te aviso',
     },
     priceSection: {
       eyebrow: 'La inversión',
@@ -404,15 +410,15 @@ const COPY = {
         },
         {
           q: '¿En qué idioma es el taller?',
-          a: 'La cohorte de septiembre se imparte en español. ¿Prefieres inglés? La edición de agosto es en inglés — mismo programa y mismo precio.',
+          a: 'La cohorte de septiembre se imparte en español. ¿Prefieres inglés? La edición en inglés todavía no tiene fecha: la abriré en cuanto haya grupo (mismo programa y mismo precio). Escríbeme y te aviso en cuanto la convoque.',
         },
         {
           q: '¿Puedo pagarlo como empresa?',
           a: 'Sí. Recibirás factura con el IVA desglosado, y la formación es un gasto deducible para tu empresa.',
         },
         {
-          q: '¿Por qué solo 10 plazas?',
-          a: 'Porque el formato no escala: 4 horas individuales por persona y ejercicios corregidos en directo. Con más de diez dejaría de ser lo que es.',
+          q: `¿Por qué solo ${COHORT.seatsTotal} plazas?`,
+          a: 'Porque el formato no escala: 4 horas individuales por persona y ejercicios corregidos en directo. Con un grupo más grande dejaría de ser lo que es.',
         },
         {
           q: '¿En qué se diferencia de un curso online al uso?',
@@ -432,19 +438,14 @@ const COPY = {
       question: '¿Ya eres asistente?',
       link: 'Accede al material',
     },
-    gate: {
-      title: 'Página privada',
-      description:
-        'Esta página aún no es pública. Introduce la contraseña que te he compartido.',
-    },
   },
   en: {
     meta: {
       title: 'Claude Workshop for Non-Technical Professionals',
       // Con curso en vídeo (restaurar al reactivarlo):
-      // description: 'Four weeks to go from using AI as a chat to delegating real work to it. Video course, 8h of live group sessions (max 10) and 4h one-on-one. Starts August 6. Taught in English.',
+      // description: 'Four weeks to go from using AI as a chat to delegating real work to it. Video course, 8h of live group sessions (max 15) and 4h one-on-one. Starts September 3, taught in Spanish — an English edition opens as soon as there is a group.',
       description:
-        'Four weeks to go from using AI as a chat to delegating real work to it. 8h of live group sessions (max 10) and 4h one-on-one. Starts August 6. Taught in English.',
+        'Four weeks to go from using AI as a chat to delegating real work to it. 8h of live group sessions (max 15) and 4h one-on-one. Starts September 3, taught in Spanish — an English edition opens as soon as there is a group.',
       ogLocale: 'en_US',
     },
     mailSubject: 'Question%20about%20the%20Claude%20workshop',
@@ -454,9 +455,9 @@ const COPY = {
       '€1,089 VAT included · invoice for your company (tax-deductible training)',
     futurePrice: '€1,100',
     betaPriceLine: 'Beta price — it will go up in future editions',
-    seatsLabel: `${COHORT.seatsLeft.august} of ${COHORT.seatsTotal} seats left`,
+    seatsLabel: `${COHORT.seatsLeft.september} of ${COHORT.seatsTotal} seats left`,
     hero: {
-      dateBadge: 'August cohort, in English · starts Thursday, August 6',
+      dateBadge: 'September cohort, in Spanish · starts Thursday, September 3',
       h1: 'Stop asking AI for text. Learn to delegate real work.',
       subPre:
         'A live workshop for non-technical professionals: go from using AI as a chatbot to ',
@@ -468,7 +469,12 @@ const COPY = {
     },
     callButton: 'Book a call (30 min)',
     stats: [
-      { value: '10', label: 'seats per cohort', icon: Users, highlight: true },
+      {
+        value: String(COHORT.seatsTotal),
+        label: 'seats per cohort',
+        icon: Users,
+        highlight: true,
+      },
       { value: '8h', label: 'live, in group', icon: Presentation },
       { value: '4h', label: 'one-on-one with me', icon: User },
       // Curso en vídeo — desactivado hasta confirmar viabilidad:
@@ -571,7 +577,7 @@ const COPY = {
     },
     midCta: {
       line: 'See yourself in these stories? Let’s talk for 30 minutes and find out.',
-      sub: `No strings attached · ${COHORT.seatsLeft.august} of ${COHORT.seatsTotal} seats left`,
+      sub: `No strings attached · ${COHORT.seatsLeft.september} of ${COHORT.seatsTotal} seats left`,
     },
     method: {
       eyebrow: 'Method',
@@ -641,39 +647,38 @@ const COPY = {
       title: `Cohorts of ${COHORT.seatsTotal} seats — and the price keeps going up`,
       srFuturePrice: 'Next edition’s price: ',
       july: { month: 'July 2026', flag: '🇪🇸', soldOut: 'Sold out' },
-      august: {
-        month: 'August 2026',
-        flag: '🇬🇧',
-        seats: `${COHORT.seatsLeft.august} of ${COHORT.seatsTotal} left`,
-        highlight: true,
-      },
       september: {
         month: 'September 2026',
         flag: '🇪🇸',
         seats: `${COHORT.seatsLeft.september} of ${COHORT.seatsTotal} left`,
-        highlight: false,
       },
       october: { month: 'October 2026' },
-      crossPre: 'Prefer Spanish? ',
-      crossLink: 'The September cohort is taught in Spanish',
+      english: {
+        month: 'English edition',
+        flag: '🇬🇧',
+        tbd: 'Date to be confirmed',
+        note: 'It opens depending on interest',
+      },
+      crossPre:
+        'The September cohort is taught in Spanish. The English edition does not have a date yet: it opens as soon as there is a group. ',
+      crossLink: 'Write me and I will let you know',
     },
     priceSection: {
       eyebrow: 'The investment',
       title: 'One seat, everything included',
       intro:
         'The four one-on-one hours alone are the equivalent of private consulting on your case.',
-      cardEyebrow: 'August cohort',
+      cardEyebrow: 'September cohort',
       included: [
         'Individual 30-min pre-call to frame your case',
         // Curso en vídeo — desactivado hasta confirmar viabilidad:
         // 'Core video course (+5 hours) to review whenever you want',
-        '4 group sessions — 8 live hours (August 6, 13, 20 & 27)',
+        '4 group sessions — 8 live hours (September 3, 10, 17 & 24)',
         '2 individual sessions — 4 hours: just you, me and your project',
         'Review deck + 6 resources, with access after the course too',
         'Material from future editions included, at no extra cost',
         `A group of ${COHORT.seatsTotal} people, maximum`,
       ],
-      // TODO: confirmar el horario definitivo de la cohorte en inglés.
       schedule: 'Thursdays, 12:00–14:00 (Madrid time, CET)',
       callSub:
         'No strings attached: we look at your case and I tell you, honestly, whether the workshop will help you.',
@@ -702,7 +707,7 @@ const COPY = {
       items: [
         {
           q: 'What language is the workshop in?',
-          a: 'The August cohort is taught in English — live sessions and one-on-ones included. There is also a Spanish cohort in September: same program, same price. Pick the language you think in.',
+          a: 'The September cohort is taught in Spanish — live sessions and one-on-ones included. The English edition does not have a date yet: I open it as soon as there is a group, so it depends on interest. Write me or book a call and I will let you know first.',
         },
         {
           q: 'I am not technical at all. Is this really for me?',
@@ -739,8 +744,8 @@ const COPY = {
           a: 'Yes. You will receive an invoice with VAT itemized, and training is a tax-deductible expense for your company.',
         },
         {
-          q: 'Why only 10 seats?',
-          a: 'Because the format does not scale: 4 one-on-one hours per person and exercises corrected live. With more than ten it would stop being what it is.',
+          q: `Why only ${COHORT.seatsTotal} seats?`,
+          a: 'Because the format does not scale: 4 one-on-one hours per person and exercises corrected live. With a bigger group it would stop being what it is.',
         },
         {
           q: 'How is this different from a regular online course?',
@@ -751,19 +756,14 @@ const COPY = {
       ],
     },
     closing: {
-      title: 'We start Thursday, August 6',
+      title: 'We start Thursday, September 3',
       body: 'If this made you think of that report you still build by hand every month, or of that “I am not technical”… that is exactly what we fix in four weeks. This is one of the last seats at beta price: October will cost €1,100 + VAT.',
       mailButton: 'Write me',
-      sub: `${COHORT.seatsLeft.august} of ${COHORT.seatsTotal} seats left · beta price (going up next edition) · full refund if the first session is not for you.`,
+      sub: `${COHORT.seatsLeft.september} of ${COHORT.seatsTotal} seats left · beta price (going up next edition) · full refund if the first session is not for you.`,
     },
     attendees: {
       question: 'Already an attendee?',
       link: 'Access the materials',
-    },
-    gate: {
-      title: 'Private page',
-      description:
-        'This page is not public yet. Enter the password I shared with you.',
     },
   },
 };
@@ -928,27 +928,6 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
   // const blogHref = withLocale('/blog');
   // const appsHref = withLocale('/my-apps');
   const mailHref = `mailto:${COHORT.contactEmail}?subject=${t.mailSubject}`;
-
-  // Enlace a esta misma landing en el otro idioma (para la cohorte alterna).
-  // Prefijo SIEMPRE explícito (también para el locale por defecto): con la ruta
-  // sin prefijo, el middleware prioriza la cookie de idioma y te devuelve al
-  // locale actual; /es/… fuerza el cambio (redirige y actualiza la cookie).
-  const otherLocale = locale === 'en' ? 'es' : 'en';
-  const otherLocaleHref = `/${otherLocale}/claude-workshop`;
-
-  // Pre-lanzamiento: la landing es privada (candado `workshop`, contraseña en
-  // WORKSHOP_PASSWORD). Sin la env var, el gate falla cerrado.
-  if (!(await hasGateAccess('workshop'))) {
-    return (
-      <TrainingGate
-        gate='workshop'
-        locale={locale === 'en' ? 'en' : 'es'}
-        redirectTo={withLocale('/claude-workshop')}
-        title={t.gate.title}
-        description={t.gate.description}
-      />
-    );
-  }
 
   return (
     <div className='flex flex-col gap-20'>
@@ -1243,48 +1222,34 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
               {t.editions.july.soldOut}
             </span>
           </div>
-          {[t.editions.august, t.editions.september].map((edition) => (
-            <div
-              key={edition.month}
-              className={cn(
-                'flex flex-col justify-between gap-6 rounded-xl p-5',
-                edition.highlight
-                  ? 'border-2 border-indigo-500/60 bg-indigo-600/5 dark:border-indigo-500/40'
-                  : 'border border-border bg-card'
-              )}
-            >
-              <div className='flex items-start justify-between gap-2'>
-                <div className='flex flex-col gap-1'>
-                  <span
-                    className={cn(
-                      'text-xs font-semibold uppercase tracking-wide',
-                      edition.highlight
-                        ? 'text-indigo-600 dark:text-indigo-400'
-                        : 'text-muted-foreground'
-                    )}
-                  >
-                    {edition.month}
-                  </span>
-                  <span className='text-xs font-medium text-amber-700 dark:text-amber-400'>
-                    {edition.seats}
-                  </span>
-                </div>
-                <span className='text-base leading-none'>{edition.flag}</span>
+          {/* Septiembre — la única cohorte con fecha, la que se vende aquí. */}
+          <div className='flex flex-col justify-between gap-6 rounded-xl border-2 border-indigo-500/60 bg-indigo-600/5 p-5 dark:border-indigo-500/40'>
+            <div className='flex items-start justify-between gap-2'>
+              <div className='flex flex-col gap-1'>
+                <span className='text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400'>
+                  {t.editions.september.month}
+                </span>
+                <span className='text-xs font-medium text-amber-700 dark:text-amber-400'>
+                  {t.editions.september.seats}
+                </span>
               </div>
-              <span className='flex flex-wrap items-baseline gap-x-2'>
-                <s className='text-base font-medium text-muted-foreground'>
-                  <span className='sr-only'>{t.editions.srFuturePrice}</span>
-                  {t.futurePrice}
-                </s>
-                <span className='text-2xl font-bold tracking-tight'>
-                  {t.price}
-                </span>
-                <span className='text-sm text-muted-foreground'>
-                  {t.priceVat}
-                </span>
+              <span className='text-base leading-none'>
+                {t.editions.september.flag}
               </span>
             </div>
-          ))}
+            <span className='flex flex-wrap items-baseline gap-x-2'>
+              <s className='text-base font-medium text-muted-foreground'>
+                <span className='sr-only'>{t.editions.srFuturePrice}</span>
+                {t.futurePrice}
+              </s>
+              <span className='text-2xl font-bold tracking-tight'>
+                {t.price}
+              </span>
+              <span className='text-sm text-muted-foreground'>
+                {t.priceVat}
+              </span>
+            </span>
+          </div>
           <div className='flex flex-col justify-between gap-6 rounded-xl border border-dashed border-border p-5'>
             <span className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
               {t.editions.october.month}
@@ -1296,15 +1261,32 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
               <span className='text-sm'>{t.priceVat}</span>
             </span>
           </div>
+          {/* Edición en inglés — sin fecha: se abrirá según el interés. */}
+          <div className='flex flex-col justify-between gap-6 rounded-xl border border-dashed border-border p-5'>
+            <div className='flex items-start justify-between gap-2'>
+              <span className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
+                {t.editions.english.month}
+              </span>
+              <span className='text-base leading-none'>
+                {t.editions.english.flag}
+              </span>
+            </div>
+            <span className='flex flex-col gap-1 text-muted-foreground'>
+              <span className='text-xl font-bold tracking-tight'>
+                {t.editions.english.tbd}
+              </span>
+              <span className='text-xs'>{t.editions.english.note}</span>
+            </span>
+          </div>
         </div>
         <p className='text-sm text-muted-foreground'>
           {t.editions.crossPre}
-          <Link
-            href={otherLocaleHref}
+          <a
+            href={mailHref}
             className='font-medium text-indigo-600 hover:underline dark:text-indigo-400'
           >
             {t.editions.crossLink}
-          </Link>
+          </a>
         </p>
       </section>
 

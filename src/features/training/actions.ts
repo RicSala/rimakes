@@ -13,8 +13,8 @@ export type UnlockState = { error?: string };
  * Validate the submitted password for a gate (`training` by default). On
  * success, set that gate's hashed-access cookie (remembered ~30 days) and
  * redirect to `redirectTo`; on failure, return an error for the form to show.
- * Used by the deck's inline gate, the Training page dialogs and the workshop
- * landing gate. Designed for `useActionState`.
+ * Used by the deck's inline gate and the Training page dialogs. Designed for
+ * `useActionState`.
  */
 export async function unlockTraining(
   _prevState: UnlockState,
