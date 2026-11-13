@@ -93,7 +93,12 @@ const PEOPLE: Record<'es' | 'en', Person[]> = {
     {
       key: 'guillem',
       role: 'Independent consultant · New York',
-      quotes: [{ text: 'He was right there whenever I got stuck.' }],
+      quotes: [
+        { text: 'He was right there whenever I got stuck.' },
+        {
+          text: 'The course has been by far the best return on investment of time and money I’ve ever made!',
+        },
+      ],
     },
     {
       key: 'humbert',
