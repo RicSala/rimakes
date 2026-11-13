@@ -43,6 +43,13 @@ import { buttonVariants } from '@/shared/components/ui/button';
 import { routing } from '@/shared/internationalization/i18n/config';
 import { cn } from '@/shared/lib/utils';
 
+import {
+  COHORT,
+  RECOMMENDATIONS_URL,
+  TESTIMONIAL_PEOPLE,
+  type TestimonialKey,
+} from './workshopData';
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Landing del taller — /claude-workshop. Bilingüe (COPY es/en), versión "venta
 // directa": precio visible, contador de plazas, garantía, testimonios y llamada.
@@ -55,89 +62,35 @@ type Props = {
   params: Promise<{ locale: Locale }>;
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// DATOS DE LA COHORTE — números y enlaces compartidos entre idiomas.
-// Fechas, horario y precios viven en COPY (es/en): si los cambias, actualiza
-// LOS DOS idiomas.
-// Solo hay una cohorte con fecha: la de septiembre, en español. Las dos páginas
-// (ES y EN) venden esa misma cohorte; la edición en inglés se abrirá según el
-// interés y todavía no tiene fecha.
-// ─────────────────────────────────────────────────────────────────────────────
-const COHORT = {
-  /** Plazas libres por cohorte — bájalas a mano según se vendan. */
-  seatsLeft: {
-    september: 13, // cohorte de septiembre (en español) — la única con fecha
-  },
-  seatsTotal: 15,
-  /** TODO: sustituir por el Payment Link real de Stripe antes de publicar. */
-  stripeUrl: 'https://buy.stripe.com/REEMPLAZAR',
-  /** TODO: crear en Cal.com un evento dedicado «Taller Claude — llamada de encaje (30 min)». */
-  calUrl:
-    'https://cal.com/ricardo-sala-mano7b/rimakes?overlayCalendar=true&layout=month_view',
-  contactEmail: 'ricardo@rimakes.com',
-};
-
-/**
- * TESTIMONIOS — personas de la Cohort 0. Todos son recomendaciones públicas de
- * LinkedIn: la foto, el nombre y el enlace al perfil son lo que hace que la cita
- * sea *verificable* (que es de donde viene la credibilidad, no de un pantallazo).
- * Datos compartidos entre idiomas; la cita y el cargo viven en COPY (es/en).
- */
-const RECOMMENDATIONS_URL =
-  'https://www.linkedin.com/in/ricardosala/details/recommendations/';
-
-const TESTIMONIAL_PEOPLE = {
-  guillem: {
-    name: 'Guillem "Bill" Garcia Galofre',
-    image: '/images/testimonials/guillem.jpg',
-    linkedin: 'https://www.linkedin.com/in/guillemgarciagalofre/',
-  },
-  salva: {
-    name: 'Salvador Rovira',
-    image: '/images/testimonials/salva.jpg',
-    linkedin: 'https://www.linkedin.com/in/salvador-rovira-991a4832/',
-  },
-  borja: {
-    name: 'Borja Camblor',
-    image: '/images/testimonials/borja.jpg',
-    linkedin: 'https://www.linkedin.com/in/borja-camblor-a582a629/',
-  },
-  jordi: {
-    name: 'Jordi Teijeiro',
-    image: '/images/testimonials/jordi.jpg',
-    linkedin: 'https://www.linkedin.com/in/jordi-teijeiro/',
-  },
-} as const;
-
-type TestimonialKey = keyof typeof TESTIMONIAL_PEOPLE;
+// Datos de la cohorte y personas de los testimonios: ver ./workshopData.ts
+// (los comparte con la imagen de Open Graph).
 
 const COPY = {
   es: {
     meta: {
       title: 'Taller de Claude para profesionales no técnicos',
       // Con curso en vídeo (restaurar al reactivarlo):
-      // description: 'Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. Curso en vídeo, 8h en grupo (máx. 15) y 4h individuales. Empezamos el 3 de septiembre.',
-      description:
-        'Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. 8h en grupo (máx. 15) y 4h individuales. Empezamos el 3 de septiembre.',
+      // description: 'Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. Curso en vídeo, 8h en grupo (5 plazas) y 4h individuales. Empezamos en diciembre.',
+      description: `Cuatro semanas para pasar de usar la IA como un chat a delegarle trabajo de verdad. 8h en grupo (${COHORT.seatsTotal} plazas) y 4h individuales. Empezamos en diciembre.`,
       ogLocale: 'es_ES',
     },
     mailSubject: 'Duda%20sobre%20el%20taller%20de%20Claude',
-    price: '900 €',
+    price: '700 €',
     priceVat: '+ IVA',
     priceTotalLine:
-      '1.089 € IVA incluido · factura para tu empresa (formación deducible)',
+      '847 € IVA incluido · factura para tu empresa (formación deducible)',
     futurePrice: '1.100 €',
     betaPriceLine: 'Precio de beta — subirá en las próximas ediciones',
-    seatsLabel: `Quedan ${COHORT.seatsLeft.september} de ${COHORT.seatsTotal} plazas`,
+    seatsLabel: `Quedan ${COHORT.seatsLeft.december} de ${COHORT.seatsTotal} plazas`,
     hero: {
-      dateBadge: 'Cohorte de septiembre · empieza el jueves 3 de septiembre',
+      dateBadge: 'Cohorte de diciembre–enero · empezamos en diciembre',
       h1: 'Deja de pedirle textos a la IA. Aprende a delegarle trabajo.',
       subPre:
         'Un taller en directo para profesionales no técnicos: pasa de usar la IA como un chat a ',
       subStrong: 'delegarle trabajo de verdad',
       subPost: ' — sin saber programar.',
       ctaSecondary: 'Ver el programa',
-      chipPrice: '900 € + IVA, pago único',
+      chipPrice: '700 € + IVA, pago único',
       chipGuarantee: 'Si la primera sesión no es para ti, devolución del 100 %',
     },
     callButton: 'Reserva una llamada (30 min)',
@@ -246,11 +199,18 @@ const COPY = {
           role: 'Consultor independiente · Nueva York',
           translated: true,
         },
+        {
+          key: 'humbert' as TestimonialKey,
+          quote:
+            '**100% recomendado.** Ricardo Sala es sin ninguna duda de los mayores expertos en IA del panorama ahora mismo. Gracias Ricardo por tener la inquietud de compartir todo tu conocimiento. Con ganas de más!!',
+          role: 'Cofundador y CEO · PDPAOLA Jewelry',
+          translated: false,
+        },
       ],
     },
     midCta: {
       line: '¿Te ves en estas historias? Hablemos 30 minutos y lo comprobamos.',
-      sub: `Sin compromiso · quedan ${COHORT.seatsLeft.september} de ${COHORT.seatsTotal} plazas`,
+      sub: `Sin compromiso · quedan ${COHORT.seatsLeft.december} de ${COHORT.seatsTotal} plazas`,
     },
     method: {
       eyebrow: 'Metodología',
@@ -320,12 +280,12 @@ const COPY = {
       title: `Cohortes de ${COHORT.seatsTotal} plazas — y el precio va subiendo`,
       srFuturePrice: 'Precio de la próxima edición: ',
       july: { month: 'Julio 2026', flag: '🇪🇸', soldOut: 'Agotado' },
-      september: {
-        month: 'Septiembre 2026',
+      december: {
+        month: 'Diciembre 2026 – Enero 2027',
         flag: '🇪🇸',
-        seats: `Quedan ${COHORT.seatsLeft.september} de ${COHORT.seatsTotal}`,
+        seats: `Quedan ${COHORT.seatsLeft.december} de ${COHORT.seatsTotal}`,
       },
-      october: { month: 'Octubre 2026' },
+      february: { month: 'Febrero 2027' },
       english: {
         month: 'Edición en inglés',
         flag: '🇬🇧',
@@ -341,16 +301,16 @@ const COPY = {
       title: 'Una plaza, todo incluido',
       intro:
         'Las cuatro horas individuales, por sí solas, ya equivalen a una consultoría privada sobre tu caso.',
-      cardEyebrow: 'Cohorte de septiembre',
+      cardEyebrow: 'Cohorte de diciembre–enero',
       included: [
         'Llamada previa individual de 30 min para encuadrar tu caso',
         // Curso en vídeo — desactivado hasta confirmar viabilidad:
         // 'Curso troncal en vídeo (+5 horas) para repasar cuando quieras',
-        '4 sesiones en grupo — 8 horas en directo (3, 10, 17 y 24 de septiembre)',
+        '4 sesiones en grupo — 8 horas en directo, entre diciembre y enero (con el calendario adaptado a las fiestas)',
         '2 sesiones individuales — 4 horas solo tú, yo y tu proyecto',
         'Deck de repaso + 6 recursos, con acceso también después del curso',
         'Material de las próximas ediciones incluido, sin coste adicional',
-        `Grupo de ${COHORT.seatsTotal} personas como máximo`,
+        `Grupo reducido: ${COHORT.seatsTotal} personas`,
       ],
       schedule: 'Jueves, de 12:00 a 14:00 (hora peninsular)',
       callSub:
@@ -410,7 +370,7 @@ const COPY = {
         },
         {
           q: '¿En qué idioma es el taller?',
-          a: 'La cohorte de septiembre se imparte en español. ¿Prefieres inglés? La edición en inglés todavía no tiene fecha: la abriré en cuanto haya grupo (mismo programa y mismo precio). Escríbeme y te aviso en cuanto la convoque.',
+          a: 'La cohorte de diciembre–enero se imparte en español. ¿Prefieres inglés? La edición en inglés todavía no tiene fecha: la abriré en cuanto haya grupo (mismo programa y mismo precio). Escríbeme y te aviso en cuanto la convoque.',
         },
         {
           q: '¿Puedo pagarlo como empresa?',
@@ -429,10 +389,10 @@ const COPY = {
       ],
     },
     closing: {
-      title: 'Empezamos el jueves 3 de septiembre',
-      body: 'Si has pensado en ese informe que haces a mano cada mes o en ese «yo no soy técnico», es justo lo que resolvemos en cuatro semanas. Esta es la última edición a precio de beta: la de octubre ya costará 1.100 € + IVA.',
+      title: 'Empezamos en diciembre',
+      body: 'Si has pensado en ese informe que haces a mano cada mes o en ese «yo no soy técnico», es justo lo que resolvemos en cuatro semanas. Esta es la última edición a precio de beta: la de febrero ya costará 1.100 € + IVA.',
       mailButton: 'Escríbeme',
-      sub: `Quedan ${COHORT.seatsLeft.september} de ${COHORT.seatsTotal} plazas · precio de beta (subirá en próximas ediciones) · si la primera sesión no es para ti, devolución del 100 %.`,
+      sub: `Quedan ${COHORT.seatsLeft.december} de ${COHORT.seatsTotal} plazas · precio de beta (subirá en próximas ediciones) · si la primera sesión no es para ti, devolución del 100 %.`,
     },
     attendees: {
       question: '¿Ya eres asistente?',
@@ -443,28 +403,27 @@ const COPY = {
     meta: {
       title: 'Claude Workshop for Non-Technical Professionals',
       // Con curso en vídeo (restaurar al reactivarlo):
-      // description: 'Four weeks to go from using AI as a chat to delegating real work to it. Video course, 8h of live group sessions (max 15) and 4h one-on-one. Starts September 3, taught in Spanish — an English edition opens as soon as there is a group.',
-      description:
-        'Four weeks to go from using AI as a chat to delegating real work to it. 8h of live group sessions (max 15) and 4h one-on-one. Starts September 3, taught in Spanish — an English edition opens as soon as there is a group.',
+      // description: 'Four weeks to go from using AI as a chat to delegating real work to it. Video course, 8h of live group sessions (5 seats) and 4h one-on-one. Starts in December, taught in Spanish — an English edition opens as soon as there is a group.',
+      description: `Four weeks to go from using AI as a chat to delegating real work to it. 8h of live group sessions (${COHORT.seatsTotal} seats) and 4h one-on-one. Starts in December, taught in Spanish — an English edition opens as soon as there is a group.`,
       ogLocale: 'en_US',
     },
     mailSubject: 'Question%20about%20the%20Claude%20workshop',
-    price: '€900',
+    price: '€700',
     priceVat: '+ VAT',
     priceTotalLine:
-      '€1,089 VAT included · invoice for your company (tax-deductible training)',
+      '€847 VAT included · invoice for your company (tax-deductible training)',
     futurePrice: '€1,100',
     betaPriceLine: 'Beta price — it will go up in future editions',
-    seatsLabel: `${COHORT.seatsLeft.september} of ${COHORT.seatsTotal} seats left`,
+    seatsLabel: `${COHORT.seatsLeft.december} of ${COHORT.seatsTotal} seats left`,
     hero: {
-      dateBadge: 'September cohort, in Spanish · starts Thursday, September 3',
+      dateBadge: 'December–January cohort, in Spanish · starts in December',
       h1: 'Stop asking AI for text. Learn to delegate real work.',
       subPre:
         'A live workshop for non-technical professionals: go from using AI as a chatbot to ',
       subStrong: 'delegating real work to it',
       subPost: ' — no coding required.',
       ctaSecondary: 'See the program',
-      chipPrice: '€900 + VAT, one-time payment',
+      chipPrice: '€700 + VAT, one-time payment',
       chipGuarantee: 'Full refund if the first session is not for you',
     },
     callButton: 'Book a call (30 min)',
@@ -573,11 +532,18 @@ const COPY = {
           role: 'Independent consultant · New York',
           translated: false,
         },
+        {
+          key: 'humbert' as TestimonialKey,
+          quote:
+            '**100% recommended.** Ricardo Sala is, without a doubt, one of the top AI experts out there right now. Thank you, Ricardo, for being so keen to share everything you know. Can’t wait for more!!',
+          role: 'Co-founder & CEO · PDPAOLA Jewelry',
+          translated: true,
+        },
       ],
     },
     midCta: {
       line: 'See yourself in these stories? Let’s talk for 30 minutes and find out.',
-      sub: `No strings attached · ${COHORT.seatsLeft.september} of ${COHORT.seatsTotal} seats left`,
+      sub: `No strings attached · ${COHORT.seatsLeft.december} of ${COHORT.seatsTotal} seats left`,
     },
     method: {
       eyebrow: 'Method',
@@ -647,12 +613,12 @@ const COPY = {
       title: `Cohorts of ${COHORT.seatsTotal} seats — and the price keeps going up`,
       srFuturePrice: 'Next edition’s price: ',
       july: { month: 'July 2026', flag: '🇪🇸', soldOut: 'Sold out' },
-      september: {
-        month: 'September 2026',
+      december: {
+        month: 'December 2026 – January 2027',
         flag: '🇪🇸',
-        seats: `${COHORT.seatsLeft.september} of ${COHORT.seatsTotal} left`,
+        seats: `${COHORT.seatsLeft.december} of ${COHORT.seatsTotal} left`,
       },
-      october: { month: 'October 2026' },
+      february: { month: 'February 2027' },
       english: {
         month: 'English edition',
         flag: '🇬🇧',
@@ -660,7 +626,7 @@ const COPY = {
         note: 'It opens depending on interest',
       },
       crossPre:
-        'The September cohort is taught in Spanish. The English edition does not have a date yet: it opens as soon as there is a group. ',
+        'The December–January cohort is taught in Spanish. The English edition does not have a date yet: it opens as soon as there is a group. ',
       crossLink: 'Write me and I will let you know',
     },
     priceSection: {
@@ -668,16 +634,16 @@ const COPY = {
       title: 'One seat, everything included',
       intro:
         'The four one-on-one hours alone are the equivalent of private consulting on your case.',
-      cardEyebrow: 'September cohort',
+      cardEyebrow: 'December–January cohort',
       included: [
         'Individual 30-min pre-call to frame your case',
         // Curso en vídeo — desactivado hasta confirmar viabilidad:
         // 'Core video course (+5 hours) to review whenever you want',
-        '4 group sessions — 8 live hours (September 3, 10, 17 & 24)',
+        '4 group sessions — 8 live hours, across December and January (scheduled around the holidays)',
         '2 individual sessions — 4 hours: just you, me and your project',
         'Review deck + 6 resources, with access after the course too',
         'Material from future editions included, at no extra cost',
-        `A group of ${COHORT.seatsTotal} people, maximum`,
+        `A small group: ${COHORT.seatsTotal} people`,
       ],
       schedule: 'Thursdays, 12:00–14:00 (Madrid time, CET)',
       callSub:
@@ -707,7 +673,7 @@ const COPY = {
       items: [
         {
           q: 'What language is the workshop in?',
-          a: 'The September cohort is taught in Spanish — live sessions and one-on-ones included. The English edition does not have a date yet: I open it as soon as there is a group, so it depends on interest. Write me or book a call and I will let you know first.',
+          a: 'The December–January cohort is taught in Spanish — live sessions and one-on-ones included. The English edition does not have a date yet: I open it as soon as there is a group, so it depends on interest. Write me or book a call and I will let you know first.',
         },
         {
           q: 'I am not technical at all. Is this really for me?',
@@ -756,10 +722,10 @@ const COPY = {
       ],
     },
     closing: {
-      title: 'We start Thursday, September 3',
-      body: 'If this made you think of that report you still build by hand every month, or of that “I am not technical”… that is exactly what we fix in four weeks. This is one of the last seats at beta price: October will cost €1,100 + VAT.',
+      title: 'We start in December',
+      body: 'If this made you think of that report you still build by hand every month, or of that “I am not technical”… that is exactly what we fix in four weeks. This is one of the last seats at beta price: February will cost €1,100 + VAT.',
       mailButton: 'Write me',
-      sub: `${COHORT.seatsLeft.september} of ${COHORT.seatsTotal} seats left · beta price (going up next edition) · full refund if the first session is not for you.`,
+      sub: `${COHORT.seatsLeft.december} of ${COHORT.seatsTotal} seats left · beta price (going up next edition) · full refund if the first session is not for you.`,
     },
     attendees: {
       question: 'Already an attendee?',
@@ -1222,19 +1188,19 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
               {t.editions.july.soldOut}
             </span>
           </div>
-          {/* Septiembre — la única cohorte con fecha, la que se vende aquí. */}
+          {/* Diciembre–enero — la única cohorte con fecha, la que se vende aquí. */}
           <div className='flex flex-col justify-between gap-6 rounded-xl border-2 border-indigo-500/60 bg-indigo-600/5 p-5 dark:border-indigo-500/40'>
             <div className='flex items-start justify-between gap-2'>
               <div className='flex flex-col gap-1'>
                 <span className='text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400'>
-                  {t.editions.september.month}
+                  {t.editions.december.month}
                 </span>
                 <span className='text-xs font-medium text-amber-700 dark:text-amber-400'>
-                  {t.editions.september.seats}
+                  {t.editions.december.seats}
                 </span>
               </div>
               <span className='text-base leading-none'>
-                {t.editions.september.flag}
+                {t.editions.december.flag}
               </span>
             </div>
             <span className='flex flex-wrap items-baseline gap-x-2'>
@@ -1252,7 +1218,7 @@ export default async function ClaudeWorkshopPage({ params }: Props) {
           </div>
           <div className='flex flex-col justify-between gap-6 rounded-xl border border-dashed border-border p-5'>
             <span className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
-              {t.editions.october.month}
+              {t.editions.february.month}
             </span>
             <span className='flex flex-wrap items-baseline gap-x-2 text-muted-foreground'>
               <span className='text-2xl font-bold tracking-tight'>

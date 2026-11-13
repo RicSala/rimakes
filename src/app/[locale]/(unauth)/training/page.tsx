@@ -32,7 +32,7 @@ const COPY = {
     upcomingBadge: 'Inscripción abierta',
     upcomingTitle: 'Taller de Claude para profesionales no técnicos',
     upcomingDescription:
-      'Nueva cohorte en septiembre (en español): programa, plazas y precio.',
+      'Nueva cohorte en diciembre–enero (en español): programa, plazas y precio.',
     sessionsHeading: 'Sesiones',
     resourcesHeading: 'Recursos',
   },
@@ -44,7 +44,7 @@ const COPY = {
     upcomingBadge: 'Enrolling now',
     upcomingTitle: 'Claude Workshop for Non-Technical Professionals',
     upcomingDescription:
-      'New cohort in September (in Spanish): program, seats and pricing.',
+      'New cohort in December–January (in Spanish): program, seats and pricing.',
     sessionsHeading: 'Sessions',
     resourcesHeading: 'Resources',
   },
