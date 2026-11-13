@@ -5,7 +5,7 @@ import {
   navigate,
   updatePrimaryColor,
 } from '@/app/api/chat/tools';
-import { openai } from '@ai-sdk/openai';
+import { anthropic } from '@ai-sdk/anthropic';
 import { convertToModelMessages, stepCountIs, streamText, UIMessage } from 'ai';
 import { getEdgeConfig } from '@/shared/lib/edgeConfig';
 
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   if (!prompt) console.error('chat-prompt is not set');
 
   const result = streamText({
-    model: openai('gpt-4.1-mini'),
+    model: anthropic('claude-haiku-5-5'),
     system: prompt ?? BACKUP_PROMPT,
     messages: convertToModelMessages(messages),
     tools: {
