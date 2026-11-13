@@ -19,6 +19,14 @@ export const metadata: Metadata = {
   title: 'rimakes · Desarrollo de aplicaciones a medida y formación en IA',
   description:
     'Desarrollo de aplicaciones a medida y formación en IA. Portfolio, blog y workshops de Ric Sala.',
+  // Only to test link previews through a tunnel (e.g. WhatsApp against this
+  // machine). It must be a production build, because in `next dev` Next always
+  // points file-based OG images at localhost:
+  //   OG_BASE_URL=https://xxx.trycloudflare.com pnpm build && pnpm start
+  // When unset, Next uses its default (the production domain on Vercel).
+  ...(process.env.OG_BASE_URL && {
+    metadataBase: new URL(process.env.OG_BASE_URL),
+  }),
 };
 
 export function generateStaticParams() {

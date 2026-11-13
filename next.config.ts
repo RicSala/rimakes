@@ -18,8 +18,10 @@ const nextConfig: NextConfig = {
   // request time (Keystatic local reader). Next's tracer can't see that runtime
   // read, so without this the deck files are missing from the serverless bundle
   // and getDeck() returns null -> 404. Bundle the (tiny) deck content in.
+  // Same for the workshop Open Graph image: it reads the testimonial photos
+  // from public/ at request time (it picks one at random).
   outputFileTracingIncludes: {
-    '/**': ['./content/decks/**/*'],
+    '/**': ['./content/decks/**/*', './public/images/testimonials/*.jpg'],
   },
 
   images: {
